@@ -94,7 +94,7 @@ public class AJDTSearchProvider implements ISearchProvider {
             } else {
                 return itd.getReturnType().equals(Signature.SIG_VOID);
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         return false;
     }
@@ -121,7 +121,7 @@ public class AJDTSearchProvider implements ISearchProvider {
                     }
                     return typeSignature.equals(itdParamSignature);
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
         return false;
@@ -159,7 +159,7 @@ public class AJDTSearchProvider implements ISearchProvider {
                         }
                     }
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
         return origElement;
@@ -171,7 +171,7 @@ public class AJDTSearchProvider implements ISearchProvider {
         try {
             ITDAwareNameEnvironment env = new ITDAwareNameEnvironment(project, workingCopies);
             return new ITDAwareLookupEnvironment(orig, env);
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         return orig;
     }
@@ -238,7 +238,7 @@ public class AJDTSearchProvider implements ISearchProvider {
             // so original contents can be discarded
             try {
                 ((AJCompilationUnit) match.openable).discardOriginalContentMode();
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
     }
@@ -276,7 +276,7 @@ public class AJDTSearchProvider implements ISearchProvider {
                     convertingBuf.setConversionOptions(orig);
                     return contents;
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
 
             // couldn't get the buffer for some reason, but we should still

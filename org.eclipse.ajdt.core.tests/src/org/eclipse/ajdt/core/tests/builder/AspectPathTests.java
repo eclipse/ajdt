@@ -9,7 +9,6 @@ import org.eclipse.ajdt.core.tests.AJDTCoreTestCase;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;

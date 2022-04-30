@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matt Chapman - initial version
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
  * visualiser drawing style, which has plain columns plus Eclipse style headers
  * with rounded corners. Custom renderers can either implement the interface
  * directly or extend this class, or any of the other renderers.
- * 
+ *
  * @author mchapman
  */
 public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
@@ -59,7 +59,7 @@ public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.contribution.visualiser.views.VisualiserRendering#getColumnHeaderHeight()
 	 */
 	public int getColumnHeaderHeight() {
@@ -81,26 +81,26 @@ public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
 				true);
 
 		// draw left-hand corner
-		for (int i = 0; i < cornerData.length; i++) {
-			byte[] b = cornerData[i];
-			gc.setForeground(colorList[b[0]]);
-			if (b[1]==b[3] && b[2]==b[4]) {
-				gc.drawPoint(b[1], b[2]);
-			} else {
-				gc.drawLine(b[1], b[2], b[3], b[4]);
-			}
-		}
+    for (byte[] b : cornerData) {
+      gc.setForeground(colorList[b[0]]);
+      if (b[1] == b[3] && b[2] == b[4]) {
+        gc.drawPoint(b[1], b[2]);
+      }
+      else {
+        gc.drawLine(b[1], b[2], b[3], b[4]);
+      }
+    }
 
 		// draw right-hand corner
-		for (int i = 0; i < cornerData.length; i++) {
-			byte[] b = cornerData[i];
-			gc.setForeground(colorList[b[0]]);
-			if (b[1]==b[3] && b[2]==b[4]) {
-				gc.drawPoint(width - b[1], b[2]);
-			} else {
-				gc.drawLine(width - b[1], b[2], width - b[3], b[4]);
-			}
-		}
+    for (byte[] b : cornerData) {
+      gc.setForeground(colorList[b[0]]);
+      if (b[1] == b[3] && b[2] == b[4]) {
+        gc.drawPoint(width - b[1], b[2]);
+      }
+      else {
+        gc.drawLine(width - b[1], b[2], width - b[3], b[4]);
+      }
+    }
 
 		header = headerImg.getImageData();
 		gc.dispose();
@@ -109,7 +109,7 @@ public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.contribution.visualiser.views.VisualiserRendering#paintColumnHeader(org.eclipse.swt.graphics.GC,
 	 *      org.eclipse.contribution.visualiser.interfaces.IMember, int)
 	 */
@@ -141,7 +141,7 @@ public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IVisualiserRenderer#getSpacing()
 	 */
 	public int getSpacing() {
@@ -150,7 +150,7 @@ public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IVisualiserRenderer#getMarginSize()
 	 */
 	public int getMarginSize() {
@@ -159,7 +159,7 @@ public class DefaultVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.contribution.visualiser.views.VisualiserRendering#paintColumn(org.eclipse.swt.graphics.GC,
 	 *      org.eclipse.contribution.visualiser.interfaces.IMember, int,
 	 *      boolean)

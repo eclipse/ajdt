@@ -62,7 +62,7 @@ public class SelectionUtil {
 				for (IJavaElement child : children) {
 					findEnclosedElements(child, offset, length, foundElements);
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 		}
 	}

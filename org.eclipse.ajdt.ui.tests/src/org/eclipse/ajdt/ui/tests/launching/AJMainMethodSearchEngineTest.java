@@ -25,8 +25,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.search.IJavaSearchScope;
 import org.eclipse.jdt.core.search.SearchEngine;
 
-import java.util.Arrays;
-
 public class AJMainMethodSearchEngineTest extends UITestCase {
 
     IProject project;

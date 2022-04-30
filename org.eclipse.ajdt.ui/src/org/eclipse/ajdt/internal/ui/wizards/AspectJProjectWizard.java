@@ -115,7 +115,7 @@ public class AspectJProjectWizard extends NewElementWizard implements IExecutabl
             AJDTUtils.addAspectJNature(project,true);
             AJBuildJob job = new AJBuildJob(project, IncrementalProjectBuilder.FULL_BUILD);
             job.schedule();
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
 
 		project = thisProject;

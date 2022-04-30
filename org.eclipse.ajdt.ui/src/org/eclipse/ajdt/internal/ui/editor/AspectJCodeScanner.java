@@ -48,7 +48,7 @@ public final class AspectJCodeScanner extends AbstractJavaScanner {
 	 *
 	 * @since 3.0
 	 */
-	protected class OperatorRule implements IRule {
+	protected static class OperatorRule implements IRule {
 
 		/** Java operators */
 		private final char[] JAVA_OPERATORS= { ';', '(', ')', '{', '}', '.', '=', '/', '\\', '+', '-', '*', '[', ']', '<', '>', ':', '?', '!', ',', '|', '&', '^', '%', '~'};

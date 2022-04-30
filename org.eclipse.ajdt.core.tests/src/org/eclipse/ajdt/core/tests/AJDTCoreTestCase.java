@@ -39,7 +39,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -204,7 +203,7 @@ public class AJDTCoreTestCase extends TestCase {
 
         try {
             jp.setOption("org.eclipse.jdt.core.compiler.problem.missingSerialVersion", "ignore"); //$NON-NLS-1$ //$NON-NLS-2$
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException ignored) {
         }
         // if not autobuilding, then test is completely in charge of building
         if (isAutobuilding()) {
@@ -371,7 +370,7 @@ public class AJDTCoreTestCase extends TestCase {
           try {
             job.join();
           }
-          catch (InterruptedException e) {
+          catch (InterruptedException ignored) {
           }
 
         }
@@ -532,7 +531,7 @@ public class AJDTCoreTestCase extends TestCase {
             waitForAutoBuild();
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
             try {
                 resource.delete(true, null);

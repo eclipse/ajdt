@@ -1,17 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Helen Hawkins   - iniital version
  *******************************************************************************/
 package org.eclipse.contribution.xref.ui.views;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.contribution.xref.core.IXReferenceAdapter;
@@ -39,8 +38,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -101,7 +98,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
@@ -124,7 +121,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 			window.getSelectionService().addPostSelectionListener(this);
 		}
 		getSite().setSelectionProvider(viewer);
-		
+
 		// context menu
 		MenuManager mgr = new MenuManager();
 		mgr.add(copyAction);
@@ -145,7 +142,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
@@ -154,7 +151,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 		XReferenceProviderManager.getManager().setIsInplace(false);
 
 		addListenersToOpenEditors();
-		
+
 		if (!(part instanceof AbstractTextEditor)
 				&& !(part instanceof ContentOutline)) {
 			// only want to respond to changes in selection
@@ -169,21 +166,21 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 		// really responding to changes due to a build)
 		List xraList = null;
 		lastJavaElement = XRefUIUtils.getSelectedJavaElement(part,selection);
-		if (linkingEnabled) {	
+		if (linkingEnabled) {
 			// calculate the xrefs for the current selection
-			if (showXRefsForFileEnabled) {			
+			if (showXRefsForFileEnabled) {
 				xraList = XRefUIUtils.getXRefAdapterListForJavaElement(lastJavaElement,true);
 			} else {
 				xraList = XRefUIUtils.getXRefAdapterListForJavaElement(lastJavaElement,false);
-			}	
+			}
 
 			if (xraList == null || xraList.isEmpty() || !lastJavaElement.exists() ) {
-				// if there are compilation errors then we want to clear 
+				// if there are compilation errors then we want to clear
 				// the view (in this case, xraList is empty or null)
 				clearView();
 			} else if (lastXRefAdapterList == null || lastXRefAdapterList.isEmpty()) {
 				//if this is the first selection (i.e. lastXRefAdapterList == null)
-				// then just set the input to be the just calculated xrefs 
+				// then just set the input to be the just calculated xrefs
 				// OR
 				// if compilatin errors occurred last time (lastXRefAdapterList is empty)
 				// and this time they're fixed then just set the input to be the xrefs
@@ -196,36 +193,36 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 					viewer.setInput(xraList);
 					XRefUIUtils.setSelection(part, selection, viewer);
 				} else if (changeDrivenByBuild){
-					// if the change has been driven by a build then 
+					// if the change has been driven by a build then
 					// need to update view since xrefs may have changed
 					viewer.setInput(xraList);
 					XRefUIUtils.setSelection(part, selection, viewer);
 				} else {
 					XRefUIUtils.setSelection(part, selection, viewer);
-				} 			
+				}
 			}
 			// record what was last selected and last calculated
 			lastWorkbenchPart = part;
 			lastSelection = selection;
 			lastXRefAdapterList = xraList;
-			
+
 			lastLinkedSelection = selection;
 			lastLinkedWorkbenchPart = part;
 			lastLinkedXRefAdapterList = xraList;
 			lastLinkedJavaElement = lastJavaElement;
 
 		} else {
-			
+
 			// calculate the xrefs for the last linked selection - these may have
 			// changed due to a build
 			if (showXRefsForFileEnabled) {
 				xraList = XRefUIUtils.getXRefAdapterListForJavaElement(lastLinkedJavaElement,true);
 			} else {
 				xraList = XRefUIUtils.getXRefAdapterListForJavaElement(lastLinkedJavaElement,false);
-			}	
+			}
 
 			if (xraList == null || xraList.isEmpty() || !lastLinkedJavaElement.exists()) {
-				// if there are compilation errors then we want to clear 
+				// if there are compilation errors then we want to clear
 				// the view (in this case, xraList is empty or null)
 				clearView();
 			} else if (lastXRefAdapterList == null || lastXRefAdapterList.isEmpty()) {
@@ -234,7 +231,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 				// we've selected the same thing
 				viewer.setInput(xraList);
 				XRefUIUtils.setSelection(lastLinkedWorkbenchPart, lastLinkedSelection, viewer);
-			} else if (sameXRefAdapter(lastLinkedXRefAdapterList,xraList) && changeDrivenByBuild) {			
+			} else if (sameXRefAdapter(lastLinkedXRefAdapterList,xraList) && changeDrivenByBuild) {
 				// if anything has changed about the contents, then need to refresh
 				// (this will come from a build)
 				viewer.setInput(xraList);
@@ -250,34 +247,32 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	private boolean sameXRefAdapter(List previousXRefAdapterList, List currentXRefAdapterList) {
 		boolean sameXRefAdapter = true;
-		for (Iterator iter = currentXRefAdapterList.iterator(); iter.hasNext();) {
-			Object o = iter.next();
-			boolean foundMatch = false;
-			if (o instanceof IXReferenceAdapter) {
-				IXReferenceAdapter currentXra = (IXReferenceAdapter) o;
+    for (Object o : currentXRefAdapterList) {
+      boolean foundMatch = false;
+      if (o instanceof IXReferenceAdapter) {
+        IXReferenceAdapter currentXra = (IXReferenceAdapter) o;
 
-				for (Iterator i2 = previousXRefAdapterList.iterator(); i2
-						.hasNext();) {
-					Object o2 = i2.next();
-					if (o2 instanceof IXReferenceAdapter) {
-						IXReferenceAdapter lastXra = (IXReferenceAdapter) o2;
-						if (currentXra.getReferenceSource().equals(
-								lastXra.getReferenceSource())) {
-							foundMatch = true;
-						}
-					}
-				}
-			}
-			if (!foundMatch) {
-				sameXRefAdapter = false;
-			}
-		}
+        for (Object o2 : previousXRefAdapterList) {
+          if (o2 instanceof IXReferenceAdapter) {
+            IXReferenceAdapter lastXra = (IXReferenceAdapter) o2;
+            if (currentXra.getReferenceSource().equals(
+              lastXra.getReferenceSource()))
+            {
+              foundMatch = true;
+            }
+          }
+        }
+      }
+      if (!foundMatch) {
+        sameXRefAdapter = false;
+      }
+    }
 		return sameXRefAdapter;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
@@ -299,9 +294,9 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 						.getEditorReferences();
 				if (openEditors.length != 0) {
 					// remove the part listener for each open editor
-					for (int i = 0; i < openEditors.length; i++) {
-						openEditors[i].getPage().removePartListener(this);
-					}
+          for (IEditorReference openEditor : openEditors) {
+            openEditor.getPage().removePartListener(this);
+          }
 				}
 			}
 		}
@@ -329,7 +324,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 			} else {
 				xraList = XRefUIUtils.getXRefAdapterListForJavaElement(
 						lastJavaElement,false);
-			}	
+			}
 			viewer.setInput(xraList);
 		}
 	}
@@ -382,7 +377,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 	public ISelection getLastSelection() {
 		return lastSelection;
 	}
-	
+
 	public IWorkbenchPart getLastSelectedWorkbenchPart() {
 		return lastWorkbenchPart;
 	}
@@ -418,7 +413,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
-		
+
 		// Add global action handlers.
 		bars.setGlobalActionHandler(ActionFactory.COPY.getId(), copyAction);
 		bars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(),
@@ -441,11 +436,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 	}
 
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
+		viewer.addDoubleClickListener(event -> doubleClickAction.run());
 	}
 
 	private void makeActions() {
@@ -472,14 +463,14 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 						.getEditorReferences();
 				if (openEditors.length != 0) {
 					// add a part listener to each open editor
-					for (int i = 0; i < openEditors.length; i++) {
-						openEditors[i].getPage().addPartListener(this);
-					}
+          for (IEditorReference openEditor : openEditors) {
+            openEditor.getPage().addPartListener(this);
+          }
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * @param changeDrivenByBuild
 	 *            The changeDrivenByBuild to set.
@@ -492,7 +483,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
@@ -500,7 +491,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partBroughtToTop(IWorkbenchPart part) {
@@ -508,7 +499,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partClosed(IWorkbenchPart part) {
@@ -530,7 +521,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 							lastWorkbenchPart = null;
 							lastJavaElement = null;
 						}
-						
+
 					}
 				}
 			}
@@ -546,7 +537,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
@@ -554,13 +545,13 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
 	}
-	
-	
+
+
 	public Object getAdapter(Class key) {
 		if (key.equals(IContextProvider.class)) {
 			return XRefUIHelp.getHelpContextProvider(this, IXRefHelpContextIds.XREF_VIEW);
@@ -586,7 +577,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 	public Action getCustomFilterAction() {
 		return xRefCustomFilterAction;
 	}
-	
+
 	/**
 	 * Returns the action for the xref view - this method is for testing
 	 * purposes and not part of the published API.
@@ -594,7 +585,7 @@ public class XReferenceView extends ViewPart implements ISelectionListener,
 	public Action getToggleShowXRefsForEntireFileAction() {
 		return toggleShowXRefsForFileAction;
 	}
-	
+
 	/**
 	 * Returns the action for the xref view - this method is for testing
 	 * purposes and not part of the published API.

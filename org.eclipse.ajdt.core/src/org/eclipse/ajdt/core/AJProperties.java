@@ -41,7 +41,7 @@ public class AJProperties {
         }
         return true;
       });
-		} catch (CoreException e) {
+		} catch (CoreException ignored) {
 		}
 		return files;
 	}

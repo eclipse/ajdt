@@ -54,7 +54,7 @@ public abstract class AbstractITDAwareCodeSelectionTests extends
     }
 
 
-    protected final class MockNameEnvironmentProvider implements
+    protected static final class MockNameEnvironmentProvider implements
             INameEnvironmentProvider {
         public ISourceType transformSourceTypeInfo(ISourceType info) {
             // don't need

@@ -71,7 +71,7 @@ public class ImageDescriptorSelectorTests extends WeavingTestCase {
     }
 
     public void testImageSelectDebugger() throws Exception {
-        MockDebugTypeSelectionDialog dialog = new MockDebugTypeSelectionDialog(new Shell(Display.getCurrent()), new IType[] {(IType) cu.getChildren()[0] }, "");
+        MockDebugTypeSelectionDialog dialog = new MockDebugTypeSelectionDialog(new Shell(Display.getCurrent()), new IType[] { (IType) cu.getChildren()[0] }, "");
         dialog.setInitialPattern("Mock");
         ILabelProvider provider = dialog.getLabelProvider();
 
@@ -82,7 +82,7 @@ public class ImageDescriptorSelectorTests extends WeavingTestCase {
         Assert.assertTrue("Image descriptor selector never activated", MockImageDescriptorSelector.isSet);
     }
 
-    class MockDebugTypeSelectionDialog extends DebugTypeSelectionDialog {
+    static class MockDebugTypeSelectionDialog extends DebugTypeSelectionDialog {
 
         public MockDebugTypeSelectionDialog(Shell shell, IType[] elements, String title) {
             super(shell, elements, title);

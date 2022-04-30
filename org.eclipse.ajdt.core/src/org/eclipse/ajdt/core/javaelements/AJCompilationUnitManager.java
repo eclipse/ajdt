@@ -35,7 +35,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
-import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.OpenableElementInfo;
 
@@ -166,7 +165,7 @@ public class AJCompilationUnitManager {
 				JavaModelManager.getJavaModelManager().removeInfoAndChildren(
 						unit);
 
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 			compilationUnitStore.remove(file);
 		}
@@ -182,7 +181,7 @@ public class AJCompilationUnitManager {
 			info.addChild(unit);
 
 			compilationUnitStore.put(file, unit);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return unit;
 	}
@@ -243,7 +242,7 @@ public class AJCompilationUnitManager {
 					}
 				}
 			}
-			catch (JavaModelException e) { }
+			catch (JavaModelException ignored) { }
 		}
 	}
 
@@ -266,7 +265,7 @@ public class AJCompilationUnitManager {
 					files.add((IFile) resource);
 			}
 		}
-		catch (CoreException e) { }
+		catch (CoreException ignored) { }
 	}
 
 	/**

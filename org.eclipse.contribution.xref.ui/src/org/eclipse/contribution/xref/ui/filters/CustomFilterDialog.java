@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ben Dalziel     - initial version
@@ -12,7 +12,7 @@
 package org.eclipse.contribution.xref.ui.filters;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.contribution.xref.internal.ui.text.XRefMessages;
@@ -49,11 +49,11 @@ public class CustomFilterDialog {
 
 	private static Shell parentShell;
 
-	
+
 	/**
 	 * Activates the dialog, stalls until OK or CANCEL is pressed, and returns
 	 * a list of strings corresponding to those items that the user has checked
-	 * 
+	 *
 	 * @param shell - Shell of the view which provides the action
 	 * @param items - List of strings used to populate the checkBox
 	 * @param checkedItems - List of strings corresponding to those items that need to be selected
@@ -64,7 +64,7 @@ public class CustomFilterDialog {
 	 */
 	public static List showDialog(Shell shell, List items, List checkedItems,
 			List defaultItems, String dlogTitle, String dlogMessage) {
-		
+
 		// Check that provided lists are valid
 		if (!isListOfStrings(items) || !isListOfStrings(checkedItems) ||!isListOfStrings(defaultItems)
 				|| checkedItems.size() > items.size() || defaultItems.size() > items.size()) {
@@ -76,7 +76,7 @@ public class CustomFilterDialog {
 		dialogTitle = dlogTitle;
 		dialogMessage = dlogMessage;
 		parentShell = shell;
-		
+
 		FilterDialog dialog = new FilterDialog(parentShell,
 				populatingList, checkedList, defaultCheckedList, dialogTitle,
 				dialogMessage);
@@ -85,14 +85,13 @@ public class CustomFilterDialog {
 		}
 		return checkedItems;
 	}
-	
+
 	private static boolean isListOfStrings(List listToCheck) {
-		for (Iterator iter = listToCheck.iterator(); iter.hasNext();) {
-			Object itemToCheck = iter.next();
-			if (!(itemToCheck instanceof String)) {
-				return false;
-			}
-		}
+    for (Object itemToCheck : listToCheck) {
+      if (!(itemToCheck instanceof String)) {
+        return false;
+      }
+    }
 		return true;
 	}
 
@@ -110,7 +109,7 @@ public class CustomFilterDialog {
 				List checkedItems, List defaultItems, String dlogTitle,
 				String dlogMessage) {
 			super(shell);
-			
+
 			populatingList = items;
 			checkedList = checkedItems;
 			defaultCheckedList = defaultItems;
@@ -130,7 +129,7 @@ public class CustomFilterDialog {
 
 		/**
 		 * Overrides method in Dialog
-		 * 
+		 *
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 		 */
 		protected Control createDialogArea(Composite parent) {
@@ -176,7 +175,7 @@ public class CustomFilterDialog {
 			List initialSelection = getInitialElementSelections();
 			if (initialSelection != null && !initialSelection.isEmpty())
 				checkInitialSelections();
-			
+
 			addSelectionButtons(parent);
 		}
 
@@ -222,37 +221,31 @@ public class CustomFilterDialog {
 			listener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					fCheckBoxList.setAllChecked(false);
-					Iterator defaultItemsInCheckboxDialog = defaultCheckedList
-							.iterator();
-					while (defaultItemsInCheckboxDialog.hasNext()) {
-						String nextItemToCheck = (String) defaultItemsInCheckboxDialog
-								.next();
-						if (populatingList.contains(nextItemToCheck)) {
-							fCheckBoxList.setChecked(nextItemToCheck, true);
-						}
-					}
+          for (Object o : defaultCheckedList) {
+            String nextItemToCheck = (String) o;
+            if (populatingList.contains(nextItemToCheck)) {
+              fCheckBoxList.setChecked(nextItemToCheck, true);
+            }
+          }
 				}
 			};
 			restoreDefaultsButton.addSelectionListener(listener);
 		}
 
 		private void checkInitialSelections() {
-			Iterator itemsInCheckboxDialog = checkedList.iterator();
-			while (itemsInCheckboxDialog.hasNext()) {
-				String nextItemToCheck = (String) itemsInCheckboxDialog.next();
-				if (populatingList.contains(nextItemToCheck)) {
-					fCheckBoxList.setChecked(nextItemToCheck, true);
-				}
-			}
+      for (Object o : checkedList) {
+        String nextItemToCheck = (String) o;
+        if (populatingList.contains(nextItemToCheck)) {
+          fCheckBoxList.setChecked(nextItemToCheck, true);
+        }
+      }
 		}
 
 		protected void okPressed() {
 			checkedList.clear();
 			if (fCheckBoxList != null) {
 				Object[] newlyChecked = fCheckBoxList.getCheckedElements();
-				for (int i = 0; i < newlyChecked.length; i++) {
-					checkedList.add(newlyChecked[i]);
-				}
+        Collections.addAll(checkedList, newlyChecked);
 			}
 			super.okPressed();
 		}

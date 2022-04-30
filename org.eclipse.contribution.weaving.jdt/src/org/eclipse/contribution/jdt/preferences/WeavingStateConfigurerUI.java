@@ -40,7 +40,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 public class WeavingStateConfigurerUI {
 
 
-    private class EnableWeavingDialog extends MessageDialogWithToggle {
+    private static class EnableWeavingDialog extends MessageDialogWithToggle {
         // problem here is that this message is AJDT specific, even though this plugin
         // should have no mention of AJDT
         private final static String MESSAGE = "Should JDT Weaving be enabled?  (Requires restart)<br/><br/>" +

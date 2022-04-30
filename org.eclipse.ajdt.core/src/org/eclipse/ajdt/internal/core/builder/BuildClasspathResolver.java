@@ -48,7 +48,7 @@ public class BuildClasspathResolver {
 		if (binaryLocations==null) {
 			try {
 				computeClasspathLocations(root, (JavaProject)javaProject, new SimpleLookupTable());
-			} catch (CoreException e) {
+			} catch (CoreException ignored) {
 			}
 		}
 
@@ -99,7 +99,7 @@ public class BuildClasspathResolver {
 		}
 
 		IClasspathEntry[] classpathEntries = javaProject.getExpandedClasspath();
-		ArrayList<ClasspathLocation> sLocations = new ArrayList<>(classpathEntries.length);
+		ArrayList<ClasspathMultiDirectory> sLocations = new ArrayList<>(classpathEntries.length);
 		ArrayList<ClasspathLocation> bLocations = new ArrayList<>(classpathEntries.length);
     for (IClasspathEntry classpathEntry : classpathEntries) {
       ClasspathEntry entry = (ClasspathEntry) classpathEntry;
@@ -128,7 +128,9 @@ public class BuildClasspathResolver {
             // AspectJ Change End
           }
           sLocations.add(
-            ClasspathLocation.forSourceFolder(
+            // Factory method (copied from JDT Core) always returns ClasspathMultiDirectory,
+            // despite more generic return type -> safe cast, but sacred knowledge -> FIXME
+            (ClasspathMultiDirectory) ClasspathLocation.forSourceFolder(
               (IContainer) target,
               outputFolder,
               entry.fullInclusionPatternChars(),
@@ -147,7 +149,6 @@ public class BuildClasspathResolver {
           JavaProject prereqJavaProject = (JavaProject) JavaCore.create(prereqProject);
           IClasspathEntry[] prereqClasspathEntries = prereqJavaProject.getRawClasspath();
           ArrayList<IContainer> seen = new ArrayList<>();
-          nextPrereqEntry:
           for (IClasspathEntry prereqEntry : prereqClasspathEntries) {
             if (prereqEntry.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
               Object prereqTarget = JavaModel.getTarget(prereqEntry.getPath(), true);

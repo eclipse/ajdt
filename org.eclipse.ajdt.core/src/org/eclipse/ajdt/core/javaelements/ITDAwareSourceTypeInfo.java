@@ -93,7 +93,7 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
                 // MemberElementInfo is package protected, so we need to access using Class.forName
                 try {
                     ReflectionUtils.setPrivateField((Class<? super SourceTypeElementInfo>) Class.forName("org.eclipse.jdt.internal.core.MemberElementInfo"), "flags", newInfo, origInfo.getModifiers());
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException ignored) {
                 }
                 elementInfo = newInfo;
             }
@@ -152,7 +152,7 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
         }
     }
 
-    private final class ITITMethod extends SourceMethod {
+    private static final class ITITMethod extends SourceMethod {
         private final SourceMethod orig;
         private final char[] fullTypeName;
         private ITITSourceMethodInfo thisInfo;
@@ -180,14 +180,14 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
                 thisInfo.setArgumentNames(info.getArgumentNames());
                 thisInfo.setArguments((ILocalVariable[]) ReflectionUtils.getPrivateField(SourceMethodElementInfo.class, "arguments", info));
                 // not handling type parameters for now.
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             return thisInfo;
         }
 
 
     }
-    private final class ITITField extends SourceField {
+    private static final class ITITField extends SourceField {
 
         private final SourceField orig;
         private final char[] fullTypeName;
@@ -213,7 +213,7 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
                 thisInfo.setNameSourceEnd(info.getNameSourceEnd());
                 thisInfo.setSourceRangeStart(info.getDeclarationSourceStart());
                 thisInfo.setSourceRangeEnd(info.getDeclarationSourceEnd());
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             return thisInfo;
         }
@@ -316,7 +316,7 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
                 this.typeParameters = new ITypeParameter[parameters.length];
                 System.arraycopy(parameters, 0, this.typeParameters, 0, parameters.length);
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 
         IJavaElement[] children = augmentChildrenAndHierarchy(type);
@@ -331,7 +331,7 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
             if (info != null && info instanceof CompilationUnitElementInfo) {
                 ((CompilationUnitElementInfo) info).annotationNumber = 0;
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 

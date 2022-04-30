@@ -84,12 +84,12 @@ public class PushInRefactoringInputPage extends UserInputWizardPage {
                 sortIdentifier = Sorter.TARGET_SORT;
             }
 
-            tableViewer.setSorter(new Sorter(sortIdentifier,dir));
+            tableViewer.setSorter(new Sorter(sortIdentifier, dir));
             table.setSortDirection(dir);
         }
     }
 
-    class Sorter extends ViewerSorter {
+    static class Sorter extends ViewerSorter {
         final static String ICON_SORT = "icon.sort";
         final static String ASPECT_SORT = "aspect.sort";
         final static String ITD_SORT = "itd.sort";
@@ -189,7 +189,7 @@ public class PushInRefactoringInputPage extends UserInputWizardPage {
         PushInRefactoring refactoring= getPushInRefactoring();
         try {
             status.merge(refactoring.checkInitialConditions(new NullProgressMonitor()));
-        } catch (OperationCanceledException e) {
+        } catch (OperationCanceledException ignored) {
         } catch (CoreException e) {
             status.merge(RefactoringStatus.createFatalErrorStatus(e.getMessage()));
         }
@@ -261,7 +261,7 @@ public class PushInRefactoringInputPage extends UserInputWizardPage {
                         icon = AspectJImages.instance()
                                 .getStructureIcon(ajElem.getAJKind(), ajElem.getAJAccessibility());
                         cell.setImage(icon.getImageDescriptor().createImage());
-                    } catch (JavaModelException e) {
+                    } catch (JavaModelException ignored) {
                     }
                 } else if (elt instanceof IType) {
                     AJDTIcon icon = AspectJImages.instance()
@@ -337,7 +337,7 @@ public class PushInRefactoringInputPage extends UserInputWizardPage {
                     IntertypeElement itd = (IntertypeElement) elt;
                     try {
                         cell.setText(new String(itd.getTargetType()));
-                    } catch (JavaModelException e) {
+                    } catch (JavaModelException ignored) {
                     }
                 } else if (elt instanceof DeclareElement) {
                     DeclareElement de = (DeclareElement) elt;
@@ -390,7 +390,7 @@ public class PushInRefactoringInputPage extends UserInputWizardPage {
     /*
      * from @link ExtractClassUserInputWizardPage
      */
-    public class FieldContentProvider implements IStructuredContentProvider {
+    public static class FieldContentProvider implements IStructuredContentProvider {
 
         public void dispose() {
         }

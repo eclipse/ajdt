@@ -120,7 +120,7 @@ public class AJCodeElement extends LocalVariable implements IAJCodeElement {
     			}
 
     			nameStart = Math.min(nameStart,nameEnd);
-    		} catch (JavaModelException e) {
+    		} catch (JavaModelException ignored) {
     		}
 	    }
 	}

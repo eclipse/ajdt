@@ -62,12 +62,12 @@ public class ExtraTypeReferenceFinder extends AbstractExtraReferenceFinder<TypeR
     protected DeclareVisitor createDeclareVisitor(char[] contents, DeclareElement decl, SearchParticipant participant,
             TypeReferencePattern pattern) throws JavaModelException {
         return new TypeReferenceDeclareVisitor(participant,
-        		TargetTypeUtils.getSimpleNameStr(pattern),
-        		TargetTypeUtils.getQualNameStr(pattern),
-                decl, contents);
+          TargetTypeUtils.getSimpleNameStr(pattern),
+          TargetTypeUtils.getQualNameStr(pattern),
+          decl, contents);
     }
 
-    class TypeReferenceDeclareVisitor extends DeclareVisitor {
+    static class TypeReferenceDeclareVisitor extends DeclareVisitor {
         private final String searchTypeSimpleName;
         private final String searchQualifier;
         private final String dotSearchTypeSimpleName;

@@ -46,7 +46,6 @@ import org.eclipse.jdt.core.search.MethodDeclarationMatch;
 import org.eclipse.jdt.core.search.MethodReferenceMatch;
 import org.eclipse.jdt.core.search.SearchMatch;
 import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.core.refactoring.descriptors.RefactoringSignatureDescriptorFactory;
 import org.eclipse.jdt.internal.corext.refactoring.Checks;
 import org.eclipse.jdt.internal.corext.refactoring.CuCollectingSearchRequestor;
@@ -549,7 +548,7 @@ public class ITDRenameRefactoringProcessor extends JavaRenameProcessor {
         try {
             if (!Flags.isPrivate(itd.getFlags()))
                 flags|= RefactoringDescriptor.MULTI_CHANGE;
-        } catch (JavaModelException exception) {
+        } catch (JavaModelException ignored) {
         }
         final String description= Messages.format("Rename intertype declaration ''{0}''", BasicElementLabels.getJavaElementName(itd.getElementName()));
         final String header= Messages.format("Rename intertype declaration ''{0}'' to ''{1}''", new String[] { JavaElementLabels.getTextLabel(itd, JavaElementLabels.ALL_FULLY_QUALIFIED), BasicElementLabels.getJavaElementName(getNewElementName())});

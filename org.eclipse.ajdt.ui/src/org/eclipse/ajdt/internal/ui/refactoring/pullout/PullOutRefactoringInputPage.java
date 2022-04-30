@@ -33,8 +33,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -198,7 +196,7 @@ public class PullOutRefactoringInputPage extends UserInputWizardPage {
 			AspectInputContentAssistProcessor processor = new AspectInputContentAssistProcessor(getRefactoring().getJavaProject());
 			ControlContentAssistHelper.createTextContentAssistant(targetAspectInput,
 					processor);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -307,7 +305,7 @@ public class PullOutRefactoringInputPage extends UserInputWizardPage {
     /*
      * from @link ExtractClassUserInputWizardPage
      */
-    public class FieldContentProvider implements IStructuredContentProvider {
+    public static class FieldContentProvider implements IStructuredContentProvider {
 
         public void dispose() {
         }

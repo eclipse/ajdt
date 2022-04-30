@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: Sian January - initial version
  * ...
  **********************************************************************/
@@ -44,17 +44,17 @@ import org.eclipse.ui.IWorkbenchPart;
 public class ResourceContentProvider extends SimpleContentProvider implements ISelectionListener {
 
 	IResource selectedResource;
-	
+
 	private boolean updateNeeded;
-	
+
 	public void initialise() {
 		if (VisualiserPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow() != null) {
 			VisualiserPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow()
 				.getSelectionService().addSelectionListener(this);
 		}
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.contribution.visualiser.simpleImpl.SimpleContentProvider#getAllMembers()
 	 */
@@ -68,8 +68,8 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 		}
 		return super.getAllMembers();
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.contribution.visualiser.simpleImpl.SimpleContentProvider#getAllGroups()
 	 */
@@ -79,12 +79,12 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 			IMarkupProvider mProv = ProviderManager.getMarkupProvider();
 			if(mProv instanceof MarkerMarkupProvider) {
 				((MarkerMarkupProvider)mProv).updateMarkups(super.getAllGroups());
-			}			
+			}
 		}
 		return super.getAllGroups();
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.contribution.visualiser.simpleImpl.SimpleContentProvider#getAllMembers(org.eclipse.contribution.visualiser.interfaces.IGroup)
 	 */
@@ -98,8 +98,8 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 		}
 		return super.getAllMembers(group);
 	}
-	
-	
+
+
 	/**
 	 * Workbench selection has changed
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
@@ -128,14 +128,14 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 							selectedResource = r;
 							updateRequired = true;
 						}
-					} catch (JavaModelException jme) { 
+					} catch (JavaModelException jme) {
 						jme.printStackTrace();
 					}
 				}
 			}
 		}
 		if(updateRequired && selectedResource != null) {
-			updateNeeded = true;			
+			updateNeeded = true;
 			VisualiserPlugin.refresh();
 		}
 	}
@@ -150,28 +150,27 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 			IResource[] children;
 			try {
 				children = ((IContainer)selectedResource).members();
-			
+
 				boolean membersAreContainers = false;
-				for (int i = 0; i < children.length; i++) {
-					if(children[i] instanceof IContainer) {
-						membersAreContainers = true;
-					}
-				}
+        for (IResource iResource : children) {
+          if (iResource instanceof IContainer) {
+            membersAreContainers = true;
+          }
+        }
 				if(!membersAreContainers) {
 					IGroup group = new SimpleGroup(selectedResource.getName());
-					for (int i = 0; i < children.length; i++) {
-						IResource resource = children[i];
-						createNewMember(group, resource);	
-					}
+          for (IResource resource : children) {
+            createNewMember(group, resource);
+          }
 					addGroup(group);
 				} else {
-					for (int i = 0; i < children.length; i++) {
-						if(children[i] instanceof IContainer) {
-							IGroup group = new SimpleGroup(children[i].getName());
-							addChildrenRecursively(group, (IContainer)children[i]);
-							addGroup(group);
-						}
-					}
+          for (IResource child : children) {
+            if (child instanceof IContainer) {
+              IGroup group = new SimpleGroup(child.getName());
+              addChildrenRecursively(group, (IContainer) child);
+              addGroup(group);
+            }
+          }
 				}
 			} catch (CoreException e) {
 				e.printStackTrace();
@@ -184,7 +183,7 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 				addGroup(group);
 			} catch (CoreException ce) {
 				ce.printStackTrace();
-			}			
+			}
 		}
 		updateNeeded = false;
 	}
@@ -197,17 +196,17 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 	private void addChildrenRecursively(IGroup group, IContainer container) {
 		try {
 			IResource[] children = container.members();
-			for (int i = 0; i < children.length; i++) {
-				IResource resource = children[i];
-				if(resource instanceof IFile) {
-					createNewMember(group, resource);
-				} else if (resource instanceof IContainer) {
-					addChildrenRecursively(group, (IContainer)resource);
-				}
-			}
+      for (IResource resource : children) {
+        if (resource instanceof IFile) {
+          createNewMember(group, resource);
+        }
+        else if (resource instanceof IContainer) {
+          addChildrenRecursively(group, (IContainer) resource);
+        }
+      }
 		} catch (CoreException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 
@@ -234,8 +233,8 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Process a mouse click on a member belonging to this provider.  This implemetation
 	 * opens the associated resource in the editor.
@@ -248,7 +247,7 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 		}
 		return true;
 	}
-	
+
 
 	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getMemberViewIcon()
@@ -264,5 +263,5 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 	public ImageDescriptor getGroupViewIcon() {
 		return VisualiserImages.FOLDER_VIEW;
 	}
-	
+
 }

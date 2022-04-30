@@ -28,7 +28,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
         try {
             astLevelField = ASTHolderCUInfo.class.getDeclaredField("astLevel");
             astLevelField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException ignored) {
         }
 	}
 
@@ -37,7 +37,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
         try {
             resolveBindingsField = ASTHolderCUInfo.class.getDeclaredField("resolveBindings");
             resolveBindingsField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException ignored) {
         }
     }
 
@@ -46,7 +46,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
         try {
             reconcileFlagsField = ASTHolderCUInfo.class.getDeclaredField("reconcileFlags");
             reconcileFlagsField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException ignored) {
         }
     }
 
@@ -55,7 +55,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
         try {
             problemsField = ASTHolderCUInfo.class.getDeclaredField("problems");
             problemsField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException ignored) {
         }
     }
 
@@ -64,7 +64,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
         try {
             astField = ASTHolderCUInfo.class.getDeclaredField("ast");
             astField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldException ignored) {
         }
     }
 
@@ -85,7 +85,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
     public int getASTLevel() {
 	    try {
             return astLevelField.getInt(this);
-        } catch (SecurityException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException ignored) {
         }
       return ICompilationUnit.NO_AST;
 	}
@@ -94,7 +94,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
     public boolean doResolveBindings() {
         try {
             return resolveBindingsField.getBoolean(this);
-        } catch (SecurityException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException ignored) {
         }
       return false;
 	}
@@ -102,7 +102,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
     public int getReconcileFlags() {
         try {
             return reconcileFlagsField.getInt(this);
-        } catch (SecurityException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException ignored) {
         }
       return ICompilationUnit.NO_AST;
 	}
@@ -112,7 +112,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
     public HashMap getProblems() {
         try {
             return (HashMap) problemsField.get(this);
-        } catch (SecurityException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException ignored) {
         }
       return null;
     }
@@ -120,7 +120,7 @@ public class AJCompilationUnitInfo extends ASTHolderCUInfo {
     public void setAST(CompilationUnit cu) {
         try {
             astField.set(this, cu);
-        } catch (SecurityException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException ignored) {
         }
 
     }

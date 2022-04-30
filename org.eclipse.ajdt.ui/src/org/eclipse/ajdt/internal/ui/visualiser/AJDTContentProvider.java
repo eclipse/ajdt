@@ -142,8 +142,8 @@ public class AJDTContentProvider extends JDTContentProvider {
 			((AJDTMarkupProvider) ProviderManager.getMarkupProvider()).resetMarkupsAndKinds();
 		}
 		long stime = System.currentTimeMillis();
-		List<IGroup> newGroups = new ArrayList<IGroup>();
-		List<IMember> newMembers = new ArrayList<IMember>();
+		List<IGroup> newGroups = new ArrayList<>();
+		List<IMember> newMembers = new ArrayList<>();
 		if (currentProject != null) {
 
 			try {
@@ -175,7 +175,7 @@ public class AJDTContentProvider extends JDTContentProvider {
 						newMembers.add(member);
 					}
 					if (member != null) {
-						IPackageFragment packageFrag = (IPackageFragment) ((ICompilationUnit) currentlySelectedJE)
+						IPackageFragment packageFrag = (IPackageFragment) currentlySelectedJE
 								.getParent();
 						boolean defaultPackage = packageFrag.isDefaultPackage();
 						// ?!? Need to confirm a group for the pkg frag is OK in
@@ -193,7 +193,7 @@ public class AJDTContentProvider extends JDTContentProvider {
 					}
 				}
 
-			} catch (JavaModelException jme) {
+			} catch (JavaModelException ignored) {
 			}
 			long etime = System.currentTimeMillis();
 
@@ -280,7 +280,7 @@ public class AJDTContentProvider extends JDTContentProvider {
 	 * @return List of JDTMembers
 	 */
 	public List<IMember> getMembersForPackage(IPackageFragment packageFragment) {
-		List<IMember> returningClasses = new ArrayList<IMember>();
+		List<IMember> returningClasses = new ArrayList<>();
 		try {
 			if (containsUsefulStuff(packageFragment)) {
 				IJavaElement[] javaElements = packageFragment.getChildren();
@@ -316,7 +316,7 @@ public class AJDTContentProvider extends JDTContentProvider {
           }
         }
 			}
-		} catch (JavaModelException jme) {
+		} catch (JavaModelException ignored) {
 		}
 		return returningClasses;
 	}

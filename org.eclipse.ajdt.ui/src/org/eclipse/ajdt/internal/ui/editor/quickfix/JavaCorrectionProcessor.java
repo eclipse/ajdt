@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -69,33 +70,32 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 	private static ContributedProcessorDescriptor[] fContributedCorrectionProcessors= null;
 
 	private static ContributedProcessorDescriptor[] getProcessorDescriptors(
-			String contributionId, boolean testMarkerTypes) {
-		IConfigurationElement[] elements = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(JavaUI.ID_PLUGIN, contributionId);
-		ArrayList res = new ArrayList(elements.length);
+		String contributionId,
+		boolean testMarkerTypes
+	) {
+		IConfigurationElement[] elements = Platform
+			.getExtensionRegistry()
+			.getConfigurationElementsFor(JavaUI.ID_PLUGIN, contributionId);
+		ArrayList<ContributedProcessorDescriptor> res = new ArrayList<>(elements.length);
 
-    for (IConfigurationElement element : elements) {
-      // AspectJ Change Begin
-      // skip jdt's processor, as we have registered our own
-      if (!element
-        .getAttribute("class") //$NON-NLS-1$
-        .equals(
-          "org.eclipse.jdt.internal.ui.text.correction.QuickFixProcessor"))
-      { //$NON-NLS-1$
-        ContributedProcessorDescriptor desc = new ContributedProcessorDescriptor(
-          element, testMarkerTypes);
-        IStatus status = desc.checkSyntax();
-        if (status.isOK()) {
-          res.add(desc);
-        }
-        else {
-          JavaPlugin.log(status);
-        }
-      }
-      // AspectJ Change End
-    }
-		return (ContributedProcessorDescriptor[]) res
-				.toArray(new ContributedProcessorDescriptor[0]);
+		for (IConfigurationElement element : elements) {
+			// AspectJ Change Begin
+			// skip jdt's processor, as we have registered our own
+			if (
+				!element.getAttribute("class") //$NON-NLS-1$
+					.equals("org.eclipse.jdt.internal.ui.text.correction.QuickFixProcessor") //$NON-NLS-1$
+			)
+			{
+				ContributedProcessorDescriptor desc = new ContributedProcessorDescriptor(element, testMarkerTypes);
+				IStatus status = desc.checkSyntax();
+				if (status.isOK())
+					res.add(desc);
+				else
+					JavaPlugin.log(status);
+			}
+			// AspectJ Change End
+		}
+		return res.toArray(new ContributedProcessorDescriptor[0]);
 	}
 
 	private static ContributedProcessorDescriptor[] getCorrectionProcessors() {
@@ -224,9 +224,9 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 
 		ICompletionProposal[] res= null;
 		if (model != null && annotations != null) {
-			ArrayList proposals= new ArrayList(10);
+			List<ICompletionProposal> proposals= new ArrayList<>(10);
 			IStatus status= collectProposals(context, model, annotations, true, !fAssistant.isUpdatedOffset(), proposals);
-			res= (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[0]);
+			res= proposals.toArray(new ICompletionProposal[0]);
 			if (!status.isOK()) {
 				fErrorMessage= status.getMessage();
 				JavaPlugin.log(status);
@@ -242,37 +242,54 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 		return res;
 	}
 
-	public static IStatus collectProposals(IInvocationContext context, IAnnotationModel model, Annotation[] annotations, boolean addQuickFixes, boolean addQuickAssists, Collection proposals) {
-		ArrayList problems= new ArrayList();
+	public static IStatus collectProposals(
+		IInvocationContext context,
+		IAnnotationModel model,
+		Annotation[] annotations,
+		boolean addQuickFixes,
+		boolean addQuickAssists,
+		Collection<ICompletionProposal> proposals
+	)
+	{
+		List<ProblemLocation> problems = new ArrayList<>();
 
 		// collect problem locations and corrections from marker annotations
-    for (Annotation curr : annotations) {
-      if (curr instanceof IJavaAnnotation) {
-        ProblemLocation problemLocation = getProblemLocation((IJavaAnnotation) curr, model);
-        if (problemLocation != null) {
-          problems.add(problemLocation);
-        }
-      }
-      else if (addQuickFixes && curr instanceof SimpleMarkerAnnotation) {
-        // don't collect if annotation is already a java annotation
-        collectMarkerProposals((SimpleMarkerAnnotation) curr, proposals);
-      }
-    }
-		MultiStatus resStatus= null;
+		for (Annotation curr : annotations) {
+			if (curr instanceof IJavaAnnotation) {
+				ProblemLocation problemLocation = getProblemLocation((IJavaAnnotation) curr, model);
+				if (problemLocation != null)
+					problems.add(problemLocation);
+			}
+			else if (addQuickFixes && curr instanceof SimpleMarkerAnnotation) {
+				// don't collect if annotation is already a java annotation
+				collectMarkerProposals((SimpleMarkerAnnotation) curr, proposals);
+			}
+		}
+		MultiStatus resStatus = null;
 
-		IProblemLocation[] problemLocations= (IProblemLocation[]) problems.toArray(new IProblemLocation[0]);
+		IProblemLocation[] problemLocations = problems.toArray(new IProblemLocation[0]);
 		if (addQuickFixes) {
-			IStatus status= collectCorrections(context, problemLocations, proposals);
+			IStatus status = collectCorrections(context, problemLocations, proposals);
 			if (!status.isOK()) {
-				resStatus= new MultiStatus(JavaUI.ID_PLUGIN, IStatus.ERROR, CorrectionMessages.JavaCorrectionProcessor_error_quickfix_message, null);
+				resStatus = new MultiStatus(
+					JavaUI.ID_PLUGIN,
+					IStatus.ERROR,
+					CorrectionMessages.JavaCorrectionProcessor_error_quickfix_message,
+					null
+				);
 				resStatus.add(status);
 			}
 		}
 		if (addQuickAssists) {
-			IStatus status= collectAssists(context, problemLocations, proposals);
+			IStatus status = collectAssists(context, problemLocations, proposals);
 			if (!status.isOK()) {
 				if (resStatus == null) {
-					resStatus= new MultiStatus(JavaUI.ID_PLUGIN, IStatus.ERROR, CorrectionMessages.JavaCorrectionProcessor_error_quickassist_message, null);
+					resStatus = new MultiStatus(
+						JavaUI.ID_PLUGIN,
+						IStatus.ERROR,
+						CorrectionMessages.JavaCorrectionProcessor_error_quickassist_message,
+						null
+					);
 				}
 				resStatus.add(status);
 			}
@@ -294,13 +311,16 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 		return null;
 	}
 
-	private static void collectMarkerProposals(SimpleMarkerAnnotation annotation, Collection proposals) {
-		IMarker marker= annotation.getMarker();
-		IMarkerResolution[] res= IDE.getMarkerHelpRegistry().getResolutions(marker);
+	private static void collectMarkerProposals(
+		SimpleMarkerAnnotation annotation,
+		Collection<ICompletionProposal> proposals
+	)
+	{
+		IMarker marker = annotation.getMarker();
+		IMarkerResolution[] res = IDE.getMarkerHelpRegistry().getResolutions(marker);
 		if (res.length > 0) {
-      for (IMarkerResolution re : res) {
-        proposals.add(new MarkerResolutionProposal(re, marker));
-      }
+			for (IMarkerResolution re : res)
+				proposals.add(new MarkerResolutionProposal(re, marker));
 		}
 	}
 
@@ -344,10 +364,10 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 
 	private static class SafeCorrectionCollector extends SafeCorrectionProcessorAccess {
 		private final IInvocationContext fContext;
-		private final Collection fProposals;
+		private final Collection<ICompletionProposal> fProposals;
 		private IProblemLocation[] fLocations;
 
-		public SafeCorrectionCollector(IInvocationContext context, Collection proposals) {
+		public SafeCorrectionCollector(IInvocationContext context, Collection<ICompletionProposal> proposals) {
 			fContext= context;
 			fProposals= proposals;
 		}
@@ -360,9 +380,8 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 			IQuickFixProcessor curr= (IQuickFixProcessor) desc.getProcessor(fContext.getCompilationUnit(), IQuickAssistProcessor.class);
 			if (curr != null) {
 				IJavaCompletionProposal[] res= curr.getCorrections(fContext, fLocations);
-				if (res != null) {
-          Collections.addAll(fProposals, res);
-				}
+				if (res != null)
+					Collections.addAll(fProposals, res);
 			}
 		}
 	}
@@ -370,9 +389,9 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 	private static class SafeAssistCollector extends SafeCorrectionProcessorAccess {
 		private final IInvocationContext fContext;
 		private final IProblemLocation[] fLocations;
-		private final Collection fProposals;
+		private final Collection<ICompletionProposal> fProposals;
 
-		public SafeAssistCollector(IInvocationContext context, IProblemLocation[] locations, Collection proposals) {
+		public SafeAssistCollector(IInvocationContext context, IProblemLocation[] locations, Collection<ICompletionProposal> proposals) {
 			fContext= context;
 			fLocations= locations;
 			fProposals= proposals;
@@ -382,9 +401,8 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 			IQuickAssistProcessor curr= (IQuickAssistProcessor) desc.getProcessor(fContext.getCompilationUnit(), IQuickAssistProcessor.class);
 			if (curr != null) {
 				IJavaCompletionProposal[] res= curr.getAssists(fContext, fLocations);
-				if (res != null) {
-          Collections.addAll(fProposals, res);
-				}
+				if (res != null)
+					Collections.addAll(fProposals, res);
 			}
 		}
 	}
@@ -434,7 +452,11 @@ public class JavaCorrectionProcessor implements org.eclipse.jface.text.quickassi
 	}
 
 
-	public static IStatus collectCorrections(IInvocationContext context, IProblemLocation[] locations, Collection proposals) {
+	public static IStatus collectCorrections(
+    IInvocationContext context,
+                                           IProblemLocation[] locations,
+                                           Collection<ICompletionProposal> proposals
+  ) {
 		ContributedProcessorDescriptor[] processors= getCorrectionProcessors();
 		SafeCorrectionCollector collector= new SafeCorrectionCollector(context, proposals);
     for (ContributedProcessorDescriptor curr : processors) {

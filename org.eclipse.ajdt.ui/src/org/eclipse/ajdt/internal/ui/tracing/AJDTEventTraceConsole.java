@@ -13,7 +13,6 @@ import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
@@ -36,7 +35,7 @@ public class AJDTEventTraceConsole extends TextConsole {
 
 
     final static RuleBasedPartitionScanner scanner = new RuleBasedPartitionScanner();
-    {
+    static {
         scanner.setPredicateRules(new IPredicateRule[] {
                 new SingleLineRule(COMPILER, "", COMPILER_TOKEN),
                 new SingleLineRule(BUILDER, "", BUILDER_TOKEN),

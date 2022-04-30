@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Adrian Colyer - initial version
  *     Sian Whiting - added tabbed layout and drawing options
@@ -13,7 +13,6 @@
 package org.eclipse.contribution.visualiser.internal.preference;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.contribution.visualiser.VisualiserPlugin;
 import org.eclipse.contribution.visualiser.core.PaletteDefinition;
@@ -35,26 +34,18 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -99,7 +90,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 	/**
 	 * Create the contents of the page
-	 * 
+	 *
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
@@ -132,7 +123,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	/**
 	 * Subsidiary method for createContents(). Creates the contents of the
 	 * drawing options tab.
-	 * 
+	 *
 	 * @param parent
 	 * @return the created control
 	 */
@@ -148,7 +139,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	/**
 	 * Subsidiary method for createContents(). Creates the contents of the
 	 * providers tab.
-	 * 
+	 *
 	 * @param parent
 	 * @return the created control
 	 */
@@ -164,16 +155,16 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	private void createDrawingStyleArea(Composite mainComposite) {
 		java.util.List renderers = RendererManager.getAllRendererDefinitions();
 		java.util.List rnames = new ArrayList();
-		for (Iterator iter = renderers.iterator(); iter.hasNext();) {
-			RendererDefinition rd = (RendererDefinition) iter.next();
-			rnames.add(rd.getName());
-		}
+    for (Object renderer : renderers) {
+      RendererDefinition rd = (RendererDefinition) renderer;
+      rnames.add(rd.getName());
+    }
 		java.util.List palettes = PaletteManager.getAllPaletteDefinitions();
 		java.util.List pnames = new ArrayList();
-		for (Iterator iter = palettes.iterator(); iter.hasNext();) {
-			PaletteDefinition rd = (PaletteDefinition) iter.next();
-			pnames.add(rd.getName());
-		}
+    for (Object palette : palettes) {
+      PaletteDefinition rd = (PaletteDefinition) palette;
+      pnames.add(rd.getName());
+    }
 
 		Composite drawingComposite = new Composite(mainComposite, SWT.NONE);
 		drawingComposite.setLayout((new GridLayout(2, true)));
@@ -312,7 +303,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 		private IVisualiserPalette ivp;
 
 		private Color[] cols;
-		
+
 		private RGB[] colsForPatterns;
 
 		private boolean localUsePatterns = VisualiserPreferences
@@ -320,11 +311,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 		VisualiserPreview(Composite parent) {
 			super(parent, SWT.NO_BACKGROUND);
-			addPaintListener(new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					paint(e.gc);
-				}
-			});
+			addPaintListener(e -> paint(e.gc));
 			// accessibility: add listeners so we can receive focus
 			addFocusListener(new FocusAdapter() {
 	            public void focusGained(FocusEvent e) {
@@ -335,21 +322,19 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	            }
 			});
 			addKeyListener(new KeyAdapter() {});
-			addTraverseListener(new TraverseListener() {
-				public void keyTraversed(TraverseEvent e) {
-					switch (e.detail) {
-					/* Do tab group traversal */
-					case SWT.TRAVERSE_ESCAPE:
-					case SWT.TRAVERSE_RETURN:
-					case SWT.TRAVERSE_TAB_NEXT:
-					case SWT.TRAVERSE_TAB_PREVIOUS:
-					case SWT.TRAVERSE_PAGE_NEXT:
-					case SWT.TRAVERSE_PAGE_PREVIOUS:
-						e.doit = true;
-						break;
-					}
-				}
-			});
+			addTraverseListener(e -> {
+        switch (e.detail) {
+        /* Do tab group traversal */
+        case SWT.TRAVERSE_ESCAPE:
+        case SWT.TRAVERSE_RETURN:
+        case SWT.TRAVERSE_TAB_NEXT:
+        case SWT.TRAVERSE_TAB_PREVIOUS:
+        case SWT.TRAVERSE_PAGE_NEXT:
+        case SWT.TRAVERSE_PAGE_PREVIOUS:
+          e.doit = true;
+          break;
+        }
+      });
 			setToolTipText(VisualiserMessages.VisualiserPreferencePage_preview);
 		}
 
@@ -432,7 +417,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 				x += r.getSpacing() + width;
 				r.paintColumnHeader(sgc, m2, x, width);
 				r.paintColumn(sgc, m2, x, y, width, height, false);
-				
+
 				// need to indicate focus for accessibility
 				if (isFocusControl()) {
 					sgc.setForeground(ColorConstants.menuForeground);
@@ -440,7 +425,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 					sgc.drawFocus(clientRect.x, clientRect.y,
 							clientRect.width, clientRect.height);
 				}
-				
+
 				gc.drawImage(buffer, 0, 0);
 				sgc.dispose();
 				buffer.dispose();
@@ -449,9 +434,9 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 		private void disposeCols() {
 			if (cols != null) {
-				for (int i = 0; i < cols.length; i++) {
-					cols[i].dispose();
-				}
+        for (Color col : cols) {
+          col.dispose();
+        }
 				cols = null;
 			}
 		}
@@ -531,44 +516,40 @@ public class VisualiserPreferencePage extends PreferencePage implements
 		});
 
 		checkboxViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						if (event.getSelection() instanceof IStructuredSelection) {
-							IStructuredSelection sel = (IStructuredSelection) event
-									.getSelection();
-							ProviderDefinition definition = (ProviderDefinition) sel
-									.getFirstElement();
-							if (definition == null)
-								clearDescription();
-							else
-								showDescription(definition);
-						}
-					}
-				});
+				.addSelectionChangedListener(event -> {
+          if (event.getSelection() instanceof IStructuredSelection) {
+            IStructuredSelection sel = (IStructuredSelection) event
+                .getSelection();
+            ProviderDefinition definition = (ProviderDefinition) sel
+                .getFirstElement();
+            if (definition == null)
+              clearDescription();
+            else
+              showDescription(definition);
+          }
+        });
 
-		checkboxViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				checkboxViewer.setAllChecked(false);
-				checkboxViewer.setChecked(event.getElement(), true);
-				checkboxViewer.setSelection(new StructuredSelection(event
-						.getElement()), true);
+		checkboxViewer.addCheckStateListener(event -> {
+      checkboxViewer.setAllChecked(false);
+      checkboxViewer.setChecked(event.getElement(), true);
+      checkboxViewer.setSelection(new StructuredSelection(event
+          .getElement()), true);
 
-				// reset palette choice in drawing options tab
-				ProviderDefinition definition = (ProviderDefinition) event
-						.getElement();
-				String pid = VisualiserPreferences
-						.getPaletteIDForProvider(definition.getID());
-				String pname = null;
-				if ((pid != null) && (pid.length() > 0)) {
-					pname = PaletteManager.getPaletteByID(pid).getName();
-				}
-				if ((pname == null) || (pname.length() == 0)) {
-					pname = PaletteManager.getDefaultForProvider(definition)
-							.getName();
-				}
-				colourList.setSelection(new String[] { pname });
-			}
-		});
+      // reset palette choice in drawing options tab
+      ProviderDefinition definition = (ProviderDefinition) event
+          .getElement();
+      String pid = VisualiserPreferences
+          .getPaletteIDForProvider(definition.getID());
+      String pname = null;
+      if ((pid != null) && (pid.length() > 0)) {
+        pname = PaletteManager.getPaletteByID(pid).getName();
+      }
+      if ((pname == null) || (pname.length() == 0)) {
+        pname = PaletteManager.getDefaultForProvider(definition)
+            .getName();
+      }
+      colourList.setSelection(new String[] { pname });
+    });
 	}
 
 	/**
@@ -602,13 +583,13 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	private void populateProviders() {
 		ProviderDefinition[] definitions = getAllDefinitions();
 		checkboxViewer.setInput(definitions);
-		for (int i = 0; i < definitions.length; i++) {
-			checkboxViewer.setChecked(definitions[i], definitions[i]
-					.isEnabled());
-			if (definitions[i].isEnabled()) {
-				showDescription(definitions[i]);
-			}
-		}
+    for (ProviderDefinition definition : definitions) {
+      checkboxViewer.setChecked(definition, definition
+        .isEnabled());
+      if (definition.isEnabled()) {
+        showDescription(definition);
+      }
+    }
 	}
 
 	/**
@@ -638,7 +619,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 	/**
 	 * Restore defaults
-	 * 
+	 *
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
@@ -658,19 +639,19 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	/**
 	 * Called when the user presses OK. Updates the Visualiser with the
 	 * selections chosen.
-	 * 
+	 *
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		if (super.performOk()) {
 			ProviderDefinition[] definitions = ProviderManager
 					.getAllProviderDefinitions();
-			for (int i = 0; i < definitions.length; i++) {
-				boolean checked = checkboxViewer.getChecked(definitions[i]);
-				if (definitions[i].isEnabled() != checked) {
-					definitions[i].setEnabled(checked);
-				}
-			}
+      for (ProviderDefinition definition : definitions) {
+        boolean checked = checkboxViewer.getChecked(definition);
+        if (definition.isEnabled() != checked) {
+          definition.setEnabled(checked);
+        }
+      }
 
 			String rname = styleList.getSelection()[0];
 			VisualiserPreferences.setRendererName(rname);
@@ -682,7 +663,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 				// Using Patterns
 				if (stripeHeight.getSelection() < VisualiserPreferences.getDefaultPatternStripeHeight() && !VisualiserPreferences.getUsePatterns() && !VisualiserPreferences.getDontAutoIncreaseStripeHeight()) {
 					if (VisualiserPreferences.getDoAutoIncreaseStripeHeight()) {
-						VisualiserPreferences.setStripeHeight(VisualiserPreferences.getDefaultPatternStripeHeight());						
+						VisualiserPreferences.setStripeHeight(VisualiserPreferences.getDefaultPatternStripeHeight());
 					} else {
 						MessageDialogWithToggle toggleDialog = new MessageDialogWithToggle(
 								null, VisualiserMessages.VisualiserPreferencePage_stripeSizeDialog_title,
@@ -698,7 +679,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 					}
 				} else
 					VisualiserPreferences.setStripeHeight(stripeHeight.getSelection());
-				
+
 				VisualiserPreferences.setBarWidth(prefWidth.getSelection());
 				VisualiserPreferences.setUsePatterns(true);
 				String pid = PaletteManager.getPaletteByName(pname).getID();
@@ -706,7 +687,7 @@ public class VisualiserPreferencePage extends PreferencePage implements
 			} else {
 				// Not using patterns
 				VisualiserPreferences.setStripeHeight(stripeHeight.getSelection());
-				
+
 				VisualiserPreferences.setBarWidth(prefWidth.getSelection());
 				VisualiserPreferences.setUsePatterns(false);
 				if (defp.equals(pname)) {

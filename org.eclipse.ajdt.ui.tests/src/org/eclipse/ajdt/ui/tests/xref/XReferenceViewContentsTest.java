@@ -90,7 +90,7 @@ public class XReferenceViewContentsTest extends UITestCase {
         assertTrue("matches declare child should exist", ((IJavaElement) ((TreeObject) c2[0]).getData()).exists());
 		Object[] c3 = viewContentProvider.getChildren(c2[0]);
 		assertEquals("method m() of named innerclass C should have 1 child",1,c3.length); //$NON-NLS-1$
-    assertEquals("matches declare child should exist", "matches declare", ((String) ((TreeObject) c3[0]).getName()));
+    assertEquals("matches declare child should exist", "matches declare", ((TreeObject) c3[0]).getName());
 		Object[] c4 = viewContentProvider.getChildren(c3[0]);
 		assertEquals("matches declare should have 1 child",1,c4.length); //$NON-NLS-1$
         assertTrue("matches declare child should exist", ((AJNode) ((TreeObject) c4[0]).getData()).getJavaElement().exists());
@@ -103,7 +103,7 @@ public class XReferenceViewContentsTest extends UITestCase {
 		// if there aren't two children then this is a regression of bug 111189
 		//  - the recursion in XReferenceContentProvider.addChildren(..) method
 		assertEquals("method m() of inner class should have 2 children",2,d2.length); //$NON-NLS-1$
-    assertEquals("matches declare child should exist", "matches declare", ((String) ((TreeObject) d2[0]).getName()));
+    assertEquals("matches declare child should exist", "matches declare", ((TreeObject) d2[0]).getName());
         assertTrue("matches declare child should exist", ((IJavaElement) ((TreeObject) d2[1]).getData()).exists());
 		// there are two children of m(): 'matches declare' and
 		// 'method-call(.....)'
@@ -123,7 +123,7 @@ public class XReferenceViewContentsTest extends UITestCase {
 		assertTrue("matches declare child should exist", ((AJNode) ((TreeObject) d3[0]).getData()).getJavaElement().exists());
 		Object[] d4 = viewContentProvider.getChildren(methodCall);
 		assertEquals("method-call should have one child",1,d4.length); //$NON-NLS-1$
-    assertEquals("matches declare child should exist", "matches declare", ((String) ((TreeObject) d4[0]).getName()));
+    assertEquals("matches declare child should exist", "matches declare", ((TreeObject) d4[0]).getName());
 		Object[] d5 = viewContentProvider.getChildren(d4[0]);
 		assertEquals("matches declare should have one child",1,d5.length); //$NON-NLS-1$
         assertTrue("matches declare child should exist", ((AJNode) ((TreeObject) d5[0]).getData()).getJavaElement().exists());

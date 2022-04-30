@@ -114,7 +114,7 @@ public class ImageDecorator implements ILabelDecorator {
 			IFile file = null;
 			try {
 				file = (IFile) comp.getCorrespondingResource();
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 			if(file != null) {
 				if(comp instanceof AJCompilationUnit) {
@@ -154,7 +154,7 @@ public class ImageDecorator implements ILabelDecorator {
 						img = getImageLabel(AspectJImages.JAR_ON_INPATH.getImageDescriptor());
 					}
 				}
-			} catch (JavaModelException e1) {
+			} catch (JavaModelException ignored) {
 			}
 		} else if (element instanceof AJCodeElement) {
 			img = getImageLabel(AspectJImages.AJ_CODE.getImageDescriptor());
@@ -183,7 +183,7 @@ public class ImageDecorator implements ILabelDecorator {
 						img = getImageLabel(getJavaImageDescriptor(icon.getImageDescriptor(), image.getBounds(), computeJavaAdornmentFlags(ajElem)));
 					}
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 		}
 
@@ -257,7 +257,7 @@ public class ImageDecorator implements ILabelDecorator {
 						return text.substring(0,text.length()-2);
 					}
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 		}
 		return null;

@@ -70,9 +70,9 @@ public class BuildConfigurationUtils {
         printProperties(bw, "src.excludes", srcExcludes); //$NON-NLS-1$
         printProperties(bw, "src.inclusionpatterns", srcInclusionpatterns);   //$NON-NLS-1$
       }
-      catch (IOException e) {
+      catch (IOException ignored) {
       }
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -186,11 +186,11 @@ public class BuildConfigurationUtils {
 				if(srcFolders.size() > i) {
 					String srcFolder = srcFolders.get(i);
 					IPath path = project.getPath().append(stripSlash(srcFolder));
-					List exclusions = (List) srcFoldersToExcludes.get(srcFolder);
+					List exclusions = srcFoldersToExcludes.get(srcFolder);
 					if(exclusions == null) {
 						exclusions = Collections.EMPTY_LIST;
 					}
-					List inclusions = (List) srcFoldersToIncludes.get(srcFolder);
+					List inclusions = srcFoldersToIncludes.get(srcFolder);
 					if(inclusions == null) {
 						inclusions = Collections.EMPTY_LIST;
 					}
@@ -223,13 +223,13 @@ public class BuildConfigurationUtils {
 			}
 			project.setRawClasspath(entries, null);
 		}
-    catch (CoreException | IOException e) {
+    catch (CoreException | IOException ignored) {
 		}
     finally {
 			if (br != null) {
 				try {
 					br.close();
-				} catch (IOException e) {
+				} catch (IOException ignored) {
 				}
 			}
 		}

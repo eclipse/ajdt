@@ -227,7 +227,7 @@ public class AspectJBreakpointRulerActionTest extends UITestCase {
 				if (line == markerLine) {
 					return true;
 				}
-			} catch (BadLocationException x) {
+			} catch (BadLocationException ignored) {
 			}
 		}
 

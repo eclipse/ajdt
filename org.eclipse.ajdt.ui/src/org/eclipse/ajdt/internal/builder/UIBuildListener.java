@@ -321,7 +321,7 @@ public class UIBuildListener implements IAJBuildListener {
 
                     marker.setAttributes(allNames, allValues);
                 }
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }
     }
@@ -451,7 +451,7 @@ public class UIBuildListener implements IAJBuildListener {
           IClasspathEntry[] newCP = newEntries.toArray(new IClasspathEntry[0]);
           javaProject.setRawClasspath(newCP, new NullProgressMonitor());
         }
-        catch (CoreException e) {
+        catch (CoreException ignored) {
         }
       }
     }
@@ -477,7 +477,7 @@ public class UIBuildListener implements IAJBuildListener {
             IClasspathEntry[] newCP = newEntries.toArray(new IClasspathEntry[0]);
             javaProject.setRawClasspath(newCP, new NullProgressMonitor());
           }
-          catch (CoreException e) {
+          catch (CoreException ignored) {
           }
         }
     }

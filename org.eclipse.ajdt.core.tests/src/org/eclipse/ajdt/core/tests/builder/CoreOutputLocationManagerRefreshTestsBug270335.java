@@ -36,7 +36,7 @@ import org.eclipse.jdt.core.JavaCore;
  */
 public class CoreOutputLocationManagerRefreshTestsBug270335 extends AJDTCoreTestCase {
 
-    private class MockCoreOutputLocationManager extends CoreOutputLocationManager {
+    private static class MockCoreOutputLocationManager extends CoreOutputLocationManager {
         private boolean iGotZapped = false;
         public MockCoreOutputLocationManager(IProject project, FileURICache fileCache) {
             super(project, fileCache);

@@ -39,7 +39,7 @@ public class ReflectionUtils {
                 fieldMap.put(key, field);
             }
             return field.get(target);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -54,7 +54,7 @@ public class ReflectionUtils {
                 fieldMap.put(key, field);
             }
             field.set(target, newValue);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -64,7 +64,7 @@ public class ReflectionUtils {
             Method method = clazz.getDeclaredMethod(methodName, types);
             method.setAccessible(true);
             return method.invoke(target, args);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }
@@ -75,7 +75,7 @@ public class ReflectionUtils {
             Constructor<T> cons = clazz.getDeclaredConstructor(parameterTypes);
             cons.setAccessible(true);
             return cons.newInstance(args);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return null;
     }

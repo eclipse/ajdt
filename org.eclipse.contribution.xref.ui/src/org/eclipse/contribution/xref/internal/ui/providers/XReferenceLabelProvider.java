@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Helen Hawkins   - iniital version
@@ -33,13 +33,13 @@ public class XReferenceLabelProvider extends LabelProvider {
 	// it will be displayed correctly in the tree.
 
 	public ILabelProvider labelProvider;
-	
+
 	public XReferenceLabelProvider() {
 		labelProvider = new DecoratingLabelProvider(
 				new JavaElementLabelProvider(), XReferenceUIPlugin.getDefault()
 						.getWorkbench().getDecoratorManager().getLabelDecorator());
 	}
-	
+
 	private boolean addedListener = false;
 
 	private ListenerList fListeners;
@@ -55,11 +55,7 @@ public class XReferenceLabelProvider extends LabelProvider {
 			// as we are only retrieving images from labelProvider not using it
 			// directly, we need to update this label provider whenever that one
 			// updates
-			labelProvider.addListener(new ILabelProviderListener() {
-				public void labelProviderChanged(LabelProviderChangedEvent event) {
-					fireLabelChanged();
-				}
-			});
+			labelProvider.addListener(event -> fireLabelChanged());
 		}
 	}
 
@@ -68,10 +64,10 @@ public class XReferenceLabelProvider extends LabelProvider {
 			LabelProviderChangedEvent event = new LabelProviderChangedEvent(
 					this);
 			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				((ILabelProviderListener) listeners[i])
-						.labelProviderChanged(event);
-			}
+      for (Object listener : listeners) {
+        ((ILabelProviderListener) listener)
+          .labelProviderChanged(event);
+      }
 		}
 	}
 

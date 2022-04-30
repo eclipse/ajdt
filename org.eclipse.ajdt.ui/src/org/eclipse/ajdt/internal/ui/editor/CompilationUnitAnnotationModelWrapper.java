@@ -230,7 +230,7 @@ public class CompilationUnitAnnotationModelWrapper implements IAnnotationModel, 
               0)); // unknown column
           }
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 		}
 	}

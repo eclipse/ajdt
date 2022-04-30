@@ -13,7 +13,6 @@ package org.eclipse.ajdt.internal.ui.tracing;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 
 public class EventTrace {
 

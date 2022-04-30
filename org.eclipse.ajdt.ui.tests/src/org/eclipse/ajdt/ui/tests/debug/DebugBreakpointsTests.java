@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ajdt.ui.tests.debug;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.ajdt.core.ReflectionUtils;

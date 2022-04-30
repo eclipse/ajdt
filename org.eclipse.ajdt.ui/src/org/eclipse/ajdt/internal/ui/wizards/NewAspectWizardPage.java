@@ -365,7 +365,7 @@ public class NewAspectWizardPage extends NewTypeWizardPage {
                 }
               }
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 

@@ -258,7 +258,7 @@ public class WeavingTestCase extends TestCase {
 			waitForAutoBuild();
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException ignored) {
 			}
 			try {
 				resource.delete(true, null);
@@ -473,7 +473,7 @@ class SynchronizationUtils {
     private static void sleep(int intervalTime) {
         try {
             Thread.sleep(intervalTime);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 

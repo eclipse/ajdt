@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ajdt.internal.ui.editor.contentassist;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.internal.ui.text.UIMessages;
@@ -61,7 +60,7 @@ public class AJCompletionProcessor extends JavaCompletionProcessor {
 	}
 
 
-	private class AJContentAssistInvocationContext extends JavaContentAssistInvocationContext {
+	private static class AJContentAssistInvocationContext extends JavaContentAssistInvocationContext {
 
 		private final IEditorPart fEditor;
 

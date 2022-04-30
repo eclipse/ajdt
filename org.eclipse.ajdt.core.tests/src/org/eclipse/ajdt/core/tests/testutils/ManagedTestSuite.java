@@ -40,7 +40,7 @@ import org.eclipse.ajdt.core.TestMode;
  */
 public class ManagedTestSuite extends TestSuite {
 
-	private class DumpThreadTask extends TimerTask {
+	private static class DumpThreadTask extends TimerTask {
 
 		private final Test test;
 
@@ -180,7 +180,7 @@ public class ManagedTestSuite extends TestSuite {
 
 	}
 
-	public class ShutdownWatchdog implements Test {
+	public static class ShutdownWatchdog implements Test {
 
 		public int countTestCases() {
 			return 1;

@@ -70,7 +70,7 @@ public class SynchronizationUtils {
 	public static void sleep(int intervalTime) {
 		try {
 			Thread.sleep(intervalTime);
-		} catch (InterruptedException e) {
+		} catch (InterruptedException ignored) {
 		}
 	}
 

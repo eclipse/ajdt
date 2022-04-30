@@ -91,7 +91,7 @@ public class ReindexingJob extends WorkspaceJob {
         } while (wasInterrupted);
     }
 
-    private class TouchJavaLikeResourceVisitor implements IResourceVisitor {
+    private static class TouchJavaLikeResourceVisitor implements IResourceVisitor {
         IProgressMonitor monitor;
 
         TouchJavaLikeResourceVisitor(IProgressMonitor monitor) {

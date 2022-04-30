@@ -9,7 +9,6 @@
 package org.eclipse.ajdt.internal.ui.editor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.internal.debug.ui.actions.ToggleBreakpointAdapter;
@@ -227,7 +226,7 @@ public class AspectJBreakpointRulerAction extends Action {
 				if (line == markerLine) {
 					return true;
 				}
-			} catch (BadLocationException x) {
+			} catch (BadLocationException ignored) {
 			}
 		}
 

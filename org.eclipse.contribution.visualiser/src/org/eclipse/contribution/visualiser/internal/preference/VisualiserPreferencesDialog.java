@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Sian Whiting - initial version
  *******************************************************************************/
@@ -23,10 +23,6 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
@@ -39,6 +35,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import java.util.Objects;
 
 /**
  * Dialog containing Visualiser preferences
@@ -65,7 +63,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 	private boolean showingError = false;
 	private VisualiserPreferencePage visPage;
 	private String errorMessage;
-	
+
 	/**
 	 * Default constructor
 	 * @param parentShell
@@ -74,7 +72,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		super(parentShell);
 	}
 
-	
+
 	/**
 	 * Override to set the title
 	 */
@@ -83,14 +81,14 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 	   shell.setText(VisualiserMessages.VisualiserPreferencePage_title);
 	}
 
-	
+
 	/**
 	 * Create the contents of the dialog
 	 */
 	protected Control createDialogArea(Composite parent) {
 		GridData gd;
 		Composite composite = (Composite) super.createDialogArea(parent);
-		
+
 		// Build the title area and separator line
 		Composite titleComposite = new Composite(composite, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -102,7 +100,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		createTitleArea(titleComposite);
-		
+
 		// Build the Page container
 		Composite pageContainer = createPageContainer(composite);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -151,27 +149,22 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		final Color borderColor =
 			new Color(titleArea.getDisplay(), rgb);
 
-		titleArea.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				e.gc.setForeground(borderColor);
-				Rectangle bounds = titleArea.getClientArea();
-				bounds.height = bounds.height - 2;
-				bounds.width = bounds.width - 1;
-				e.gc.drawRectangle(bounds);
-			}
-		});
+		titleArea.addPaintListener(e -> {
+      e.gc.setForeground(borderColor);
+      Rectangle bounds = titleArea.getClientArea();
+      bounds.height = bounds.height - 2;
+      bounds.width = bounds.width - 1;
+      e.gc.drawRectangle(bounds);
+    });
 
 		// Add a dispose listener
-		titleArea.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				if (titleAreaColor != null)
-					titleAreaColor.dispose();
-				if (errorMsgAreaBackground != null)
-					errorMsgAreaBackground.dispose();
-				borderColor.dispose();
-			}
-		});
+		titleArea.addDisposeListener(e -> {
+      if (titleAreaColor != null)
+        titleAreaColor.dispose();
+      if (errorMsgAreaBackground != null)
+        errorMsgAreaBackground.dispose();
+      borderColor.dispose();
+    });
 
 		// Message label
 		messageLabel = new CLabel(titleArea, SWT.LEFT);
@@ -202,9 +195,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 	 */
 	public void setErrorMessage(String newErrorMessage) {
 		// Any change?
-		if (errorMessage == null
-			? newErrorMessage == null
-			: errorMessage.equals(newErrorMessage))
+		if (Objects.equals(errorMessage, newErrorMessage))
 			return;
 
 		errorMessage = newErrorMessage;
@@ -218,7 +209,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 					JFaceResources.getImage(PREF_DLG_TITLE_IMG));
 			}
 
-			// avoid calling setMessage in case it is overridden to call setErrorMessage, 
+			// avoid calling setMessage in case it is overridden to call setErrorMessage,
 			// which would result in a recursive infinite loop
 			if (message == null)
 				//this should probably never happen since setMessage does this conversion....
@@ -242,7 +233,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 						JFaceResources.getImage(PREF_DLG_IMG_TITLE_ERROR);
 				}
 
-				// show the error	
+				// show the error
 				normalMsgAreaBackground = messageLabel.getBackground();
 				messageLabel.setBackground(errorMsgAreaBackground);
 				messageLabel.setImage(errorMsgImage);
@@ -252,7 +243,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		titleArea.layout(true);
 	}
 
-		
+
 	/**
 	 * Creates the inner page container.
 	 */
@@ -277,7 +268,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		return VisualiserPlugin.getDefault().getPreferenceStore();
 	}
 
-	
+
 	/**
 	 * Update the enabled state of buttons in the page
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateButtons()
@@ -291,8 +282,8 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 	 * the message is stored and will be shown after a call to clearErrorMessage
 	 * <p>
 	 * Shortcut for <code>setMessage(newMessage, NONE)</code>
-	 * </p> 
-	 * 
+	 * </p>
+	 *
 	 * @param newMessage the message, or <code>null</code> to clear
 	 *   the message
 	 */
@@ -305,14 +296,14 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 	 * Sets the message for this dialog with an indication of what type
 	 * of message it is.
 	 * <p>
-	 * The valid message types are one of <code>NONE</code>, 
+	 * The valid message types are one of <code>NONE</code>,
 	 * <code>INFORMATION</code>, <code>WARNING</code>, or <code>ERROR</code>.
 	 * </p>
 	 * <p>
-	 * Note that for backward compatibility, a message of type <code>ERROR</code> 
-	 * is different than an error message (set using <code>setErrorMessage</code>). 
-	 * An error message overrides the current message until the error message is 
-	 * cleared. This method replaces the current message and does not affect the 
+	 * Note that for backward compatibility, a message of type <code>ERROR</code>
+	 * is different than an error message (set using <code>setErrorMessage</code>).
+	 * An error message overrides the current message until the error message is
+	 * cleared. This method replaces the current message and does not affect the
 	 * error message.
 	 * </p>
 	 *
@@ -383,7 +374,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		else
 			messageLabel.setFont(JFaceResources.getDialogFont());
 
-		// Set the message and error message	
+		// Set the message and error message
 		if (pageMessage == null) {
 			setMessage(visPage.getTitle());
 		} else {
@@ -397,9 +388,9 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 	 * Update the title
 	 * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	 */
-	public void updateTitle() {		
+	public void updateTitle() {
 	}
-	
+
 	/**
 	 * Disposes the preference page
 	 */
@@ -409,7 +400,7 @@ public class VisualiserPreferencesDialog extends Dialog implements IPreferencePa
 		}
 		return super.close();
 	}
-	
+
 	/**
 	 * Called when OK is pressed in the dialog.
 	 * Send OK to the visualiser prefernce page contained in this dialog

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Helen Hawkins - initial version
  *******************************************************************************/
@@ -33,7 +33,7 @@ import org.osgi.framework.BundleException;
 public class AllUITests {
 
 	public static Test suite() {
-	    
+
 	    // avoid deadlock when starting tests.
 	    // ensure that jdt core is already started before we try
 	    // loading the jdt weaving bundle
@@ -49,19 +49,19 @@ public class AllUITests {
             e.printStackTrace();
             TestCase.fail("Could not start jdt weaving bundle because of: " + e.getMessage());
         }
-        
+
 		ManagedTestSuite suite = new ManagedTestSuite(AllUITests.class.getName());
 		//$JUnit-BEGIN$
-		
+
 		// AJDT tests
 		suite.addTest(AllAJDTUITests.suite());
-		
+
 		// visualiser tests
 		suite.addTest(org.eclipse.contribution.visualiser.tests.AllTests.suite());
 
 		// AJDT visualiser content provider tests
 		suite.addTest(new TestSuite(AJDTContentProviderTest.class));
-		
+
 		//$JUnit-END$
 		return suite;
 	}
@@ -73,12 +73,12 @@ public class AllUITests {
                 try {
                     System.out.println("Waiting for " + jdtCore + " to activate");
                     AllUITests.class.wait(1000);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
             }
         }
     }
-		
+
 	/**
 	 * Prevents AJDTPrefWizard from popping up during tests and simulates normal
 	 * usage by closing the welcome page, and opening the java perspective
@@ -106,25 +106,25 @@ public class AllUITests {
 		try {
 			PlatformUI.getWorkbench().showPerspective(JavaUI.ID_PERSPECTIVE,
 					window);
-		} catch (WorkbenchException e) {
+		} catch (WorkbenchException ignored) {
 		}
 
 		// open Cross Ref view
 		try {
 			window.getActivePage().showView(XReferenceView.ID);
-		} catch (PartInitException e1) {
+		} catch (PartInitException ignored) {
 		}
 
 		// open Console view
 		try {
 			window.getActivePage().showView("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
-		} catch (PartInitException e1) {
+		} catch (PartInitException ignored) {
 		}
 
 		waitForJobsToComplete();
 		setupDone = true;
 	}
-	
+
 	private static void waitForJobsToComplete() {
 		SynchronizationUtils.joinBackgroudActivities();
 	}

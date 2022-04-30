@@ -481,7 +481,7 @@ public class AJCompilationUnit extends CompilationUnit implements NoFFDC{
             if (isInOriginalContentMode() || (buf == null)) {
             	return buf;
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 
 		if (javaCompBuffer == null){

@@ -229,7 +229,7 @@ public class AJComparatorTest extends AJDTCoreTestCase {
 
 	}
 
-	class AdaptableString implements IAdaptable {
+	static class AdaptableString implements IAdaptable {
 
 		private final String val;
 

@@ -15,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.core.AspectJPlugin;
@@ -110,7 +109,7 @@ public class AJBuilderTest extends AJDTCoreTestCase {
         "blah blah blah/*comment*/" + origContents);
 			c.setContents(new ReaderInputStream(sr), IResource.FORCE, null);
 			sr.close();
-			try {Thread.sleep(1000); } catch (Exception e) {}
+			try {Thread.sleep(1000); } catch (Exception ignored) {}
 			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, null);
 			waitForAutoBuild();
 			assertTrue("project should have errors, but had:\n" + testLog.getLog(), testLog //$NON-NLS-1$

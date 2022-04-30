@@ -153,7 +153,7 @@ public class ITDCodeSelection {
                 	}
                 }
         	}
-    	} catch (JavaModelException e) {
+    	} catch (JavaModelException ignored) {
     	}
         return null;
     }

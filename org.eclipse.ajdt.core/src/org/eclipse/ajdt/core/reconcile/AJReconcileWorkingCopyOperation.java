@@ -152,7 +152,7 @@ public class AJReconcileWorkingCopyOperation extends
 			deltaField.setAccessible(true);
 			Object o = deltaField.get(deltaBuilder);
 			return (JavaElementDelta)o;
-		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | NoSuchFieldException e) {
+		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | NoSuchFieldException ignored) {
 		}
     return null;
 	}

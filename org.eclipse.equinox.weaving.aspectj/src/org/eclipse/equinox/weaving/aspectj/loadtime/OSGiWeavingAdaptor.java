@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *   David Knibb               initial implementation
  *   Matthew Webster           Eclipse 3.2 changes
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -43,7 +42,7 @@ public class OSGiWeavingAdaptor extends ClassLoaderWeavingAdaptor {
      * internal class to collect generated classes (produced by the weaving) to
      * define then after the weaving itself
      */
-    class GeneratedClass {
+    static class GeneratedClass {
 
         private final byte[] bytes;
 
@@ -75,7 +74,7 @@ public class OSGiWeavingAdaptor extends ClassLoaderWeavingAdaptor {
 
         public OSGiGeneratedClassHandler(final ClassLoader loader) {
             loaderRef = new BcelWeakClassLoaderReference(loader);
-            classesToBeDefined = new ConcurrentLinkedQueue<GeneratedClass>();
+            classesToBeDefined = new ConcurrentLinkedQueue<>();
         }
 
         /**
@@ -135,7 +134,7 @@ public class OSGiWeavingAdaptor extends ClassLoaderWeavingAdaptor {
      * The OSGi weaving adaptor provides a bridge to the AspectJ weaving adaptor
      * implementation for general classloaders. This weaving adaptor exists per
      * bundle that should be woven.
-     * 
+     *
      * @param loader The classloader of the bundle to be woven
      * @param context The bridge to the weaving context
      * @param namespace The namespace of this adaptor, some kind of unique ID
@@ -162,12 +161,12 @@ public class OSGiWeavingAdaptor extends ClassLoaderWeavingAdaptor {
             if (defineClassMethod == null) {
                 defineClassMethod = ClassLoader.class.getDeclaredMethod(
                         "defineClass",
-                        new Class[] { String.class, bytes.getClass(),
-                                int.class, int.class });
+                  String.class, bytes.getClass(),
+                  int.class, int.class);
             }
             defineClassMethod.setAccessible(true);
-            clazz = defineClassMethod.invoke(loader, new Object[] { name,
-                    bytes, new Integer(0), new Integer(bytes.length) });
+            clazz = defineClassMethod.invoke(loader, name,
+              bytes, 0, bytes.length);
         } catch (final InvocationTargetException e) {
             if (e.getTargetException() instanceof LinkageError) {
                 warn("define generated class failed", e.getTargetException());
@@ -189,10 +188,10 @@ public class OSGiWeavingAdaptor extends ClassLoaderWeavingAdaptor {
      * In some situations the weaving creates new classes on the fly that are
      * not part of the original bundle. This is the case when the weaver needs
      * to create closure-like constructs for the woven code.
-     * 
+     *
      * This method returns a map of the generated classes (name -> bytecode) and
      * flushes the internal cache afterwards to avoid memory damage over time.
-     * 
+     *
      * @param className The name of the class for which additional classes might
      *            got generated
      * @return the map of generated class names and bytecodes for those
@@ -200,18 +199,17 @@ public class OSGiWeavingAdaptor extends ClassLoaderWeavingAdaptor {
      */
     public Map<String, byte[]> getGeneratedClassesFor(final String className) {
         final Map<?, ?> generated = this.generatedClasses;
-        final Map<String, byte[]> result = new HashMap<String, byte[]>();
+        final Map<String, byte[]> result = new HashMap<>();
 
-        final Iterator<?> generatedClassNames = generated.keySet().iterator();
-        while (generatedClassNames.hasNext()) {
-            final String name = (String) generatedClassNames.next();
-            final IUnwovenClassFile unwovenClass = (IUnwovenClassFile) generated
-                    .get(name);
+      for (Object o : generated.keySet()) {
+        final String name = (String) o;
+        final IUnwovenClassFile unwovenClass = (IUnwovenClassFile) generated
+          .get(name);
 
-            if (!className.equals(name)) {
-                result.put(name, unwovenClass.getBytes());
-            }
+        if (!className.equals(name)) {
+          result.put(name, unwovenClass.getBytes());
         }
+      }
 
         flushGeneratedClasses();
         return result;

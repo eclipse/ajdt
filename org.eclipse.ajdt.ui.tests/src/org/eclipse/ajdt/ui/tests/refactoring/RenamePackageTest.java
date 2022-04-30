@@ -65,7 +65,7 @@ public class RenamePackageTest extends UITestCase {
             StringBuilder sb = new StringBuilder();
             sb.append("No markers should have been found, but the following markers were found on A.aj:\n"); //$NON-NLS-1$
           for (IMarker marker : markers) {
-            sb.append("\t" + marker.getAttribute(IMarker.MESSAGE) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+            sb.append("\t").append(marker.getAttribute(IMarker.MESSAGE)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
           }
             assertEquals(sb.toString(), 0, markers.length);
         }
@@ -77,7 +77,7 @@ public class RenamePackageTest extends UITestCase {
             StringBuilder sb = new StringBuilder();
             sb.append("No markers should have been found, but the following markers were found on B.aj:\n"); //$NON-NLS-1$
           for (IMarker marker : markers) {
-            sb.append("\t" + marker.getAttribute(IMarker.MESSAGE) + "\n");  //$NON-NLS-1$//$NON-NLS-2$
+            sb.append("\t").append(marker.getAttribute(IMarker.MESSAGE)).append("\n");  //$NON-NLS-1$//$NON-NLS-2$
           }
             assertEquals(sb.toString(), 0, markers.length);
         }

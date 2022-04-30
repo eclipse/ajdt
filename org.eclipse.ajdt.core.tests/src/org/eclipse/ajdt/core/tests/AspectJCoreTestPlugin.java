@@ -55,7 +55,7 @@ public class AspectJCoreTestPlugin extends Plugin {
 		try {
 			URL resolved = FileLocator.resolve(loc);
 			pluginDir = resolved.getFile();
-		} catch (IOException e) {}
+		} catch (IOException ignored) {}
 		if ((pluginDir==null) || (pluginDir.length()==0)) {
 			return System.getProperty("user.dir") + File.separator //$NON-NLS-1$
 				+ "workspace" + File.separator + "org.eclipse.ajdt.core.tests" //$NON-NLS-1$ //$NON-NLS-2$

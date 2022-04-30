@@ -61,7 +61,7 @@ public class AopXmlPreferences {
         }
         try {
             projectNode.flush();
-        } catch (BackingStoreException e) {
+        } catch (BackingStoreException ignored) {
         }
     }
 

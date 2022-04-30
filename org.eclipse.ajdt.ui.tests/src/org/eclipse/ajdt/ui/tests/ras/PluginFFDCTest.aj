@@ -19,7 +19,7 @@ public class PluginFFDCTest extends UITestCase {
 		try {
 			throw new Exception(message);
 		}
-		catch (Exception ex) {
+		catch (Exception ignored) {
 		}
 
 		assertMessage(listener,message);
@@ -32,7 +32,7 @@ public class PluginFFDCTest extends UITestCase {
 		try {
 			throw new Exception(message);
 		}
-		catch (Exception ex) {
+		catch (Exception ignored) {
 		}
 
 		assertMessage(listener,message);

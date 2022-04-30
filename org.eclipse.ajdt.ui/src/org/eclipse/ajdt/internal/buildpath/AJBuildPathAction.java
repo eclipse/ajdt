@@ -102,7 +102,7 @@ public abstract class AJBuildPathAction {
 	 * @author Andrew Eisenberg
 	 *
 	 */
-	private class JarListValidator implements IInputValidator {
+	private static class JarListValidator implements IInputValidator {
 
         public String isValid(String newText) {
             if (newText.length() == 0) {

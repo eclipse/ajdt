@@ -101,7 +101,7 @@ public class AJDTMarkupProvider extends SimpleMarkupProvider {
 				        AJRelationshipManager.ASPECT_DECLARATIONS, AJRelationshipManager.MATCHES_DECLARE});
 				if(allRelationships != null) {
 					for (IRelationship relationship : allRelationships) {
-						List<IMarkupKind> kinds = new ArrayList<IMarkupKind>();
+						List<IMarkupKind> kinds = new ArrayList<>();
                         IProgramElement sourceIpe = model.getProgramElement(relationship.getSourceHandle());
                         if(sourceIpe != null) {
                             List<String> targets = relationship.getTargets();
@@ -159,7 +159,7 @@ public class AJDTMarkupProvider extends SimpleMarkupProvider {
         								}
         								IMarkupKind markupKind;
         								if(kindMap == null) {
-        									kindMap = new HashMap<String, IMarkupKind>();
+        									kindMap = new HashMap<>();
         								}
         								if(relationship.getName().equals(AJRelationshipManager.MATCHES_DECLARE.getDisplayName())) {
         									String sourceName = target.getElementName();
@@ -198,7 +198,7 @@ public class AJDTMarkupProvider extends SimpleMarkupProvider {
 	 * @return
 	 */
 	private List<Stripe> checkErrorsAndWarnings(List stripes) {
-		List<Stripe> returningStripes = new ArrayList<Stripe>();
+		List<Stripe> returningStripes = new ArrayList<>();
     for (Object o : stripes) {
       Stripe stripe = (Stripe) o;
       List<IMarkupKind> kinds = new ArrayList<IMarkupKind>(stripe.getKinds());
@@ -274,7 +274,7 @@ public class AJDTMarkupProvider extends SimpleMarkupProvider {
 		if(kindMap == null) {
 			updateModel();
 		}
-		TreeSet<IMarkupKind> kinds = new TreeSet<IMarkupKind>();
+		TreeSet<IMarkupKind> kinds = new TreeSet<>();
 		if(kindMap != null) {
 			kinds.addAll(kindMap.values());
 		}
@@ -453,7 +453,7 @@ public class AJDTMarkupProvider extends SimpleMarkupProvider {
 		}
 	}
 
-	private class ErrorOrWarningMarkupKind extends StealthMarkupKind {
+	private static class ErrorOrWarningMarkupKind extends StealthMarkupKind {
 
 		private final boolean errorKind;
 		private String declaringAspect;

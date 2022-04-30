@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +37,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -51,7 +49,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -896,7 +893,7 @@ public class AJCompilerPreferencePage extends PropertyAndPreferencePage
 				.getNode(AspectJPlugin.PLUGIN_ID);
 		try {
 			projectNode.flush();
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
 	}
 
@@ -1002,7 +999,7 @@ public class AJCompilerPreferencePage extends PropertyAndPreferencePage
       });
 		} catch (InterruptedException e) {
 			// cancelled by user
-		} catch (InvocationTargetException e) {
+		} catch (InvocationTargetException ignored) {
 		}
 	}
 
@@ -1276,7 +1273,7 @@ public class AJCompilerPreferencePage extends PropertyAndPreferencePage
 		List<String> existingKeysList = new ArrayList<>();
 		try {
 			existingKeysList = Arrays.asList(projectNode.keys());
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
     for (String key : keys) {
       String value = defaultValueMap.get(key);

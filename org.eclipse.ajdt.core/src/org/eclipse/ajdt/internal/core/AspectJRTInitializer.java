@@ -25,19 +25,19 @@ import org.eclipse.jdt.core.JavaModelException;
 public class AspectJRTInitializer extends ClasspathVariableInitializer {
 
 	public static boolean hasBeenUsed = false;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.core.ClasspathVariableInitializer#initialize(java.lang.String)
 	 */
 	public void initialize(String variable) {
 		if (variable.equals("ASPECTJRT_LIB")) { //$NON-NLS-1$
 			// define it to point to aspectjrt.jar in ajde project.
-			String ajrtPath = CoreUtils.getAspectjrtClasspath();			
+			String ajrtPath = CoreUtils.getAspectjrtClasspath();
 			try {
 				JavaCore.setClasspathVariable("ASPECTJRT_LIB", //$NON-NLS-1$
 						new Path(ajrtPath),null);
 				hasBeenUsed = true;
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 		}
 	}

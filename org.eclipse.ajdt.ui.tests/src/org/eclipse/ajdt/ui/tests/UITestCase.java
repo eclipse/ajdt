@@ -93,7 +93,7 @@ public abstract class UITestCase extends AJDTCoreTestCase {
 					IEditorPart editorPart= IDE.openEditor(p, file, activate);
 					initializeHighlightRange(editorPart);
 					return editorPart;
-				} catch (PartInitException e) {
+				} catch (PartInitException ignored) {
 				}
 			}
 		}
@@ -111,7 +111,7 @@ public abstract class UITestCase extends AJDTCoreTestCase {
 					IEditorPart editorPart= IDE.openEditor(p, file, AspectJEditor.ASPECTJ_EDITOR_ID, activate);
 					initializeHighlightRange(editorPart);
 					return editorPart;
-				} catch (PartInitException e) {
+				} catch (PartInitException ignored) {
 				}
 			}
 		}
@@ -332,14 +332,14 @@ public abstract class UITestCase extends AJDTCoreTestCase {
     protected void sleep() {
         try {
             Thread.sleep(2000);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 
     protected void sleep(int delay) {
         try {
             Thread.sleep(delay);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 }

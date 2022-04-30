@@ -63,7 +63,7 @@ public class PushInRefactoringAction implements IWorkbenchWindowActionDelegate, 
                     MessageDialog.openInformation(getShell(), "No ITDs",
                             "No intertype declarations selected");
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
     }
@@ -121,7 +121,7 @@ public class PushInRefactoringAction implements IWorkbenchWindowActionDelegate, 
                             currSelection = new IJavaElement[1];
                             currSelection[0] = candidate;
                         }
-                    } catch (JavaModelException e) {
+                    } catch (JavaModelException ignored) {
                     }
                 }
             }
@@ -162,7 +162,7 @@ public class PushInRefactoringAction implements IWorkbenchWindowActionDelegate, 
                   for (IJavaElement child : children) {
                     itds.addAll(findITDsInChildren(child));
                   }
-                } catch (JavaModelException e) {
+                } catch (JavaModelException ignored) {
                 }
             }
         }

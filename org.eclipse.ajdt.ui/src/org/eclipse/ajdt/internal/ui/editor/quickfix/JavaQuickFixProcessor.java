@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.ajdt.core.AspectJPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.ui.text.java.IInvocationContext;

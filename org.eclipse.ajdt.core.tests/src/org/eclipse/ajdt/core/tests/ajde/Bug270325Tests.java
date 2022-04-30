@@ -50,7 +50,7 @@ public class Bug270325Tests extends AJDTCoreTestCase {
         }
     }
 
-    class MockCompilerFactory extends CoreCompilerFactory {
+    static class MockCompilerFactory extends CoreCompilerFactory {
         protected AjCompiler createCompiler(IProject project) {
           return new AjCompiler(project.getName(),
             new MockCoreCompilerConfiguration(project),

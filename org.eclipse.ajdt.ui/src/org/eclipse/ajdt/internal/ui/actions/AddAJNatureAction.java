@@ -42,7 +42,7 @@ public class AddAJNatureAction implements IObjectActionDelegate {
 				// Add the AspectJ nature to the project and update the
 				// build classpath with the aspectjrt.jar
 				AJDTUtils.addAspectJNature(project,true);
-			} catch (CoreException e) {
+			} catch (CoreException ignored) {
 			}
 		}
 	}

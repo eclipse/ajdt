@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Chapman   - initial version
@@ -31,8 +31,8 @@ public class SelectAllAction extends Action {
 	public SelectAllAction(TreeViewer viewer) {
 		super();
 		fViewer = viewer;
-		setText(WorkbenchMessages.Workbench_selectAll); 
-		setToolTipText(WorkbenchMessages.Workbench_selectAllToolTip); 
+		setText(WorkbenchMessages.Workbench_selectAll);
+		setToolTipText(WorkbenchMessages.Workbench_selectAllToolTip);
 	}
 
 	public void run() {
@@ -40,17 +40,16 @@ public class SelectAllAction extends Action {
 		Tree tree = fViewer.getTree();
 		collectExpandedAndVisible(tree.getItems(), allVisible);
 		tree.setSelection((TreeItem[]) allVisible
-				.toArray(new TreeItem[allVisible.size()]));
+				.toArray(new TreeItem[0]));
 	}
 
 	private void collectExpandedAndVisible(TreeItem[] items, List result) {
-		for (int i = 0; i < items.length; i++) {
-			TreeItem item = items[i];
-			result.add(item);
-			if (item.getExpanded()) {
-				collectExpandedAndVisible(item.getItems(), result);
-			}
-		}
+    for (TreeItem item : items) {
+      result.add(item);
+      if (item.getExpanded()) {
+        collectExpandedAndVisible(item.getItems(), result);
+      }
+    }
 	}
 
 }

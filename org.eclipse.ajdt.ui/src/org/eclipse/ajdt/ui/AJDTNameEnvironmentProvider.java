@@ -95,7 +95,7 @@ public final class AJDTNameEnvironmentProvider implements
         return new TransformedCompilationUnit(unit);
     }
 
-    private class TransformedCompilationUnit extends CompilationUnit {
+    private static class TransformedCompilationUnit extends CompilationUnit {
         private char[] transformedContents = null;
         private final char[] origContents;
         public TransformedCompilationUnit(CompilationUnit orig) {

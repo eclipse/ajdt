@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -61,7 +63,7 @@ public class XMLPrintHandler {
 	}
 
 	public static void printComment(Writer xmlWriter, String comment)throws IOException {
-    xmlWriter.write(XML_COMMENT_BEGIN_TAG + encode(comment).toString() + XML_COMMENT_END_TAG + "\n" //$NON-NLS-1$
+    xmlWriter.write(XML_COMMENT_BEGIN_TAG + encode(comment) + XML_COMMENT_END_TAG + "\n" //$NON-NLS-1$
     );
 	}
 
@@ -72,7 +74,7 @@ public class XMLPrintHandler {
 
 	public static String wrapAttributeForPrint(String attribute, String value) {
     String temp = XML_SPACE + attribute + XML_EQUAL + XML_DBL_QUOTES +
-                  encode(value).toString() + XML_DBL_QUOTES;
+                  encode(value) + XML_DBL_QUOTES;
 		return temp;
 
 	}
@@ -119,7 +121,7 @@ public class XMLPrintHandler {
 		}
 		// AspectJ Change begin - print out comment nodes
 		case Node.COMMENT_NODE: {
-      xmlWriter.write(XML_COMMENT_BEGIN_TAG + encode(node.getNodeValue()).toString() + XML_COMMENT_END_TAG + "\n" //$NON-NLS-1$
+      xmlWriter.write(XML_COMMENT_BEGIN_TAG + encode(node.getNodeValue()) + XML_COMMENT_END_TAG + "\n" //$NON-NLS-1$
       );
 			break;
 		}
@@ -160,7 +162,7 @@ public class XMLPrintHandler {
 	}
 
 	public static void writeFile(Document doc, File file) throws IOException {
-    try (OutputStream out = new FileOutputStream(file); Writer writer = new OutputStreamWriter(out, "UTF-8")) {
+    try (OutputStream out = Files.newOutputStream(file.toPath()); Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8)) {
       //$NON-NLS-1$
       XMLPrintHandler.printNode(writer, doc, "UTF-8", ""); //$NON-NLS-1$ //$NON-NLS-2$
     }

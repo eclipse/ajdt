@@ -80,7 +80,7 @@ public class CodeChecker {
 			parser.parse(sourceUnit, result);
 			return parser.containsAspectJSyntax();
 		}
-    catch (IOException e) {
+    catch (IOException ignored) {
     }
 
     return false;

@@ -663,7 +663,7 @@ public class AspectsConvertingParser implements TerminalTokens, NoFFDC {
                             knownTypeParameters.add(parameter.getElementName());
                         }
                     }
-                } catch (JavaModelException e) {
+                } catch (JavaModelException ignored) {
                 }
             }
         }
@@ -762,7 +762,7 @@ public class AspectsConvertingParser implements TerminalTokens, NoFFDC {
             if (type != null) {
                 return type;
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         // this type may not exist
         return unit.getType(typeName);

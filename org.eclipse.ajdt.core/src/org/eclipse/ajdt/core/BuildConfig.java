@@ -69,7 +69,7 @@ public class BuildConfig {
           }
         }
       }
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		projectsToIncludedSourceFiles.put(project, sourceFiles);
 		return sourceFiles;
@@ -110,7 +110,7 @@ public class BuildConfig {
               }
             }
           }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         projectsToIncludedSourceFiles.put(project, sourceFiles);
         return sourceFiles;
@@ -150,7 +150,7 @@ public class BuildConfig {
         }
         return true;
       });
-		} catch (CoreException e) {
+		} catch (CoreException ignored) {
 		}
 		return contents;
 	}

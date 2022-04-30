@@ -1,17 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matt Chapman - initial version
  *******************************************************************************/
 package org.eclipse.contribution.visualiser.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.contribution.visualiser.VisualiserPlugin;
@@ -42,7 +41,7 @@ public class PaletteManager {
 
 	/**
 	 * Get a list of all the registered palettes
-	 * 
+	 *
 	 * @return a list of PaletteDefinition objects
 	 */
 	public static List /* PaletteDefinition */getAllPaletteDefinitions() {
@@ -56,7 +55,7 @@ public class PaletteManager {
 	 * Get the current palette, either as set by the preferences, or if not set
 	 * the default palette specified by the current provider, or if that is not
 	 * set, use the default palette implementation
-	 * 
+	 *
 	 * @return the current palette
 	 */
 	public static PaletteDefinition getCurrentPalette() {
@@ -83,35 +82,33 @@ public class PaletteManager {
 
 	/**
 	 * Return the palette definition with the given name, or null if not found
-	 * 
+	 *
 	 * @param name
 	 * @return the PaletteDefinition found, or null
 	 */
 	public static PaletteDefinition getPaletteByName(String name) {
-		for (Iterator iter = getAllPaletteDefinitions().iterator(); iter
-				.hasNext();) {
-			PaletteDefinition r = (PaletteDefinition) iter.next();
-			if (r.getName().equals(name)) {
-				return r;
-			}
-		}
+    for (Object o : getAllPaletteDefinitions()) {
+      PaletteDefinition r = (PaletteDefinition) o;
+      if (r.getName().equals(name)) {
+        return r;
+      }
+    }
 		return null;
 	}
 
 	/**
 	 * Return the palette definition with the given id, or null if not found
-	 * 
+	 *
 	 * @param id
 	 * @return the PaletteDefinition with the given id, or null
 	 */
 	public static PaletteDefinition getPaletteByID(String id) {
-		for (Iterator iter = getAllPaletteDefinitions().iterator(); iter
-				.hasNext();) {
-			PaletteDefinition r = (PaletteDefinition) iter.next();
-			if (r.getID().equals(id)) {
-				return r;
-			}
-		}
+    for (Object o : getAllPaletteDefinitions()) {
+      PaletteDefinition r = (PaletteDefinition) o;
+      if (r.getID().equals(id)) {
+        return r;
+      }
+    }
 		return null;
 	}
 
@@ -120,7 +117,7 @@ public class PaletteManager {
 	 * the usual process is used to determine the chosen palette. This should be
 	 * called whenever the provider is changed, in case the palette needs to
 	 * change accordingly.
-	 *  
+	 *
 	 */
 	public static void resetCurrent() {
 		current = null;
@@ -129,7 +126,7 @@ public class PaletteManager {
 	/**
 	 * Search for a registered palette with the given name and if found, sets
 	 * that palette to be the current one
-	 * 
+	 *
 	 * @param name
 	 *            the name of the palette
 	 */
@@ -142,22 +139,23 @@ public class PaletteManager {
 
 	/**
 	 * Get the defined default palette
-	 * 
+	 *
 	 * @return the default PaletteDefinition
 	 */
 	public static PaletteDefinition getDefaultPalette() {
 		if (palettes == null) {
 			initialisePaletteDefinitions();
 		}
-		for (Iterator iter = palettes.iterator(); iter.hasNext();) {
-			PaletteDefinition r = (PaletteDefinition) iter.next();
-			if (r.getPalette() instanceof DefaultVisualiserPalette) {
-				if (r.getPalette().getClass().getName().equals(
-						DEFAULT_PALETTE_CLASS)) {
-					return r;
-				}
-			}
-		}
+    for (Object palette : palettes) {
+      PaletteDefinition r = (PaletteDefinition) palette;
+      if (r.getPalette() instanceof DefaultVisualiserPalette) {
+        if (r.getPalette().getClass().getName().equals(
+          DEFAULT_PALETTE_CLASS))
+        {
+          return r;
+        }
+      }
+    }
 		return null;
 	}
 
@@ -168,7 +166,7 @@ public class PaletteManager {
 		}
 		return r;
 	}
-	
+
 	/**
 	 * Find the registered palette from the defined extension point
 	 */
@@ -178,22 +176,23 @@ public class PaletteManager {
 				.getExtensionPoint(PALETTE_EXTENSION);
 		IExtension[] exs = exP.getExtensions();
 
-		for (int i = 0; i < exs.length; i++) {
-			IConfigurationElement[] ces = exs[i].getConfigurationElements();
-			for (int j = 0; j < ces.length; j++) {
-				try {
-					Object ext = ces[j].createExecutableExtension("class"); //$NON-NLS-1$
-					if (ext instanceof IVisualiserPalette) {
-						String name = ces[j].getAttribute("name"); //$NON-NLS-1$
-						String id = ces[j].getAttribute("id"); //$NON-NLS-1$
-						PaletteDefinition rd = new PaletteDefinition(id, name,
-								(IVisualiserPalette) ext);
-						palettes.add(rd);
-					}
-				} catch (CoreException e) {
-					VisualiserPlugin.logException(e);
-				}
-			}
-		}
+    for (IExtension ex : exs) {
+      IConfigurationElement[] ces = ex.getConfigurationElements();
+      for (IConfigurationElement ce : ces) {
+        try {
+          Object ext = ce.createExecutableExtension("class"); //$NON-NLS-1$
+          if (ext instanceof IVisualiserPalette) {
+            String name = ce.getAttribute("name"); //$NON-NLS-1$
+            String id = ce.getAttribute("id"); //$NON-NLS-1$
+            PaletteDefinition rd = new PaletteDefinition(id, name,
+              (IVisualiserPalette) ext);
+            palettes.add(rd);
+          }
+        }
+        catch (CoreException e) {
+          VisualiserPlugin.logException(e);
+        }
+      }
+    }
 	}
 }

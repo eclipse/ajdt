@@ -19,12 +19,12 @@ import org.eclipse.contribution.xref.ui.XReferenceUIPlugin;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
+ *
  */
 public interface IXRefHelpContextIds {
-	
-	public static final String PREFIX= XReferenceUIPlugin.PLUGIN_ID + '.';
-	
-	public static final String XREF_VIEW= PREFIX + "xref_view_context"; //$NON-NLS-1$
-	
+
+	String PREFIX= XReferenceUIPlugin.PLUGIN_ID + '.';
+
+	String XREF_VIEW= PREFIX + "xref_view_context"; //$NON-NLS-1$
+
 }

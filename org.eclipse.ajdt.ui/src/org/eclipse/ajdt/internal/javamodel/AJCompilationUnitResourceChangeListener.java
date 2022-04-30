@@ -41,7 +41,7 @@ public class AJCompilationUnitResourceChangeListener implements IResourceChangeL
 				if (cd == null) {
 					try {
 						delta.accept(myDeltaVisitor);
-					} catch (CoreException e) {
+					} catch (CoreException ignored) {
 					}
 				} else {
           for (IResourceDelta iResourceDelta : cd) {
@@ -63,7 +63,7 @@ public class AJCompilationUnitResourceChangeListener implements IResourceChangeL
                 }
               }
             }
-            catch (CoreException e) {
+            catch (CoreException ignored) {
             }
           }
 				}

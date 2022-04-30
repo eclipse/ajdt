@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2002 - 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Sian Whiting - initial version
  *     Andy Clement - refactored for stand-alone visualiser
@@ -13,7 +13,6 @@ package org.eclipse.contribution.visualiser.views;
 
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +60,7 @@ import org.eclipse.ui.progress.UIJob;
 
 
 /**
- * The Menu part of the Visualiser.  
+ * The Menu part of the Visualiser.
  * Displays Markup kinds, colour selection buttons and checkboxes.
  */
 public class Menu extends ViewPart {
@@ -86,7 +85,7 @@ public class Menu extends ViewPart {
 	private boolean uptodate = false;
 	private Map kinds;
 		 private static Job updateJob;
-		 
+
 	/**
 	 * The constructor.
 	 */
@@ -105,8 +104,8 @@ public class Menu extends ViewPart {
 			}
 		Menu.vmp = vmp;
 	}
-	
-	
+
+
 	/**
 	 * Private function used to create square images on colour chooser buttons.
 	 */
@@ -123,7 +122,7 @@ public class Menu extends ViewPart {
 		gc.dispose();
 	}
 
-	
+
 	/**
 	 * This is a callback that allows us
 	 * to create the composite and initialize it.
@@ -139,7 +138,7 @@ public class Menu extends ViewPart {
 		scrollpane.setContent(canvas);
 		canvas.setLayout(layout);
 
-		/* 
+		/*
 		 * Listener for colour buttons - if clicked produces a ColorDialog
 		 * then redraws the square image with the chosen colour.
 		 */
@@ -164,7 +163,7 @@ public class Menu extends ViewPart {
 					if (!(VisualiserPlugin.visualiser == null)) {
 						vmp.setColorFor((IMarkupKind)labels[location].getData(),colors[location]);
 						VisualiserPlugin.visualiser.draw();
-					}					
+					}
 				}
 			}
 		};
@@ -174,7 +173,7 @@ public class Menu extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				if (!(VisualiserPlugin.visualiser == null)) {
 					for (int i = 0; i < colors.length; i++) {
-						kindActive.put(labels[i].getData(),new Boolean(checkboxes[i].getSelection()));	
+						kindActive.put(labels[i].getData(), checkboxes[i].getSelection());
 					}
 					VisualiserPlugin.visualiser.updateDisplay(false);
 				}
@@ -183,7 +182,7 @@ public class Menu extends ViewPart {
 		makePullDownActions();
 		contributeToActionBars();
 		VisualiserPlugin.getDefault().setMenu(this);
-		
+
 		// Add an empty ISelectionProvider so that this view works with dynamic help (bug 104331)
 		getSite().setSelectionProvider(new ISelectionProvider() {
 			public void addSelectionChangedListener(ISelectionChangedListener listener) {
@@ -198,7 +197,7 @@ public class Menu extends ViewPart {
 		});
 
 	}
-	
+
 
 	/**
 	 * Create the actions for the view's pull down menu.
@@ -251,8 +250,8 @@ public class Menu extends ViewPart {
 	private void showAll() {
 		if(checkboxes!=null){
 			for (int i = 0; i < checkboxes.length; i++) {
-				checkboxes[i].setSelection(true);						
-				kindActive.put(labels[i].getData(), new Boolean(checkboxes[i].getSelection()));
+				checkboxes[i].setSelection(true);
+				kindActive.put(labels[i].getData(), checkboxes[i].getSelection());
 			}
 			VisualiserPlugin.visualiser.draw();
 		}
@@ -265,16 +264,16 @@ public class Menu extends ViewPart {
 	private void showNone() {
 		if(checkboxes!=null){
 			for (int i = 0; i < checkboxes.length; i++) {
-				checkboxes[i].setSelection(false);						
-				kindActive.put(labels[i].getData(), new Boolean(false));
+				checkboxes[i].setSelection(false);
+				kindActive.put(labels[i].getData(), Boolean.FALSE);
 			}
-			VisualiserPlugin.visualiser.draw();				
+			VisualiserPlugin.visualiser.draw();
 		}
 	}
 
 
 	/**
-	 * Select the checkboxes whose names are in the given List then 
+	 * Select the checkboxes whose names are in the given List then
 	 * update the visualiser
 	 */
 	protected void onlyShow(List names) {
@@ -288,29 +287,29 @@ public class Menu extends ViewPart {
 			for(int i=0; i<labels.length; i++){
 				if(names.contains(labels[i].getText())){
 					checkboxes[i].setSelection(true);
-					kindActive.put(labels[i].getData(), new Boolean(true));
+					kindActive.put(labels[i].getData(), Boolean.TRUE);
 				} else {
 					checkboxes[i].setSelection(false);
-					kindActive.put(labels[i].getData(), new Boolean(false));
+					kindActive.put(labels[i].getData(), Boolean.FALSE);
 				}
 			}
 			VisualiserPlugin.visualiser.draw();
 		}
 	}
-	
+
 
 	/**
 	 * Get the active state of a kind (IE is the checkbox checked).
 	 * @param kind - the kind
 	 * @return true if the kind is active
-	 */	
+	 */
 	public boolean getActive(IMarkupKind kind) {
 		if (kindActive==null) return true;
 		if(kindActive.get(kind) == null) return true;
-		return ((Boolean)kindActive.get(kind)).booleanValue();
+		return (Boolean) kindActive.get(kind);
 	}
-	
-	
+
+
 	/**
 	 * Get the active state of a kind by name(IE is the checkbox checked).
 	 * @param kindName - the kind name
@@ -327,9 +326,9 @@ public class Menu extends ViewPart {
 		if(kindActive.get(kind) == null) {
 			return true;
 		}
-		return ((Boolean)kindActive.get(kind)).booleanValue();
+		return (Boolean) kindActive.get(kind);
 	}
-	
+
 	/**
 	 * Reset the up-to-date state of this view
 	 */
@@ -345,15 +344,13 @@ public class Menu extends ViewPart {
 		if (uptodate) return;
 			// ClassCastException is thrown if provider has not returned a set
 			// of IMarkupKinds from getAllMarkupKinds().
-		Display.getDefault().syncExec( new Runnable() {
-			public void run() {		
-				if(getSite().getPage().isPartVisible(VisualiserPlugin.menu)) {
-					getUpdateJob().schedule();
-				} else {
-					update();
-				}
-			}
-		});	 		
+		Display.getDefault().syncExec(() -> {
+      if(getSite().getPage().isPartVisible(VisualiserPlugin.menu)) {
+        getUpdateJob().schedule();
+      } else {
+        update();
+      }
+    });
 
 	}
 
@@ -364,7 +361,7 @@ public class Menu extends ViewPart {
 	 		 		 		if ((canvas==null) || canvas.isDisposed()) {
 	 		 		 			return Status.OK_STATUS;
 	 		 		 		}
-	 		 		 		update();		 		 		 		 		 
+	 		 		 		update();
 	 		 		 		return Status.OK_STATUS;
  		 		 		 }
 	 		 		 };
@@ -379,12 +376,12 @@ public class Menu extends ViewPart {
 	private int getNumberToShow(Set markupCategories) {
 		int num = 0;
 		if (markupCategories == null) return 0;
-		for (Iterator iter = markupCategories.iterator(); iter.hasNext();) {
-			IMarkupKind element = (IMarkupKind) iter.next();
-			if(element.showInMenu()) {
-				num++;
-			}
-		}
+    for (Object markupCategory : markupCategories) {
+      IMarkupKind element = (IMarkupKind) markupCategory;
+      if (element.showInMenu()) {
+        num++;
+      }
+    }
 		return num;
 	}
 
@@ -396,9 +393,9 @@ public class Menu extends ViewPart {
 		if(canvas!=null){
 			Control[] children = canvas.getChildren();
 			if (children.length > 0) {
-				for (int i = 0; i < children.length; i++) {
-					children[i].dispose();
-				}
+        for (Control child : children) {
+          child.dispose();
+        }
 			}
 		}
 	}
@@ -420,57 +417,58 @@ public class Menu extends ViewPart {
 		 colorSquares = new Image[numKindsToShow];
 		 colorDialogs = new ColorDialog[numKindsToShow];
 		 colors = new Color[numKindsToShow];
-		 
-		 
+
+
 		 kindActive = new Hashtable();
 		 kinds = new HashMap();
-		 
-		 int i = 0;
-		 for (Iterator iter = markupKinds.iterator(); iter.hasNext();) {
-		 		 IMarkupKind element = (IMarkupKind) iter.next();
-		 		 kinds.put(element.getName(), element);
-		 		 if(element.showInMenu()) {
-		 		 		 int imageSize = 12;
-		 		 		 colors[i] = vmp.getColorFor(element);
-		 		 		 if(colors[i] == null) {
-		 		 		 		 throw new NullPointerException(VisualiserMessages.getColorForError);
-		 		 		 }
-		 		 		 if (!VisualiserPreferences.getUsePatterns()) {
-			 		 		 buttons[i] = new Button(canvas, SWT.PUSH);
-			 		 		 buttons[i].setToolTipText(VisualiserMessages.Change_color_for + " " + element.getName()); //$NON-NLS-1$		 		 		 
-			 		 		 shells[i] = buttons[i].getShell();
-			 		 		 colorDialogs[i] = new ColorDialog(shells[i]);
-			 		 		 Display display = shells[i].getDisplay();
-			 		 		 colorSquares[i] = new Image(display, imageSize, imageSize);
-			 		 		 buttons[i].setImage(colorSquares[i]);
-			 		 		 buttons[i].addSelectionListener(selectionListener);
-			 		 		 Image image = buttons[i].getImage();
-			 		 		 drawImage(image, colors[i]);
-			 		 		 buttons[i].setImage(image);
-		 		 		 } else {
-		 		 			 // We're using patterns so make a plain label rather than a button
-		 		 			 Label l = new Label(canvas, SWT.NONE);		 		 			 
-			 		 		 colorSquares[i] = new Image(canvas.getDisplay(), imageSize, imageSize);
-		 		 			 l.setImage(colorSquares[i]);
-		 		 			 l.setToolTipText(VisualiserMessages.Pattern_for + " " + element.getName()); //$NON-NLS-1$
-			 		 		 Image image = l.getImage();
-			 		 		 drawImage(image, colors[i]);
-			 		 		 l.setImage(image);
-			 		 	 }	 
-		 		 		 checkboxes[i] = new Button(canvas, SWT.CHECK);
-		 		 		 checkboxes[i].addSelectionListener(checkboxListener);
-		 		 		 checkboxes[i].setSelection(true);
 
-		 		 		 icons[i] = new Label(canvas, SWT.NONE);
-		 		 		 icons[i].setImage(element.getIcon());
-		 		 		 labels[i] = new Label(canvas, SWT.NONE);
-		 		 		 labels[i].setText(element.getName());
-		 		 		 labels[i].setData(element);
-		 		 		 labels[i].setToolTipText(element.getFullName());
-		 		 		 i++;
-		 		 }
-		 		 kindActive.put(element, new Boolean(true));
-		 }
+		 int i = 0;
+    for (Object markupKind : markupKinds) {
+      IMarkupKind element = (IMarkupKind) markupKind;
+      kinds.put(element.getName(), element);
+      if (element.showInMenu()) {
+        int imageSize = 12;
+        colors[i] = vmp.getColorFor(element);
+        if (colors[i] == null) {
+          throw new NullPointerException(VisualiserMessages.getColorForError);
+        }
+        if (!VisualiserPreferences.getUsePatterns()) {
+          buttons[i] = new Button(canvas, SWT.PUSH);
+          buttons[i].setToolTipText(VisualiserMessages.Change_color_for + " " + element.getName()); //$NON-NLS-1$
+          shells[i] = buttons[i].getShell();
+          colorDialogs[i] = new ColorDialog(shells[i]);
+          Display display = shells[i].getDisplay();
+          colorSquares[i] = new Image(display, imageSize, imageSize);
+          buttons[i].setImage(colorSquares[i]);
+          buttons[i].addSelectionListener(selectionListener);
+          Image image = buttons[i].getImage();
+          drawImage(image, colors[i]);
+          buttons[i].setImage(image);
+        }
+        else {
+          // We're using patterns so make a plain label rather than a button
+          Label l = new Label(canvas, SWT.NONE);
+          colorSquares[i] = new Image(canvas.getDisplay(), imageSize, imageSize);
+          l.setImage(colorSquares[i]);
+          l.setToolTipText(VisualiserMessages.Pattern_for + " " + element.getName()); //$NON-NLS-1$
+          Image image = l.getImage();
+          drawImage(image, colors[i]);
+          l.setImage(image);
+        }
+        checkboxes[i] = new Button(canvas, SWT.CHECK);
+        checkboxes[i].addSelectionListener(checkboxListener);
+        checkboxes[i].setSelection(true);
+
+        icons[i] = new Label(canvas, SWT.NONE);
+        icons[i].setImage(element.getIcon());
+        labels[i] = new Label(canvas, SWT.NONE);
+        labels[i].setText(element.getName());
+        labels[i].setData(element);
+        labels[i].setToolTipText(element.getFullName());
+        i++;
+      }
+      kindActive.put(element, Boolean.TRUE);
+    }
 		 canvas.layout();
 		 canvas.setSize(canvas.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 		 uptodate = true;
@@ -484,7 +482,7 @@ public class Menu extends ViewPart {
 		}
 	}
 
-	
+
 	/**
 	 * Dispose of the menu when closed.
 	 */

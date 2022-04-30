@@ -121,7 +121,7 @@ public class ReadOnlyBug261007 extends AJDTCoreTestCase {
                 ra = readonly2.getResourceAttributes();
                 ra.setReadOnly(false);
                 readonly2.setResourceAttributes(ra);
-            } catch (NullPointerException e) {
+            } catch (NullPointerException ignored) {
             }
         }
 

@@ -451,8 +451,8 @@ public abstract class PathBlock {
                 List<IClasspathEntry> containerEntries = AspectJCorePreferences.resolveClasspathContainer(
                   rawEntry, currJProject.getProject());
 
-                for (Object entry : containerEntries) {
-                  IClasspathEntry containerEntry = (IClasspathEntry) entry;
+                for (IClasspathEntry entry : containerEntries) {
+                  IClasspathEntry containerEntry = entry;
                   resolvedEntries.put(containerEntry.getPath()
                     .toPortableString(), containerEntry);
                 }
@@ -466,8 +466,8 @@ public abstract class PathBlock {
                     && requiredProj.exists())
                 {
                   List<IClasspathEntry> containerEntries2 = AspectJCorePreferences.resolveDependentProjectClasspath(rawEntry, requiredProj);
-                  for (Object o : containerEntries2) {
-                    IClasspathEntry containerEntry = (IClasspathEntry) o;
+                  for (IClasspathEntry o : containerEntries2) {
+                    IClasspathEntry containerEntry = o;
                     resolvedEntries.put(containerEntry.getPath()
                       .toPortableString(), containerEntry);
                   }
@@ -588,7 +588,7 @@ public abstract class PathBlock {
             try {
               return JavaCore.getClasspathContainer(new Path(attribute.getValue()), fCurrJProject);
             }
-            catch (JavaModelException e) {
+            catch (JavaModelException ignored) {
             }
           }
         }
@@ -720,7 +720,7 @@ public abstract class PathBlock {
                   }
                     created[i] = AspectJCorePreferences.ensureHasAttribute(created[i], getRestrictionPathAttrName(), "");
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
 
             CPListElement[] res = new CPListElement[created.length];
@@ -761,7 +761,7 @@ public abstract class PathBlock {
                 }
                 return cpElements;
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         return null;
     }
@@ -769,7 +769,7 @@ public abstract class PathBlock {
     private IClasspathEntry[] getRawClasspath() {
         IClasspathEntry[] currEntries = new IClasspathEntry[fPathList.getSize()];
         for (int i = 0; i < currEntries.length; i++) {
-            CPListElement curr = (CPListElement) fPathList.getElement(i);
+            CPListElement curr = fPathList.getElement(i);
             currEntries[i] = curr.getClasspathEntry();
         }
         return currEntries;
@@ -792,7 +792,7 @@ public abstract class PathBlock {
                                                                                     // Project
                     res.add(outputLocation);
                 }
-            } catch (JavaModelException e) {}
+            } catch (JavaModelException ignored) {}
         }
 
         List cplist = fPathList.getElements();
@@ -992,7 +992,7 @@ public abstract class PathBlock {
         int nElements= fPathList.getSize();
         buf.append('[').append(nElements).append(']');
         for (int i= 0; i < nElements; i++) {
-            CPListElement elem= (CPListElement) fPathList.getElement(i);
+            CPListElement elem= fPathList.getElement(i);
             elem.appendEncodedSettings(buf);
         }
         return buf.toString();

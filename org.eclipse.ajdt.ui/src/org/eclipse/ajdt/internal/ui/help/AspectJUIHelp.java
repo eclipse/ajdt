@@ -95,7 +95,7 @@ public class AspectJUIHelp {
 					}
 				}
 				JavadocHelpContext.displayHelp(fContextId, selected);
-			} catch (CoreException x) {
+			} catch (CoreException ignored) {
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public class AspectJUIHelp {
 			if (fSelected != null && fSelected.length > 0) {
 				try {
 					context= new JavadocHelpContext(context, fSelected);
-				} catch (JavaModelException e) {
+				} catch (JavaModelException ignored) {
 				}
 			}
 			return context;

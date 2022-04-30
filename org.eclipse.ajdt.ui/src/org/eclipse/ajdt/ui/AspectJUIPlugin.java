@@ -417,7 +417,7 @@ public class AspectJUIPlugin extends org.eclipse.ui.plugin.AbstractUIPlugin {
     			newCP[originalCPLength] = ajrtLIB;
     			javaProject.setRawClasspath(newCP, new NullProgressMonitor());
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -461,7 +461,7 @@ public class AspectJUIPlugin extends org.eclipse.ui.plugin.AbstractUIPlugin {
 						.toArray(new IClasspathEntry[0]);
 				javaProject.setRawClasspath(newCP, new NullProgressMonitor());
 			}// end if at least one classpath element removed
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 

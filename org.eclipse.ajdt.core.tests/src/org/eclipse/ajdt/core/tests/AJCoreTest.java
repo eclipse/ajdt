@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ajdt.core.tests;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.aspectj.asm.IRelationship;

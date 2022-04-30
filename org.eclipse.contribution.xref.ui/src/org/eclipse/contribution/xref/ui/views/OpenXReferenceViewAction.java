@@ -3,8 +3,8 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation 
+ *
+ * Contributors: IBM Corporation - initial API and implementation
  * 				 Helen Hawkins   - iniital version
  *               Neal Upstone    - Patch for bug 271605
  ******************************************************************************/
@@ -49,8 +49,8 @@ public class OpenXReferenceViewAction implements IObjectActionDelegate, IWorkben
 		    IWorkbenchPart workbenchPart = getActiveWorkbenchPart();
 			XReferenceView xrefView = XReferenceUIPlugin.xrefView;
 			xrefView.selectionChanged(workbenchPart,currentSelection);
-		} catch (PartInitException e) {
-		}        
+		} catch (PartInitException ignored) {
+		}
     }
 
     /* (non-Javadoc)
@@ -82,12 +82,12 @@ public class OpenXReferenceViewAction implements IObjectActionDelegate, IWorkben
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
      */
-    public void dispose() {        
+    public void dispose() {
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
      */
-    public void init(IWorkbenchWindow window) {      
+    public void init(IWorkbenchWindow window) {
     }
 }

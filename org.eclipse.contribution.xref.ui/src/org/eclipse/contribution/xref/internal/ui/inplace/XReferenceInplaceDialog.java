@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Helen Hawkins   - initial version
@@ -46,8 +46,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -60,13 +58,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -86,7 +80,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
@@ -115,7 +108,7 @@ import org.eclipse.ui.keys.IBindingService;
  * A lot of the functionality in this class has been adapted from
  * org.eclipse.jdt.internal.ui.text.AbstractInformationControl
  */
-public class XReferenceInplaceDialog {  
+public class XReferenceInplaceDialog {
 
 	/**
 	 * Dialog constants telling whether this control can be resized or move.
@@ -133,7 +126,7 @@ public class XReferenceInplaceDialog {
 	private static final String STORE_SIZE_HEIGHT = "size.height"; //$NON-NLS-1$
 
 	/**
-	 * The name of the dialog store's section associated with the 
+	 * The name of the dialog store's section associated with the
 	 * inplace XReference view.
 	 */
 	private final String sectionName = "org.eclipse.contribution.internal.xref.QuickXRef"; //$NON-NLS-1$
@@ -157,7 +150,7 @@ public class XReferenceInplaceDialog {
 	 */
 	private ToolBar toolBar;
 	private MenuManager viewMenuManager;
-	
+
 	/**
 	 * Fields which are updated by the IWorkbenchWindowActionDelegate
 	 * to record the selection in the editor
@@ -166,9 +159,9 @@ public class XReferenceInplaceDialog {
 	private IWorkbenchPart workbenchPart;
 
 	/**
-	 * Fields for view toggling support - to show or hide 
+	 * Fields for view toggling support - to show or hide
 	 * parent crosscutting
-	 */	
+	 */
 	private final String invokingCommandId = "org.eclipse.contribution.xref.show.xref";	//$NON-NLS-1$
 	private boolean isShowingParentCrosscutting = false;
 	private Command invokingCommand;
@@ -195,11 +188,11 @@ public class XReferenceInplaceDialog {
 	private IHandlerActivation handlerActivation;
 
 	/**
-	 * For testing purposes need to be able to get hold 
+	 * For testing purposes need to be able to get hold
 	 * of the XReferenceInplaceDialog instance
 	 */
 	public static XReferenceInplaceDialog dialog;
-	
+
 	/**
 	 * Constructor which takes the parent shell
 	 */
@@ -219,9 +212,9 @@ public class XReferenceInplaceDialog {
 		}
 		// set isInplace to true after calling close
 		XReferenceProviderManager.getManager().setIsInplace(true);
-		
+
 		if (invokingCommandId != null) {
-			ICommandService commandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+			ICommandService commandService = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 			invokingCommand = commandService.getCommand(invokingCommandId);
 			if (invokingCommand != null && !invokingCommand.isDefined())
 				invokingCommand= null;
@@ -229,7 +222,7 @@ public class XReferenceInplaceDialog {
 				// Pre-fetch key sequence - do not change because scope will change later.
 				getInvokingCommandKeySequences();
 		}
-		
+
 		createShell();
 		// bug 102140 - need to pass the action the shell of the inplace
 		// view so that focus is returned to the inplace view when the
@@ -242,14 +235,14 @@ public class XReferenceInplaceDialog {
 		createHorizontalSeparator(composite);
 		viewer = createTreeViewer(composite, SWT.V_SCROLL | SWT.H_SCROLL);
 
-		createStatusField(composite);		
+		createStatusField(composite);
 		addListenersToTree(viewer);
 		// set the tab order
 		viewMenuButtonComposite.setTabList(new Control[] {filterText});
 		composite.setTabList(new Control[] {viewMenuButtonComposite, viewer.getTree()});
 
 		setInfoSystemColor();
-		installFilter();		
+		installFilter();
 		addListenersToShell();
 		createContents();
 		initializeBounds();
@@ -291,7 +284,7 @@ public class XReferenceInplaceDialog {
 		viewMenuButtonComposite.setLayout(layout);
 		viewMenuButtonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
-	
+
 	private TreeViewer createTreeViewer(Composite parent, int style) {
 		viewer = new TreeViewer(parent, SWT.SINGLE | (style & ~SWT.MULTI));
 		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -302,15 +295,15 @@ public class XReferenceInplaceDialog {
 		viewer.setLabelProvider(labelProvider);
 		viewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 
-		// adding these filters which restrict the contents of 
-		// the view according to what has been typed in the 
+		// adding these filters which restrict the contents of
+		// the view according to what has been typed in the
 		// text bar
 		viewer.addFilter(new NamePatternFilter());
 		viewer.addFilter(new MemberFilter());
-		
+
 		return viewer;
 	}
-	
+
 	private void createHorizontalSeparator(Composite parent) {
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL
 				| SWT.LINE_DOT);
@@ -336,9 +329,9 @@ public class XReferenceInplaceDialog {
 		toolBar.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		statusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 	}
-	
+
 // --------------------- adding listeners ---------------------------
-	
+
 	private void addListenersToTree(TreeViewer treeViewer) {
 		final Tree tree = treeViewer.getTree();
 		tree.addKeyListener(new KeyListener() {
@@ -367,10 +360,10 @@ public class XReferenceInplaceDialog {
 
 			public void mouseMove(MouseEvent e) {
 				if (tree.equals(e.getSource())) {
-					Object o = tree.getItem(new Point(e.x, e.y));
+					TreeItem o = tree.getItem(new Point(e.x, e.y));
 					if (o instanceof TreeItem) {
 						if (!o.equals(fLastItem)) {
-							fLastItem = (TreeItem) o;
+							fLastItem = o;
 							tree.setSelection(new TreeItem[] { fLastItem });
 						} else if (e.y < tree.getItemHeight() / 4) {
 							// Scroll up
@@ -416,45 +409,38 @@ public class XReferenceInplaceDialog {
 
 		doubleClickAction = new DoubleClickAction(dialogShell, treeViewer);
 
-		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-				if (dialogShell != null && dialogShell.isDisposed()) {
-					dispose();
-				}
-			}
-		});
-		
+		treeViewer.addDoubleClickListener(event -> {
+      doubleClickAction.run();
+      if (dialogShell != null && dialogShell.isDisposed()) {
+        dispose();
+      }
+    });
+
 		treeViewer.getTree().addKeyListener(getKeyAdapter());
 	}
-	
-	private void addListenersToShell() {
-		dialogShell.addDisposeListener( new DisposeListener() {
 
-			public void widgetDisposed(DisposeEvent e) {
-				close();
-				if (statusTextFont != null && !statusTextFont.isDisposed())
-					statusTextFont.dispose();
-				
-				dialogShell= null;
-				viewer= null;
-				composite= null;
-				filterText= null;
-				statusTextFont= null;
-				
-			}
-		} );
-		
-		deactivateListener = new Listener() {
-			/*
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				if (isDeactivateListenerActive)
-					dispose();
-			}
-		};
-		
+	private void addListenersToShell() {
+		dialogShell.addDisposeListener(e -> {
+      close();
+      if (statusTextFont != null && !statusTextFont.isDisposed())
+        statusTextFont.dispose();
+
+      dialogShell= null;
+      viewer= null;
+      composite= null;
+      filterText= null;
+      statusTextFont= null;
+
+    });
+
+    /*
+     * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+     */
+    deactivateListener = event -> {
+      if (isDeactivateListenerActive)
+        dispose();
+    };
+
 		dialogShell.addListener(SWT.Deactivate, deactivateListener);
 		isDeactivateListenerActive= true;
 		dialogShell.addShellListener(new ShellAdapter() {
@@ -466,7 +452,7 @@ public class XReferenceInplaceDialog {
 					isDeactivateListenerActive= true;
 			}
 		});
-		
+
 		dialogShell.addControlListener(new ControlAdapter() {
 			/**
 			 * {@inheritDoc}
@@ -475,12 +461,12 @@ public class XReferenceInplaceDialog {
 				bounds= dialogShell.getBounds();
 				if (trim != null) {
 					Point location= composite.getLocation();
-					bounds.x= bounds.x - trim.x + location.x;		
+					bounds.x= bounds.x - trim.x + location.x;
 					bounds.y= bounds.y - trim.y + location.y;
 				}
-				
+
 			}
-			
+
 			/**
 			 * {@inheritDoc}
 			 */
@@ -488,16 +474,16 @@ public class XReferenceInplaceDialog {
 				bounds= dialogShell.getBounds();
 				if (trim != null) {
 					Point location= composite.getLocation();
-					bounds.x= bounds.x - trim.x + location.x;		
+					bounds.x= bounds.x - trim.x + location.x;
 					bounds.y= bounds.y - trim.y + location.y;
 			}
 			}
 		});
 	}
-	
-	
-	// --------------------- creating and filling the menu ---------------------------	
-	
+
+
+	// --------------------- creating and filling the menu ---------------------------
+
 	private void createViewMenu(Composite parent) {
 		toolBar = new ToolBar(parent, SWT.FLAT);
 		ToolItem viewMenuButton = new ToolItem(toolBar, SWT.PUSH, 0);
@@ -536,9 +522,9 @@ public class XReferenceInplaceDialog {
 		fShowViewMenuAction.setActionDefinitionId("org.eclipse.ui.window.showViewMenu"); //$NON-NLS-1$
 
 		// Register action with handler service
-		IHandlerService handlerService = (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		handlerActivation = handlerService.activateHandler(fShowViewMenuAction.getActionDefinitionId(), new ActionHandler(fShowViewMenuAction));
-		
+
 		viewMenuButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showViewMenu();
@@ -548,9 +534,9 @@ public class XReferenceInplaceDialog {
 
 	private void showViewMenu( ) {
 		isDeactivateListenerActive= false;
-		
+
 		Menu aMenu = getViewMenuManager().createContextMenu(dialogShell);
-		
+
 		Rectangle bounds = toolBar.getBounds();
 		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
 		topLeft = dialogShell.toDisplay(topLeft);
@@ -558,7 +544,7 @@ public class XReferenceInplaceDialog {
 
 		aMenu.setVisible(true);
 	}
-	
+
 	private MenuManager getViewMenuManager() {
 		if (viewMenuManager == null) {
 			viewMenuManager= new MenuManager();
@@ -566,7 +552,7 @@ public class XReferenceInplaceDialog {
 		}
 		return viewMenuManager;
 	}
-	
+
 	private void fillViewMenu(IMenuManager viewMenu) {
 		viewMenu.add(new GroupMarker("SystemMenuStart")); //$NON-NLS-1$
 		viewMenu.add(new MoveAction());
@@ -576,17 +562,17 @@ public class XReferenceInplaceDialog {
 		viewMenu.add(xReferenceActionInplace);
 	}
 
-	// --------------------- creating and filling the status field ---------------------------	
-		
+	// --------------------- creating and filling the status field ---------------------------
+
 	private void createStatusField(Composite parent) {
-		
+
 		Composite comp= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout(1, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		comp.setLayout(layout);
 		comp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		createHorizontalSeparator(comp);
 
 		// Status field label
@@ -596,8 +582,8 @@ public class XReferenceInplaceDialog {
 		Font font= statusField.getFont();
 		Display display= parent.getDisplay();
 		FontData[] fontDatas= font.getFontData();
-		for (int i= 0; i < fontDatas.length; i++)
-			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+    for (FontData fontData : fontDatas)
+      fontData.setHeight(fontData.getHeight() * 9 / 10);
 		Font statusTextFont= new Font(display, fontDatas);
 		statusField.setFont(statusTextFont);
 	}
@@ -606,23 +592,23 @@ public class XReferenceInplaceDialog {
 		TriggerSequence[] sequences = getInvokingCommandKeySequences();
 		if (sequences == null || sequences.length == 0)
 			return ""; //$NON-NLS-1$
-		
+
 		String keySequence= sequences[0].format();
-		
+
 		if (isShowingParentCrosscutting)
-			return NLS.bind(XRefMessages.XReferenceInplaceDialog_statusFieldText_hideParentCrosscutting, keySequence); 
-			return NLS.bind(XRefMessages.XReferenceInplaceDialog_statusFieldText_showParentCrosscutting, keySequence); 
+			return NLS.bind(XRefMessages.XReferenceInplaceDialog_statusFieldText_hideParentCrosscutting, keySequence);
+			return NLS.bind(XRefMessages.XReferenceInplaceDialog_statusFieldText_showParentCrosscutting, keySequence);
 	}
-	
+
 	private TriggerSequence[] getInvokingCommandKeySequences() {
-		IBindingService bindingService = (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		TriggerSequence[] bindings = bindingService.getActiveBindingsFor(invokingCommandId);
 		if(bindings.length > 0) {
 			invokingCommandTriggerSequences = bindings;
 		}
-		return invokingCommandTriggerSequences;		
+		return invokingCommandTriggerSequences;
 	}
-	
+
 	private KeyAdapter getKeyAdapter() {
 		if (keyAdapter == null) {
 			keyAdapter= new KeyAdapter() {
@@ -632,19 +618,19 @@ public class XReferenceInplaceDialog {
 					TriggerSequence[] sequences= getInvokingCommandKeySequences();
 					if (sequences == null)
 						return;
-					for (int i= 0; i < sequences.length; i++) {
-						if (sequences[i].equals(keySequence)) {
-							e.doit= false;
-							toggleShowParentCrosscutting();
-							return;
-						}
-					}
+          for (TriggerSequence sequence : sequences) {
+            if (sequence.equals(keySequence)) {
+              e.doit = false;
+              toggleShowParentCrosscutting();
+              return;
+            }
+          }
 				}
-			};			
+			};
 		}
-		return keyAdapter;		
+		return keyAdapter;
 	}
-	
+
 	public void refresh() {
 		if (lastSelection != null && workbenchPart != null) {
 			List xraList = null;
@@ -663,7 +649,7 @@ public class XReferenceInplaceDialog {
 			}
 		}
 	}
-	
+
 	protected void toggleShowParentCrosscutting() {
 		if (lastSelection != null && workbenchPart != null) {
 			List xraList = null;
@@ -681,16 +667,16 @@ public class XReferenceInplaceDialog {
 				XRefUIUtils.setSelection(workbenchPart, sel,viewer);
 			}
 		}
-		
+
 		isShowingParentCrosscutting = !isShowingParentCrosscutting;
 		updateStatusFieldText();
 	}
-	
+
 	protected void updateStatusFieldText() {
 		if (statusField != null)
 			statusField.setText(getStatusFieldText());
 	}
-	
+
 	// ----------- all to do with setting the bounds of the dialog -------------
 
 	/**
@@ -703,17 +689,17 @@ public class XReferenceInplaceDialog {
 		if (oldBounds != null) {
 			dialogShell.setBounds(oldBounds);
 			return;
-		} 
+		}
 		dialogShell.setBounds(getDefaultBounds());
 	}
-	
+
 	public Rectangle getDefaultBounds() {
 		GC gc = new GC(composite);
 		gc.setFont(composite.getFont());
 		int width = gc.getFontMetrics().getAverageCharWidth();
 		int height = gc.getFontMetrics().getHeight();
 		gc.dispose();
-		
+
 		Point size = new Point (60 * width, 10 * height);
 		Point location = getDefaultLocation(size);
 		return new Rectangle(location.x, location.y, size.x,size.y);
@@ -739,24 +725,24 @@ public class XReferenceInplaceDialog {
 						+ monitorBounds.height - initialSize.y)));
 	}
 
-	
+
 	private IDialogSettings getDialogSettings() {
 		IDialogSettings settings = XReferenceUIPlugin.getDefault().getDialogSettings().getSection(sectionName);
 		if (settings == null)
 			settings = XReferenceUIPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
-		
+
 		return settings;
 	}
-	
+
 	private void storeBounds() {
 		IDialogSettings dialogSettings = getDialogSettings();
-		
+
 		boolean controlRestoresSize = !dialogSettings.getBoolean(STORE_DISABLE_RESTORE_SIZE);
 		boolean controlRestoresLocation = !dialogSettings.getBoolean(STORE_DISABLE_RESTORE_LOCATION);
-		
+
 		if (bounds == null)
 			return;
-		
+
 		if (controlRestoresSize) {
 			dialogSettings.put(STORE_SIZE_WIDTH, bounds.width);
 			dialogSettings.put(STORE_SIZE_HEIGHT, bounds.height);
@@ -766,16 +752,16 @@ public class XReferenceInplaceDialog {
 			dialogSettings.put(STORE_LOCATION_Y, bounds.y);
 		}
 	}
-	
+
 	private Rectangle restoreBounds() {
-		
+
 		IDialogSettings dialogSettings = getDialogSettings();
-		
+
 		boolean controlRestoresSize = !dialogSettings.getBoolean(STORE_DISABLE_RESTORE_SIZE);
 		boolean controlRestoresLocation = !dialogSettings.getBoolean(STORE_DISABLE_RESTORE_LOCATION);
-		
+
 		Rectangle bounds= new Rectangle(-1, -1, -1, -1);
-		
+
 		if (controlRestoresSize) {
 			try {
 				bounds.width= dialogSettings.getInt(STORE_SIZE_WIDTH);
@@ -785,7 +771,7 @@ public class XReferenceInplaceDialog {
 				bounds.height= -1;
 			}
 		}
-	
+
 		if (controlRestoresLocation) {
 			try {
 				bounds.x= dialogSettings.getInt(STORE_LOCATION_X);
@@ -795,12 +781,12 @@ public class XReferenceInplaceDialog {
 				bounds.y= -1;
 			}
 		}
-		
+
 		// sanity check
 		if (bounds.x == -1 && bounds.y == -1 && bounds.width == -1 && bounds.height == -1) {
 			return null;
 		}
-		
+
 		Rectangle maxBounds= null;
 		if (dialogShell != null && !dialogShell.isDisposed())
 			maxBounds= dialogShell.getDisplay().getBounds();
@@ -812,7 +798,7 @@ public class XReferenceInplaceDialog {
 			if (display != null && !display.isDisposed())
 				maxBounds= display.getBounds();
 		}
-		
+
 		if (bounds.width > -1 && bounds.height > -1) {
 			if (maxBounds != null) {
 				bounds.width= Math.min(bounds.width, maxBounds.width);
@@ -822,11 +808,11 @@ public class XReferenceInplaceDialog {
 			bounds.width= Math.max(bounds.width, 30);
 			bounds.height= Math.max(bounds.height, 30);
 		}
-		
+
 		if (bounds.x > -1 && bounds.y > -1 && maxBounds != null) {
 			bounds.x= Math.max(bounds.x, maxBounds.x);
 			bounds.y= Math.max(bounds.y, maxBounds.y);
-			
+
 			if (bounds .width > -1 && bounds.height > -1) {
 				bounds.x= Math.min(bounds.x, maxBounds.width - bounds.width);
 				bounds.y= Math.min(bounds.y, maxBounds.height - bounds.height);
@@ -834,7 +820,7 @@ public class XReferenceInplaceDialog {
 		}
 		return bounds;
 	}
-	
+
 	// ----------- all to do with filtering text
 
 	private Text createFilterText(Composite parent) {
@@ -875,11 +861,11 @@ public class XReferenceInplaceDialog {
 	private void gotoSelectedElement() {
 		Object selectedElement = getSelectedElement();
 		if (selectedElement instanceof IStructuredSelection) {
-			Object sel =(IStructuredSelection) selectedElement;
+			Object sel = selectedElement;
 			Object data = ((TreeObject) sel).getData();
 			if (data != null) {
 			    if (data instanceof IXReferenceNode) {
-			        XRefUIUtils.revealInEditor(((IXReferenceNode)data).getJavaElement());  
+			        XRefUIUtils.revealInEditor(((IXReferenceNode)data).getJavaElement());
 			    } else if (data instanceof IJavaElement) {
 			    	XRefUIUtils.revealInEditor((IJavaElement) data);
 			    }
@@ -890,7 +876,7 @@ public class XReferenceInplaceDialog {
 			Object data = item.getData();
 			if (data != null) {
 			    if (data instanceof IXReferenceNode) {
-			        XRefUIUtils.revealInEditor(((IXReferenceNode)data).getJavaElement());  
+			        XRefUIUtils.revealInEditor(((IXReferenceNode)data).getJavaElement());
 			    } else if (data instanceof IJavaElement) {
 			    	XRefUIUtils.revealInEditor((IJavaElement) data);
 			    }
@@ -898,7 +884,7 @@ public class XReferenceInplaceDialog {
 			}
 		}
 	}
-		
+
 	private Object getSelectedElement() {
 		if (viewer == null) return null;
 		return ((IStructuredSelection) viewer.getSelection()).getFirstElement();
@@ -907,16 +893,14 @@ public class XReferenceInplaceDialog {
 	private void installFilter() {
 		filterText.setText(""); //$NON-NLS-1$
 
-		filterText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				String text = ((Text) e.widget).getText();
-				int length = text.length();
-				if (length > 0 && text.charAt(length - 1) != '*') {
-					text = text + '*';
-				}
-				setMatcherString(text);
-			}
-		});
+		filterText.addModifyListener(e -> {
+      String text = ((Text) e.widget).getText();
+      int length = text.length();
+      if (length > 0 && text.charAt(length - 1) != '*') {
+        text = text + '*';
+      }
+      setMatcherString(text);
+    });
 	}
 
 	private void setMatcherString(String pattern) {
@@ -928,7 +912,7 @@ public class XReferenceInplaceDialog {
 		}
 		stringMatcherUpdated();
 	}
-	
+
 	private void stringMatcherUpdated() {
 		filteredElements.clear();
 		// refresh viewer to refilter
@@ -950,34 +934,36 @@ public class XReferenceInplaceDialog {
 
 	private Object findElement(TreeItem[] items) {
 		ILabelProvider labelProvider = (ILabelProvider) viewer.getLabelProvider();
-		for (int i = 0; i < items.length; i++) {
-			Object o = items[i].getData();
-			TreeParent treeParent = null;
-			TreeObject treeObject = null;
-			if (o instanceof TreeParent) {
-				treeParent = (TreeParent) o;
-			} else if (o instanceof TreeObject) {
-				treeObject = (TreeObject) o;
-			}
-			Object element = null;
-			if (treeParent == null) {
-				element = treeObject;
-			} else {
-				element = treeParent;
-			}
-			if (stringMatcher == null)
-				return element;
+    for (TreeItem item : items) {
+      Object o = item.getData();
+      TreeParent treeParent = null;
+      TreeObject treeObject = null;
+      if (o instanceof TreeParent) {
+        treeParent = (TreeParent) o;
+      }
+      else if (o instanceof TreeObject) {
+        treeObject = (TreeObject) o;
+      }
+      Object element = null;
+      if (treeParent == null) {
+        element = treeObject;
+      }
+      else {
+        element = treeParent;
+      }
+      if (stringMatcher == null)
+        return element;
 
-			if (element != null) {
-				String label = labelProvider.getText(element);
-				if (stringMatcher.match(label))
-					return element;
-			}
+      if (element != null) {
+        String label = labelProvider.getText(element);
+        if (stringMatcher.match(label))
+          return element;
+      }
 
-			element = findElement(items[i].getItems());
-			if (element != null)
-				return element;
-		}
+      element = findElement(item.getItems());
+      if (element != null)
+        return element;
+    }
 		return null;
 	}
 
@@ -1004,42 +990,43 @@ public class XReferenceInplaceDialog {
 				}
 				return true;
 			}
-			return hasUnfilteredChild(treeViewer, element);			
+			return hasUnfilteredChild(treeViewer, element);
 		}
 
 		private boolean hasUnfilteredChild(TreeViewer viewer, Object element) {
 			if (element instanceof TreeParent) {
 				Object[] children = ((ITreeContentProvider) viewer
 						.getContentProvider()).getChildren(element);
-				for (int i = 0; i < children.length; i++) {
-					
-					if (select(viewer, element, children[i])) {
-						return true;
-					}
-				}
+        for (Object child : children) {
+
+          if (select(viewer, element, child)) {
+            return true;
+          }
+        }
 			}
 			return false;
 		}
-		
+
 		/*
 		 * (non-Javadoc) Method declared on ViewerFilter.
 		 */
 		public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 			int size = elements.length;
 			ArrayList out = new ArrayList(size);
-			for (int i = 0; i < size; ++i) {
-				Object element = elements[i];
-				if (filteredElements.contains(parent)) {
-					if (element instanceof TreeParent) {
-						filteredElements.add(element);						
-					}
-					out.add(element);
-				} else if (filteredElements.contains(element)) {
-					out.add(element);
-				} else if (select(viewer, parent, element)) {
-					out.add(element);
-				}
-			}
+      for (Object element : elements) {
+        if (filteredElements.contains(parent)) {
+          if (element instanceof TreeParent) {
+            filteredElements.add(element);
+          }
+          out.add(element);
+        }
+        else if (filteredElements.contains(element)) {
+          out.add(element);
+        }
+        else if (select(viewer, parent, element)) {
+          out.add(element);
+        }
+      }
 			return out.toArray();
 		}
 	}
@@ -1051,7 +1038,7 @@ public class XReferenceInplaceDialog {
 	/**
 	 * Static inner class which sets the layout for the inplace view. Without
 	 * this, the inplace view will not be populated.
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.text.AbstractInformationControl
 	 */
 	private static class BorderFillLayout extends Layout {
@@ -1086,12 +1073,12 @@ public class XReferenceInplaceDialog {
 			Point minSize = new Point(0, 0);
 
 			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					Point size = children[i].computeSize(wHint, hHint,
-							flushCache);
-					minSize.x = Math.max(minSize.x, size.x);
-					minSize.y = Math.max(minSize.y, size.y);
-				}
+        for (Control child : children) {
+          Point size = child.computeSize(wHint, hHint,
+            flushCache);
+          minSize.x = Math.max(minSize.x, size.x);
+          minSize.y = Math.max(minSize.y, size.y);
+        }
 			}
 
 			minSize.x += fBorderSize * 2 + 3;
@@ -1111,12 +1098,11 @@ public class XReferenceInplaceDialog {
 					composite.getClientArea().height);
 
 			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					Control child = children[i];
-					child.setSize(minSize.x - fBorderSize * 2, minSize.y
-							- fBorderSize * 2);
-					child.setLocation(fBorderSize, fBorderSize);
-				}
+        for (Control child : children) {
+          child.setSize(minSize.x - fBorderSize * 2, minSize.y
+                                                     - fBorderSize * 2);
+          child.setLocation(fBorderSize, fBorderSize);
+        }
 			}
 		}
 	}
@@ -1124,7 +1110,7 @@ public class XReferenceInplaceDialog {
 	// ---------- shuts down the dialog ---------------
 
 	/**
-	 * Close the dialog 
+	 * Close the dialog
 	 */
 	public void close() {
 		storeBounds();
@@ -1134,7 +1120,7 @@ public class XReferenceInplaceDialog {
 		contentProvider.dispose();
 		XReferenceProviderManager.getManager().setIsInplace(false);
 	}
-	
+
 	public void dispose() {
 		filterText = null;
 		if (dialogShell != null) {
@@ -1146,21 +1132,21 @@ public class XReferenceInplaceDialog {
 			composite = null;
 			dialog = null;
 		}
-		IHandlerService handlerService = (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		handlerService.deactivateHandler(handlerActivation);
-		
+
 		// Restore editor's key binding scope
 		if (fKeyBindingScopes != null && fKeyBindingService != null) {
 			fKeyBindingService.setScopes(fKeyBindingScopes);
 			fKeyBindingScopes= null;
 			fKeyBindingService= null;
 		}
-		
+
 		XReferenceProviderManager.getManager().setIsInplace(false);
 	}
 
 	// ------------------ moving actions --------------------------
-	
+
 	/**
 	 * Move action for the dialog.
 	 */
@@ -1172,7 +1158,7 @@ public class XReferenceInplaceDialog {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
 		public void run() {
@@ -1194,17 +1180,17 @@ public class XReferenceInplaceDialog {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
 		public void run() {
 			IDialogSettings settings= getDialogSettings();
-			
+
 			boolean newValue= !isChecked();
 			// store new value
 			settings.put(STORE_DISABLE_RESTORE_LOCATION, newValue);
 			settings.put(STORE_DISABLE_RESTORE_SIZE, newValue);
-			
+
 			isDeactivateListenerActive= true;
 		}
 	}
@@ -1225,13 +1211,13 @@ public class XReferenceInplaceDialog {
 			performTrackerAction(SWT.RESIZE);
 			isDeactivateListenerActive = true;
 		}
-		
+
 	}
 
-	
+
 	/**
 	 * Perform the requested tracker action (resize or move).
-	 * 
+	 *
 	 * @param style
 	 *            The track style (resize or move).
 	 */
@@ -1248,11 +1234,11 @@ public class XReferenceInplaceDialog {
 	}
 
 	// -------------------- all to do with the contents of the view --------------------
-	
+
 	private void createContents() {
 		if (lastSelection != null && workbenchPart != null) {
 			previousXRefAdapterList = XRefUIUtils.getXRefAdapterForSelection(workbenchPart,lastSelection,false);
-			
+
 			if (previousXRefAdapterList != null) {
 				viewer.setInput(previousXRefAdapterList);
 				XRefUIUtils.setSelection(workbenchPart, lastSelection,viewer);
@@ -1260,14 +1246,14 @@ public class XReferenceInplaceDialog {
 		}
 		filterText.setText(""); //$NON-NLS-1$
 	}
-		
+
 	/**
 	 * @param lastSelection The lastSelection to set.
 	 */
 	public void setLastSelection(ISelection lastSelection) {
 		this.lastSelection = lastSelection;
 	}
-	
+
 	/**
 	 * @param workbenchPart The workbenchPart to set.
 	 */
@@ -1278,9 +1264,9 @@ public class XReferenceInplaceDialog {
 	public boolean isOpen() {
 		return dialogShell != null;
 	}
-	
+
 	// -------- the following methods are all for testing purposes --------
-	
+
 	/**
 	 * Returns the dialog for the xref inplace view - this method is for testing
 	 * purposes and not part of the published API.
@@ -1288,7 +1274,7 @@ public class XReferenceInplaceDialog {
 	public static XReferenceInplaceDialog getInplaceDialog() {
 		return dialog;
 	}
-	
+
 	/**
 	 * Returns the shell for the xref inplace view - this method is for testing
 	 * purposes and not part of the published API.
@@ -1296,7 +1282,7 @@ public class XReferenceInplaceDialog {
 	public Shell getShell() {
 		return dialogShell;
 	}
-	
+
 	/**
 	 * Returns the action for the xref inplace view - this method is for testing
 	 * purposes and not part of the published API.
@@ -1304,7 +1290,7 @@ public class XReferenceInplaceDialog {
 	public Action getCustomFilterActionInplace() {
 		return xReferenceActionInplace;
 	}
-	
+
 	/**
 	 * Returns the tree viewer for the xref inplace view - this method is for testing
 	 * purposes and not part of the published API.

@@ -120,7 +120,7 @@ public class CoreUtils {
                     }
                     return ajrt.getCanonicalPath();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
         return null;
@@ -199,11 +199,11 @@ public class CoreUtils {
               }
             }
           }
-          catch (JavaModelException e) {
+          catch (JavaModelException ignored) {
           }
         }
       }
-      catch (CoreException e) {
+      catch (CoreException ignored) {
       }
     }
 		projects.add(0, classFolderDependingProjects
@@ -233,10 +233,9 @@ public class CoreUtils {
           }
         }
       }
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
-		return exportedEntries
-				.toArray(new IClasspathEntry[0]);
+		return exportedEntries.toArray(new IClasspathEntry[0]);
 	}
 
 	/**
@@ -273,7 +272,7 @@ public class CoreUtils {
 			if (outputLocations.size() == 0) {
 				outputLocations.add(javaProject.getOutputLocation());
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return outputLocations;
 	}
@@ -299,7 +298,7 @@ public class CoreUtils {
 	                if (project.hasNature(ID_NATURE)) {
 	                    return true;
 	                }
-	            } catch (CoreException e) {
+	            } catch (CoreException ignored) {
 	            }
 	        }
 	        return false;

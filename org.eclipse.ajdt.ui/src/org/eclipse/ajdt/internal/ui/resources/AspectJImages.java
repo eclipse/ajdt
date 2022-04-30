@@ -32,14 +32,14 @@ public class AspectJImages  {
 
 	private static AspectJImages instance;
 
-	private static final org.eclipse.ui.ISharedImages workbenchImages = 
+	private static final org.eclipse.ui.ISharedImages workbenchImages =
 		AspectJUIPlugin.getDefault().getWorkbench().getSharedImages();
-		
+
 	private static final URL ajdeIconLocation = Platform.getBundle("org.aspectj.ajde").getEntry("/"); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 	private static final String AJDE_ICON_PATH_PREFIX = "org/aspectj/ajde/resources/"; //$NON-NLS-1$
 
-	// The following icons are private and should be accessed through the 
+	// The following icons are private and should be accessed through the
 	// getStructureIcon operation:
 	private final AJDTIcon JDT_PACKAGE = new AJDTIcon(
 		JavaUI.getSharedImages().getImageDescriptor( ISharedImages.IMG_OBJS_PACKAGE ) );
@@ -47,7 +47,7 @@ public class AspectJImages  {
 		JavaUI.getSharedImages().getImageDescriptor( ISharedImages.IMG_OBJS_CUNIT ) );
 	private final AJDTIcon JDT_CLASS = new AJDTIcon(
 		JavaUI.getSharedImages().getImageDescriptor( ISharedImages.IMG_OBJS_CLASS ) );
-	
+
 	//following 4 icons cannot be accessed using JavaUI.getSharedImages()
 	private final AJDTIcon JDT_INNER_CLASS_PRIVATE = new AJDTIcon(
 			JavaPluginImages.DESC_OBJS_INNER_CLASS_PRIVATE );
@@ -76,8 +76,8 @@ public class AspectJImages  {
 
 	private static final AJDTIcon AJDT_ASPECT = new AJDTIcon(
 		"icons/structure/aspect.gif" ); //$NON-NLS-1$
-	
-	// Luzius - added aspect icons with visibility 
+
+	// Luzius - added aspect icons with visibility
 	public static final AJDTIcon ASPECT_PRIVATE   = new AJDTIcon(
 		"icons/structure/aspect_pri.gif");	 //$NON-NLS-1$
 	public static final AJDTIcon ASPECT_PROTECTED = new AJDTIcon(
@@ -93,13 +93,13 @@ public class AspectJImages  {
 		JavaUI.getSharedImages().getImageDescriptor( ISharedImages.IMG_OBJS_IMPDECL ) );
 	public static AJDTIcon JDT_IMPORT_CONTAINER = new AJDTIcon(
 	JavaUI.getSharedImages().getImageDescriptor( ISharedImages.IMG_OBJS_IMPCONT ) );
-		
+
 	// AMC - added gutter annotation icon
 	public static final AJDTIcon E_ANNOTATION = new AJDTIcon(
 				"icons/actions/e_annotation.gif"); //$NON-NLS-1$
 	public static final AJDTIcon ANNOTATION   = new AJDTIcon(
 				"icons/actions/annotation.gif"); //$NON-NLS-1$
-	
+
 	// MPC - added wizard banner icons
 	public static final AJDTIcon W_NEW_ASPECT = new AJDTIcon(
 				"icons/wizban/newaspect_wiz.gif"); //$NON-NLS-1$
@@ -194,10 +194,10 @@ public class AspectJImages  {
 
 	public static final AJDTIcon AJ_CODE = new AJDTIcon(
 		"icons/structure/code.gif"); //$NON-NLS-1$
-	
+
 	public static final AJDTIcon ASPECTJ_FILE = new AJDTIcon(
 		"icons/structure/ajcu_obj.gif");	 //$NON-NLS-1$
-	
+
 	public static final AJDTIcon EXCLUDED_ASPECTJ_FILE = new AJDTIcon(
 		"icons/structure/ajcu_obj_excluded.gif");	 //$NON-NLS-1$
 
@@ -213,7 +213,7 @@ public class AspectJImages  {
 	public static final AJDTIcon HIDE_DECLARATIONS = new AJDTIcon("icons/actions/hide_declarations.gif"); //$NON-NLS-1$
 	public static final AJDTIcon HIDE_ERRORS = new AJDTIcon("icons/actions/hide_errors.gif"); //$NON-NLS-1$
 	public static final AJDTIcon HIDE_WARNINGS = new AJDTIcon("icons/actions/hide_warnings.gif"); //$NON-NLS-1$
-			
+
 	// TEMPORARY:
 	private final AJDTIcon JDT_PRIVATE_FIELD = new AJDTIcon(
 				"icons/jdt/field_private_obj.gif"); //$NON-NLS-1$
@@ -235,7 +235,7 @@ public class AspectJImages  {
 				"icons/actions/reset_colours.gif"); //$NON-NLS-1$
 	public static final AJDTIcon AOP_XML = new AJDTIcon(
 	            "icons/buildconfig/aopxml.gif"); //$NON-NLS-1$
-	
+
 	// icons for crosscutting changes view
 	public static final AJDTIcon CHANGES_ADDED = new AJDTIcon(
 				"icons/diff/added.gif"); //$NON-NLS-1$
@@ -245,7 +245,7 @@ public class AspectJImages  {
 				"icons/diff/propagateup.gif"); //$NON-NLS-1$
 	public static final AJDTIcon COMPARISON = new AJDTIcon(
 				"icons/diff/compare_view.gif"); //$NON-NLS-1$
-	
+
 	// sample icons for advice markers
 	public static final AJDTIcon ARROW_SAMPLE = new AJDTIcon(
 				"icons/markers/samples/arrow_sample.gif"); //$NON-NLS-1$
@@ -280,16 +280,16 @@ public class AspectJImages  {
 	public static final AJDTIcon PROGRESS_SAMPLE = new AJDTIcon(
 		"icons/markers/samples/progress.gif"); //$NON-NLS-1$
 
-	
+
 	public static AspectJImages instance( ) {
 		if ( instance == null ) {
 			instance = new AspectJImages( );
 		}
-		return instance;	
+		return instance;
 	}
 
 	private AspectJImages(){}
-	
+
 
 	protected AJDTIcon createIcon(String path) {
 		if ( path.startsWith( AJDE_ICON_PATH_PREFIX ) ) {
@@ -299,7 +299,7 @@ public class AspectJImages  {
 		try {
 			URL url = new URL( ajdeIconLocation, "icons/" + path ); //$NON-NLS-1$
 			retVal = new AJDTIcon( url );
-		} catch (MalformedURLException malEx) {
+		} catch (MalformedURLException ignored) {
 		}
 		return retVal;
 	}
@@ -312,7 +312,7 @@ public class AspectJImages  {
 			 kind == IProgramElement.Kind.METHOD ||
 			 kind == IProgramElement.Kind.FIELD ) {
 			 	String err = "Should use 2-arg version of getStructureIcon for contructors, methods and fields."; //$NON-NLS-1$
-				throw new RuntimeException( err );			 		
+				throw new RuntimeException( err );
 			 }
 		if (kind == IProgramElement.Kind.PACKAGE) {
 			return JDT_PACKAGE;
@@ -334,7 +334,7 @@ public class AspectJImages  {
 			return DECLARE_ERROR;
 		} else if (kind == IProgramElement.Kind.DECLARE_PRECEDENCE) {
 			return DECLARE_PRECEDENCE;
-		} else if (kind == IProgramElement.Kind.DECLARE_PARENTS) { 
+		} else if (kind == IProgramElement.Kind.DECLARE_PARENTS) {
 			return DECLARE_PARENTS;
 		} else if (kind == IProgramElement.Kind.DECLARE_SOFT) {
 			return DECLARE_SOFT;
@@ -354,12 +354,12 @@ public class AspectJImages  {
 		}
 		return AJDTIcon.MISSING_ICON;
 	}
-	
+
 	/**
 	 * (copied from AJDTStructureViewNodeFactory.changeIconIfAdviceNode and adjustet) (Luzius)
 	 */
 	public AJDTIcon getAdviceIcon(IProgramElement.ExtraInformation extraInfo, boolean hasDynamicTests) {
-		if (extraInfo != null && extraInfo.getExtraAdviceInformation()!=null) {				
+		if (extraInfo != null && extraInfo.getExtraAdviceInformation()!=null) {
 				if(extraInfo.getExtraAdviceInformation().equals("before")) { //$NON-NLS-1$
 					if(hasDynamicTests) {
 						return AspectJImages.DYNAMIC_BEFORE_ADVICE;
@@ -376,7 +376,7 @@ public class AspectJImages  {
 					if(hasDynamicTests) {
 						return AspectJImages.DYNAMIC_AFTER_ADVICE;
 					} else {
-						return AspectJImages.AFTER_ADVICE;	
+						return AspectJImages.AFTER_ADVICE;
 					}
 				}
 			}
@@ -444,7 +444,7 @@ public class AspectJImages  {
 			} else if ( access == IProgramElement.Accessibility.PACKAGE ) {
 				return ITD_METHOD_DEF;
 			} else return AJDTIcon.MISSING_ICON;
-			
+
 		} else if (kind == IProgramElement.Kind.INTER_TYPE_CONSTRUCTOR) {
 			if ( access == IProgramElement.Accessibility.PUBLIC ) {
 				return ITD_CONSTRUCTOR_PUB;
@@ -455,7 +455,7 @@ public class AspectJImages  {
 			} else if ( access == IProgramElement.Accessibility.PACKAGE ) {
 				return ITD_CONSTRUCTOR_DEF;
 			} else return AJDTIcon.MISSING_ICON;
-			
+
 		} else if (kind == IProgramElement.Kind.ASPECT) {
 			if ( access == IProgramElement.Accessibility.PUBLIC ) {
 				return ASPECT_PUBLIC;
@@ -466,7 +466,7 @@ public class AspectJImages  {
 			} else if ( access == IProgramElement.Accessibility.PACKAGE ) {
 				return ASPECT_PACKAGE;
 			} else return AJDTIcon.MISSING_ICON;
-			
+
 		} else if (kind == IProgramElement.Kind.CLASS) {
 			if ( access == IProgramElement.Accessibility.PUBLIC ) {
 				return JDT_INNER_CLASS_PUBLIC;
@@ -482,10 +482,10 @@ public class AspectJImages  {
 		} else {
 			return getIcon( kind );
 		}
-	}	
+	}
 
 	public AJDTIcon getIcon(IRelationship.Kind relationship) {
-		if (relationship == IRelationship.Kind.ADVICE 
+		if (relationship == IRelationship.Kind.ADVICE
 				|| relationship == IRelationship.Kind.DECLARE
 					|| relationship == IRelationship.Kind.DECLARE_INTER_TYPE){
 			return ADVISES;
@@ -493,7 +493,7 @@ public class AspectJImages  {
 			return AJDTIcon.MISSING_ICON;
 		}
 	}
-	
+
 	public ImageDescriptorRegistry getRegistry() {
 		if (registry == null) {
 			registry= new ImageDescriptorRegistry();

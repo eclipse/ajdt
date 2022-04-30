@@ -164,10 +164,8 @@ public class AJClasspathTab extends JavaClasspathTab {
         action = new AttachSourceAction(null, SWT.RADIO);
         advancedActions.add(action);
 
-        IAction[] adv = advancedActions
-                .toArray(new IAction[0]);
-        createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer,
-                adv));
+        IAction[] adv = advancedActions.toArray(new IAction[0]);
+        createButton(pathButtonComp, new AddAdvancedAction(fClasspathViewer, adv));
 
         action = new RestoreDefaultEntriesAction(fClasspathViewer, this);
         createButton(pathButtonComp, action);
@@ -276,7 +274,7 @@ public class AJClasspathTab extends JavaClasspathTab {
                 }
             }
             fClasspathViewer.getTreeViewer().refresh();
-        } catch (CoreException e) {}
+        } catch (CoreException ignored) {}
     }
 
     /**

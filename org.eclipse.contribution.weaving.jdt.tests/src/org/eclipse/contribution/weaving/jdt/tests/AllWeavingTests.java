@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2009 SpringSource and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Eisenberg - initial API and implementation
  *******************************************************************************/
@@ -50,7 +50,7 @@ public class AllWeavingTests {
             e.printStackTrace();
             TestCase.fail("Could not start jdt weaving bundle because of: " + e.getMessage());
         }
-        
+
         TestSuite suite = new TestSuite(AllWeavingTests.class.getName());
         suite.addTestSuite(CompilationUnitProviderTests.class);
         suite.addTestSuite(SourceTransformerTests.class);
@@ -61,7 +61,7 @@ public class AllWeavingTests {
         suite.addTestSuite(RefactoringHooksTests.class);
         return suite;
     }
-    
+
     private static void waitForIt(String jdtCore) {
         Bundle b = Platform.getBundle(jdtCore);
         synchronized (AllWeavingTests.class) {
@@ -69,11 +69,11 @@ public class AllWeavingTests {
                 try {
                     System.out.println("Waiting for " + jdtCore + " to activate");
                     AllWeavingTests.class.wait(1000);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
             }
         }
     }
 
-    
+
 }

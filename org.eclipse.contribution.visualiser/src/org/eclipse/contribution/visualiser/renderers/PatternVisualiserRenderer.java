@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Ben Dalziel - initial version
  *******************************************************************************/
@@ -24,24 +24,24 @@ import org.eclipse.swt.widgets.Display;
 public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	private static PatternVisualiserRenderer pvr;
-	
+
 	PatternVisualiserPalette palette = new PatternVisualiserPalette();
-		
+
 	private static int nextAvailablePattern = 0;
-	
+
 	private Map patternMemory = new HashMap();
-	
+
 	private  PatternVisualiserRenderer() {
-		
+
 	}
-	
+
 	public static PatternVisualiserRenderer getPatternRenderer() {
 		if (pvr == null) {
 			pvr = new PatternVisualiserRenderer();
 		}
 		return pvr;
 	}
-	
+
 	/**
 	 * Get the next assignable pattern data and return it. If all the predefined patterns
 	 * have been assigned, a new one is generated
@@ -55,9 +55,9 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 		} else {
 			byte[][] patternData = palette.getRandomPattern();
 				return patternData;
-		}		
+		}
 	}
-	
+
 	/**
 	 * Converts the patternData into a Pattern
 	 * @param patternData - byte[][] used to create the image
@@ -67,16 +67,16 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 		Image patternImg = new Image(Display.getCurrent(), 8, 8);
 		GC gc = new GC(patternImg);
 
-		for (int i = 0; i < patternData.length; i++) {
-			byte[] b = patternData[i];
-			gc.setForeground(ColorConstants.black);
-			if (b[1]==b[3] && b[2]==b[4]) {
-				gc.drawPoint(b[1], b[2]);
-			} else {
-				gc.drawLine(b[1], b[2], b[3], b[4]);
-			}
-		}
-		Pattern pattern = new Pattern(Display.getCurrent(), patternImg);		
+    for (byte[] b : patternData) {
+      gc.setForeground(ColorConstants.black);
+      if (b[1] == b[3] && b[2] == b[4]) {
+        gc.drawPoint(b[1], b[2]);
+      }
+      else {
+        gc.drawLine(b[1], b[2], b[3], b[4]);
+      }
+    }
+		Pattern pattern = new Pattern(Display.getCurrent(), patternImg);
 		gc.dispose();
 		patternImg.dispose();
 		return pattern;
@@ -89,7 +89,7 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 	 * @return byte[][] - pattern data
 	 */
 	private byte[][] getPatternForColour(RGB rgb, boolean isPrefDialog) {
-		
+
 		byte[][] stripePatternData = null;
 		if (patternMemory.containsKey(rgb)) {
 			stripePatternData = (byte[][]) patternMemory.get(rgb);
@@ -99,9 +99,9 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 		}
 		return stripePatternData;
 	}
-	
+
 	/**
-	 * Uses a colour, associates a pattern with it and tiles it over the gc 
+	 * Uses a colour, associates a pattern with it and tiles it over the gc
 	 * @param gc
 	 * @param rgb - The RGB assigned to the gc
 	 */

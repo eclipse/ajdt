@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andy Clement - initial version
  *     Matt Chapman - add priority ordering to providers + paletteID
@@ -12,7 +12,6 @@
 package org.eclipse.contribution.visualiser.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -51,7 +50,7 @@ public class ProviderManager {
 
 	/**
 	 * Get the currently active content provider
-	 * 
+	 *
 	 * @return the currently active content provider
 	 */
 	public static IContentProvider getContentProvider() {
@@ -60,7 +59,7 @@ public class ProviderManager {
 
 	/**
 	 * Get the currently active markup provider
-	 * 
+	 *
 	 * @return the currently active markup provider
 	 */
 	public static IMarkupProvider getMarkupProvider() {
@@ -84,80 +83,76 @@ public class ProviderManager {
 				.getExtensionPoint(PROVIDER_EXTENSION);
 		IExtension[] exs = exP.getExtensions();
 
-		for (int i = 0; i < exs.length; i++) {
-			IConfigurationElement[] ces = exs[i].getConfigurationElements();
-			for (int j = 0; j < ces.length; j++) {
-				try {
-					Object ext = ces[j].createExecutableExtension("contentProviderClass"); //$NON-NLS-1$
+    for (IExtension iExtension : exs) {
+      IConfigurationElement[] ces = iExtension.getConfigurationElements();
+      for (IConfigurationElement ce : ces) {
+        try {
+          Object ext = ce.createExecutableExtension("contentProviderClass"); //$NON-NLS-1$
 
-					if (ext instanceof IContentProvider) {
-						markupP = (IMarkupProvider) ces[j]
-								.createExecutableExtension("markupProviderClass"); //$NON-NLS-1$
-						markupP.initialise();
-						contentP = (IContentProvider) ext;
-						contentP.initialise();
-						ProviderDefinition cpdef = new ProviderDefinition(
-								ces[j].getAttribute("id"), //$NON-NLS-1$
-								ces[j].getAttribute("name"), contentP, markupP); //$NON-NLS-1$
-						contentProviders.add(cpdef);
-						String desc = ces[j].getAttribute("description"); //$NON-NLS-1$
-						if (desc != null)
-							cpdef.setDescription(desc);
-						String title = ces[j].getAttribute("title"); //$NON-NLS-1$
-						if (title != null) {
-							cpdef.setTitle(title);
-						}
-						String priorityString = ces[j].getAttribute("priority"); //$NON-NLS-1$
-						if (priorityString != null) {
-							try {
-								cpdef.setPriority(new Integer(priorityString)
-										.intValue());
-							} catch (NumberFormatException e) {
-							}
-						}
-						String paletteID = ces[j].getAttribute("paletteid"); //$NON-NLS-1$
-						if (paletteID != null) {
-							cpdef.setPaletteID(paletteID);
-						}
-						String emptyMessage = ces[j].getAttribute("emptyMessage"); //$NON-NLS-1$
-						if (emptyMessage != null) {
-							cpdef.setEmptyMessage(emptyMessage);
-						}
+          if (ext instanceof IContentProvider) {
+            markupP = (IMarkupProvider) ce
+              .createExecutableExtension("markupProviderClass"); //$NON-NLS-1$
+            markupP.initialise();
+            contentP = (IContentProvider) ext;
+            contentP.initialise();
+            ProviderDefinition cpdef = new ProviderDefinition(
+              ce.getAttribute("id"), //$NON-NLS-1$
+              ce.getAttribute("name"), contentP, markupP); //$NON-NLS-1$
+            contentProviders.add(cpdef);
+            String desc = ce.getAttribute("description"); //$NON-NLS-1$
+            if (desc != null)
+              cpdef.setDescription(desc);
+            String title = ce.getAttribute("title"); //$NON-NLS-1$
+            if (title != null) {
+              cpdef.setTitle(title);
+            }
+            String priorityString = ce.getAttribute("priority"); //$NON-NLS-1$
+            if (priorityString != null) {
+              try {
+                cpdef.setPriority(Integer.valueOf(priorityString));
+              }
+              catch (NumberFormatException ignored) {
+              }
+            }
+            String paletteID = ce.getAttribute("paletteid"); //$NON-NLS-1$
+            if (paletteID != null) {
+              cpdef.setPaletteID(paletteID);
+            }
+            String emptyMessage = ce.getAttribute("emptyMessage"); //$NON-NLS-1$
+            if (emptyMessage != null) {
+              cpdef.setEmptyMessage(emptyMessage);
+            }
 
-					}
-				} catch (Exception ex) {
-					System.err.println(ex);
-					ex.printStackTrace();
-				}
-			}
-		}
+          }
+        }
+        catch (Exception ex) {
+          System.err.println(ex);
+          ex.printStackTrace();
+        }
+      }
+    }
 		if (markupP == null)
 			markupP = new NullMarkupProvider();
 
 		if (contentProviders.size() != 0) {
 			// sort providers according to priority, highest priority first
-			Collections.sort(contentProviders, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					return ((ProviderDefinition) o2).getPriority()
-							- ((ProviderDefinition) o1).getPriority();
-				}
-			});
+			contentProviders.sort((o1, o2) -> ((ProviderDefinition) o2).getPriority()
+                                        - ((ProviderDefinition) o1).getPriority());
 			// If the user has previously selected a provider set it to be
 			// selected,
 			// otherwise select the first one - the one with the highest
 			// priority
 			String provider = VisualiserPreferences.getProvider();
 			boolean set = false;
-			for (int i = 0; i < contentProviders.size(); i++) {
-				ProviderDefinition cp = (ProviderDefinition) contentProviders
-						.get(i);
-				String name = cp.getName();
-				if (provider.equals(name)) {
-					cp.setEnabled(true);
-					set = true;
-					break;
-				}
-			}
+      for (Object contentProvider : contentProviders) {
+        ProviderDefinition cp = (ProviderDefinition) contentProvider;
+        String name = cp.getName();
+        if (provider.equals(name)) {
+          cp.setEnabled(true);
+          set = true;
+          break;
+        }
+      }
 			if (!set) {
 				ProviderDefinition cp = (ProviderDefinition) contentProviders
 						.get(0);
@@ -171,7 +166,7 @@ public class ProviderManager {
 
 	/**
 	 * Get the single instance of the ProviderManager
-	 * 
+	 *
 	 * @return the single instance of the ProviderManager
 	 */
 	public static ProviderManager getProviderManager() {
@@ -188,7 +183,7 @@ public class ProviderManager {
 
 	/**
 	 * Get the current provider definition
-	 * 
+	 *
 	 * @return the current provider definition
 	 */
 	public static ProviderDefinition getCurrent() {
@@ -198,7 +193,7 @@ public class ProviderManager {
 	/**
 	 * Set the current provider definition. Activates the asociated content and
 	 * markup providers
-	 * 
+	 *
 	 * @param definition
 	 */
 	public static void setCurrent(ProviderDefinition definition) {
@@ -212,18 +207,18 @@ public class ProviderManager {
 			needToUpdateVisualiser = true;
 
 		PaletteManager.resetCurrent();
-		
+
 		// De-activate the previous provider
 		markupP.deactivate();
 		contentP.deactivate();
-		
+
 		contentP = definition.getContentProvider();
 		markupP = definition.getMarkupInstance();
-		
+
 		// Activate the new provider
 		markupP.activate();
 		contentP.activate();
-		
+
 		if (needToUpdateVisualiser) {
 			if (VisualiserPlugin.visualiser != null) {
 				VisualiserPlugin.visualiser.setVisContentProvider(contentP);

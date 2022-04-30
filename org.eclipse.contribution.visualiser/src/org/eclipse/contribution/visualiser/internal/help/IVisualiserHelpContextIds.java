@@ -19,13 +19,13 @@ import org.eclipse.contribution.visualiser.VisualiserPlugin;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
+ *
  */
 public interface IVisualiserHelpContextIds {
-	
-	public static final String PREFIX= VisualiserPlugin.PLUGIN_ID + '.';
-	
-	public static final String VISUALISER_VIEW= PREFIX + "visualiser_view_context"; //$NON-NLS-1$
-	public static final String VISUALISER_MENU_VIEW= PREFIX + "visualiser_menu_view_context"; //$NON-NLS-1$
-	
+
+	String PREFIX= VisualiserPlugin.PLUGIN_ID + '.';
+
+	String VISUALISER_VIEW= PREFIX + "visualiser_view_context"; //$NON-NLS-1$
+	String VISUALISER_MENU_VIEW= PREFIX + "visualiser_menu_view_context"; //$NON-NLS-1$
+
 }

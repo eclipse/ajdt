@@ -13,7 +13,6 @@ package org.eclipse.ajdt.internal.ui.wizards.exports;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -151,7 +150,7 @@ public class AJJarPackagerUtil {
 
 			// Test if it has a main method
 			return JavaModelUtil.hasMainMethod(mainClass);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return false;
 	}

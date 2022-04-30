@@ -34,10 +34,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -192,7 +190,7 @@ public class AJDTErrorDialog extends IconAndMessageDialog {
             try {
               URL url = new URL(event.text);
               PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(url);
-            } catch (MalformedURLException | PartInitException e) {
+            } catch (MalformedURLException | PartInitException ignored) {
             }
 });
             GridData data = new GridData(GridData.GRAB_HORIZONTAL

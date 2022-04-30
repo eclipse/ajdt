@@ -12,7 +12,6 @@ package org.eclipse.ajdt.core.tests.testutils;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.core.IAJLogger;

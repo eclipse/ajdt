@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ajdt.core.tests.javaelements;
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;

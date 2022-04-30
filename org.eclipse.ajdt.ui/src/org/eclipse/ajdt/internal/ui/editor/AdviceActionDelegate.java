@@ -348,7 +348,7 @@ public class AdviceActionDelegate extends AbstractRulerActionDelegate {
         public void run() {
             try {
                 JavaUI.openInEditor(jumpLocation);
-            } catch (PartInitException | JavaModelException e) {
+            } catch (PartInitException | JavaModelException ignored) {
             }
         }
 	}
@@ -473,7 +473,7 @@ public class AdviceActionDelegate extends AbstractRulerActionDelegate {
                         editor.selectAndReveal(region.getOffset(), region.getLength());
                         return;
                     }
-                } catch (JavaModelException | PartInitException e) {
+                } catch (JavaModelException | PartInitException ignored) {
                 }
             }
             report(UIMessages.AdviceActionDelegate_resource_not_found);
@@ -483,7 +483,7 @@ public class AdviceActionDelegate extends AbstractRulerActionDelegate {
             IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
             try {
                 return doc.getLineInformation(Integer.parseInt(linenumber)-1);
-            } catch (NumberFormatException | BadLocationException e) {
+            } catch (NumberFormatException | BadLocationException ignored) {
             }
           return null;
         }

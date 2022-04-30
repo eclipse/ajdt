@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andy Clement - initial version
  * 	   Sian January - added additional methods and refactored
@@ -12,7 +12,6 @@
 package org.eclipse.contribution.visualiser.simpleImpl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.contribution.visualiser.interfaces.IContentProvider;
@@ -26,7 +25,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class SimpleContentProvider implements IContentProvider {
 
 	private List groups = null;
-	
+
 
 	/**
 	 * Returns all registered groups
@@ -39,14 +38,14 @@ public class SimpleContentProvider implements IContentProvider {
 
 
 	/**
-	 * Returns all IMembers contained in the given IGroup 
+	 * Returns all IMembers contained in the given IGroup
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers(IGroup)
 	 */
 	public List getAllMembers(IGroup group) {
 		return group.getMembers();
 	}
-	
-	
+
+
 	/**
 	 * Returns the List of all IMembers in all registered groups
 	 */
@@ -54,16 +53,14 @@ public class SimpleContentProvider implements IContentProvider {
 		List grps = getAllGroups();
 		List members = new ArrayList();
 		if (grps == null) return members;
-		Iterator iter = grps.iterator();
-		while (iter.hasNext()) {
-			IGroup grp = (IGroup)iter.next();
-			List membersInGroup = getAllMembers(grp);
-			Iterator iter2 = membersInGroup.iterator();
-			while (iter2.hasNext()) {
-				IMember im = (IMember)iter2.next();
-				members.add(im);
-			}
-		}
+    for (Object value : grps) {
+      IGroup grp = (IGroup) value;
+      List membersInGroup = getAllMembers(grp);
+      for (Object o : membersInGroup) {
+        IMember im = (IMember) o;
+        members.add(im);
+      }
+    }
 		return members;
 	}
 
@@ -74,10 +71,10 @@ public class SimpleContentProvider implements IContentProvider {
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#initialise()
 	 */
 	public void initialise() {
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Register a group
 	 * @param grp
@@ -86,8 +83,8 @@ public class SimpleContentProvider implements IContentProvider {
 	  if (groups == null) groups = new ArrayList();
 	  groups.add(grp);
 	}
-	
-	
+
+
 	/**
 	 * Get the total number of groups registered
 	 * @return the number of groups
@@ -122,15 +119,15 @@ public class SimpleContentProvider implements IContentProvider {
 	public ImageDescriptor getGroupViewIcon() {
 		return null;
 	}
-	
+
 	/**
 	 * Empties the data structure that contains the added groups
 	 */
 	protected void resetModel() {
 		groups = null;
 	}
-	
-	/** 
+
+	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#activate()
 	 */
 	public void activate() {

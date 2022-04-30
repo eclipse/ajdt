@@ -168,7 +168,7 @@ public class PointcutUtilities {
 					}
 				}
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return null;
 	}

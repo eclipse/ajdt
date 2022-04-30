@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors: Sian January - initial version
  * ...
  **********************************************************************/
@@ -46,11 +46,11 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  * files being displayed.
  */
 public class MarkerMarkupProvider extends SimpleMarkupProvider {
-	
+
 	Map namesToKinds = new HashMap();
 	List images = new ArrayList();
-	
-	
+
+
 	/**
 	 * Update the set of markups stored by this provider.
 	 * @param groups
@@ -60,72 +60,73 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		resetColours();
 		resetMarkupsAndKinds();
 		if (groups != null) {
-			for (Iterator iter = groups.iterator(); iter.hasNext();) {
-				IGroup group = (IGroup) iter.next();
-				for (Iterator iter2 = group.getMembers().iterator(); iter2.hasNext();) {
-					IMember member = (IMember)iter2.next();
-					if (member instanceof ResourceMember) {
-						IResource res = ((ResourceMember)member).getResource();
-						try {
-							IMarker[] markers = res.findMarkers(null, true, IResource.DEPTH_INFINITE);
-							for (int i = 0; i < markers.length; i++) {
-								IMarker marker = markers[i];
-								Integer lineNum = (Integer)marker.getAttribute(IMarker.LINE_NUMBER);
-								if (lineNum != null) {
-									int lineNumber = lineNum.intValue();
-									String name = getLabel(marker);
-									if(name == null) {
-										name = marker.getType();
-									}
-									IMarkupKind kind;
-									if (namesToKinds.get(name) instanceof IMarkupKind) {
-										kind = (IMarkupKind)namesToKinds.get(name);
-									} else {
-										Image image = getImage(marker);
-										images.add(image);
-										kind = new SimpleMarkupKind(name, image);
-										namesToKinds.put(name, kind);
-										addMarkupKind(kind);
-										Color color = getColor(marker);
-										if(color != null) {
-											setColorFor(kind, color);
-										}
-									}
-									boolean stripeOnLineAlready = false;
-									List stripes = getMemberMarkups(member);
-									if (stripes != null) {
-										for (Iterator iter3 = stripes.iterator(); iter3.hasNext();) {
-											Stripe stripe = (Stripe) iter3.next();
-											if(stripe.getOffset() == lineNumber) {
-												List kindList = Arrays.asList(new Object[] {kind});
-												stripe.addKinds(kindList);
-												stripeOnLineAlready = true;
-											}
-										}
-									}
-									if (!stripeOnLineAlready) {
-										Stripe stripe = new StripeWithMarker(kind, lineNumber, marker);
-										addMarkup(member.getFullname(), stripe);
-									}
-								}
-							}
-						} catch (CoreException e) {
-							e.printStackTrace();
-						}
-					}
-				}
-			}
+      for (Object item : groups) {
+        IGroup group = (IGroup) item;
+        for (Object value : group.getMembers()) {
+          IMember member = (IMember) value;
+          if (member instanceof ResourceMember) {
+            IResource res = ((ResourceMember) member).getResource();
+            try {
+              IMarker[] markers = res.findMarkers(null, true, IResource.DEPTH_INFINITE);
+              for (IMarker marker : markers) {
+                Integer lineNum = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
+                if (lineNum != null) {
+                  int lineNumber = lineNum;
+                  String name = getLabel(marker);
+                  if (name == null) {
+                    name = marker.getType();
+                  }
+                  IMarkupKind kind;
+                  if (namesToKinds.get(name) instanceof IMarkupKind) {
+                    kind = (IMarkupKind) namesToKinds.get(name);
+                  }
+                  else {
+                    Image image = getImage(marker);
+                    images.add(image);
+                    kind = new SimpleMarkupKind(name, image);
+                    namesToKinds.put(name, kind);
+                    addMarkupKind(kind);
+                    Color color = getColor(marker);
+                    if (color != null) {
+                      setColorFor(kind, color);
+                    }
+                  }
+                  boolean stripeOnLineAlready = false;
+                  List stripes = getMemberMarkups(member);
+                  if (stripes != null) {
+                    for (Object o : stripes) {
+                      Stripe stripe = (Stripe) o;
+                      if (stripe.getOffset() == lineNumber) {
+                        List kindList = Arrays.asList(kind);
+                        stripe.addKinds(kindList);
+                        stripeOnLineAlready = true;
+                      }
+                    }
+                  }
+                  if (!stripeOnLineAlready) {
+                    Stripe stripe = new StripeWithMarker(kind, lineNumber, marker);
+                    addMarkup(member.getFullname(), stripe);
+                  }
+                }
+              }
+            }
+            catch (CoreException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+      }
 		}
 	}
-	
-	
+
+
 	/**
 	 * Get the Image for a marker, or null if none is defined
 	 * @param marker
 	 * @return the Image found
 	 */
 	private Image getImage(IMarker marker) {
-		IWorkbenchAdapter adapter= (IWorkbenchAdapter)marker.getAdapter(IWorkbenchAdapter.class);
+		IWorkbenchAdapter adapter= marker.getAdapter(IWorkbenchAdapter.class);
 		if (adapter != null) {
 		     ImageDescriptor descriptor = adapter.getImageDescriptor(marker);
 		     if (descriptor != null) {
@@ -147,11 +148,11 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Get the label for a marker, or null if a label can not be found
-	 * 
+	 *
 	 * @param marker
 	 * @return the String found, or null if none is found
 	 */
@@ -169,7 +170,7 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		}
 		return null;
 	}
-	
+
 
 	/**
 	 * Get the Color for a marker, or null if none is defined
@@ -190,10 +191,10 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
-	 * Process a mouse click on a stripe.  This implementation opens the editor at the 
+	 * Process a mouse click on a stripe.  This implementation opens the editor at the
 	 * location of the marker
 	 * @see org.eclipse.contribution.visualiser.interfaces.IMarkupProvider#processMouseclick(IMember, Stripe, int)
 	 */
@@ -204,11 +205,11 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 				JDTUtils.openInEditor(marker);
 			}
 		}
-		
+
 		return false;
 	}
 
-	
+
 	/**
 	 * Deactivate this provider - dispose of system resources
 	 */
@@ -226,14 +227,14 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 	}
 
 
-	
-	public class StripeWithMarker extends Stripe {
-		
+
+	public static class StripeWithMarker extends Stripe {
+
 		IMarker marker;
-		
+
 		/**
 		 * Stripe constructor when the stripe is of the minimum depth (1).
-		 * 
+		 *
 		 * @param k The kind of stripe
 		 * @param i The offset down the bar where the stripe starts
 		 */
@@ -241,11 +242,11 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 			super(k,i);
 			this.marker = marker;
 		}
-		
+
 		public IMarker getMarker() {
 			return marker;
 		}
-		
+
 	}
 
 }

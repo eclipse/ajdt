@@ -71,8 +71,7 @@ public class AJFormattingStrategy extends ContextBasedFormattingStrategy {
 				ArrayList<Replacement> changes = pars.convert(ConversionOptions.CONSTANT_SIZE);
 				content = new String(pars.content);
 
-				@SuppressWarnings("unchecked")
-                final TextEdit edit = CodeFormatterUtil.reformat(
+				final TextEdit edit = CodeFormatterUtil.reformat(
 						CodeFormatter.K_COMPILATION_UNIT | CodeFormatter.F_INCLUDE_COMMENTS, content, partition
 								.getOffset(), partition.getLength(), 0,
 						TextUtilities.getDefaultLineDelimiter(document),

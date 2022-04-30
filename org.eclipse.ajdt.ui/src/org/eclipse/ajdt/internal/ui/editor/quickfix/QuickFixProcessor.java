@@ -214,7 +214,7 @@ public class QuickFixProcessor implements IQuickFixProcessor, IQuickAssistProces
 				}
 				offset--;
 			}
-		} catch(JavaModelException e) {
+		} catch(JavaModelException ignored) {
 		}
 		return start;
 	}

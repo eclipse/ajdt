@@ -367,7 +367,7 @@ public final class AJWorldFacade {
             return false;
         }
         for (int i = 0; i < unresolvedTypesLength; i++) {
-            String eltParamType = new String( (char[]) eltTypes.get(i));
+            String eltParamType = new String(eltTypes.get(i));
             int genericStart = eltParamType.indexOf('<');
             if (genericStart > -1) {
                 eltParamType = eltParamType.substring(0, genericStart);

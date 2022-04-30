@@ -4,12 +4,12 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- *   David Knibb               initial implementation      
+ *   David Knibb               initial implementation
  *   Matthew Webster           Eclipse 3.2 changes
- *   Heiko Seeberger           AJDT 1.5.1 changes     
- *   Martin Lippert            weaving context and adaptors reworked     
+ *   Heiko Seeberger           AJDT 1.5.1 changes
+ *   Martin Lippert            weaving context and adaptors reworked
  *   Martin Lippert            extracted weaving service factory
  *   Martin Lippert            advanced aspect resolving implemented
  *   Martin Lippert            caching of generated classes
@@ -69,7 +69,7 @@ public class AspectJWeavingService implements IWeavingService {
             this.weavingContext = new OSGiWeavingContext(loader,
                     bundleRevision, aspectDefinitions);
             this.weavingAdaptor = new OSGiWeavingAdaptor(loader,
-                    weavingContext, namespaceAddOn.toString());
+                    weavingContext, namespaceAddOn);
         } else {
             if (AspectJWeavingStarter.DEBUG) {
                 System.err
@@ -115,7 +115,7 @@ public class AspectJWeavingService implements IWeavingService {
             ensureAdaptorInit();
             return weavingAdaptor.getGeneratedClassesFor(className);
         } else {
-            return new HashMap<String, byte[]>();
+            return new HashMap<>();
         }
     }
 
@@ -127,7 +127,7 @@ public class AspectJWeavingService implements IWeavingService {
             System.out.println("> WeavingService.getKey() bundle="
                     + bundleRevision.getSymbolicName());
 
-        final String namespace = namespaceAddOn.toString();
+        final String namespace = namespaceAddOn;
 
         if (AspectJWeavingStarter.DEBUG)
             System.out.println("< WeavingService.getKey() key='" + namespace

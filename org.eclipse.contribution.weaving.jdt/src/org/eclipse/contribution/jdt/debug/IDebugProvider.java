@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.contribution.jdt.debug;
 
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.debug.core.IJavaBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaBreakpointListener;

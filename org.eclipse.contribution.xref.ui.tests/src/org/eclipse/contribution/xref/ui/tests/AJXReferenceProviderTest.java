@@ -12,7 +12,6 @@
 package org.eclipse.contribution.xref.ui.tests;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;

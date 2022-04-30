@@ -339,7 +339,7 @@ public class AspectJPreferences {
 			if (!isUsingProjectSettings) {
 				projectNode.removeNode();
 			}
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
 	}
 
@@ -361,7 +361,7 @@ public class AspectJPreferences {
 		}
 		try {
 			projectNode.flush();
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
 	}
 
@@ -379,7 +379,7 @@ public class AspectJPreferences {
         writer.write(System.getProperty("line.separator")); //$NON-NLS-1$
       }
 			writer.close();
-		} catch (IOException e) {
+		} catch (IOException ignored) {
 		}
 	}
 
@@ -524,7 +524,7 @@ public class AspectJPreferences {
 			}
 			try {
 				projectNode.flush();
-			} catch (BackingStoreException e) {
+			} catch (BackingStoreException ignored) {
 			}
 		}
 		else {

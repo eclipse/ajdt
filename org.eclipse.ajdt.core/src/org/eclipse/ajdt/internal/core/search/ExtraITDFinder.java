@@ -235,7 +235,7 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
         for (int i = 0; i < parameterTypes.length; i++) {
             try {
                 simpleNames[i] = Signature.getSignatureSimpleName(Signature.getTypeErasure(parameterTypes[i].toCharArray()));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return simpleNames;

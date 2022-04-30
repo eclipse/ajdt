@@ -34,7 +34,7 @@ import org.eclipse.ui.part.IPageSite;
 
 public class AJDTEventTraceConsolePage extends TextConsolePage implements EventListener {
 
-    public class AutoFormatSettingAction extends Action {
+    public static class AutoFormatSettingAction extends Action {
         private final AJDTEventTraceConsolePage fPage;
         private final IPreferenceStore fPreferenceStore;
 

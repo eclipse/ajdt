@@ -23,7 +23,6 @@ import org.aspectj.ajdt.internal.compiler.ast.InterTypeDeclaration;
 import org.aspectj.ajdt.internal.compiler.ast.InterTypeFieldDeclaration;
 import org.aspectj.asm.IHierarchy;
 import org.aspectj.asm.IProgramElement;
-import org.aspectj.asm.IProgramElement.Modifiers;
 import org.aspectj.bridge.ISourceLocation;
 import org.eclipse.jdt.internal.compiler.ast.Annotation;
 import org.eclipse.jdt.internal.core.LocalVariable;
@@ -225,7 +224,7 @@ public abstract class IntertypeElement extends AspectJMemberElement {
                             targetTypeCache = (IType) rel;
                             break;
                         }
-                    } catch (JavaModelException e) { }
+                    } catch (JavaModelException ignored) { }
                 }
             }
         }

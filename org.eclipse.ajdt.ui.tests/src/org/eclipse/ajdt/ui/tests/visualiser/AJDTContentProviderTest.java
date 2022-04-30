@@ -180,7 +180,7 @@ public class AJDTContentProviderTest extends UITestCase {
 	 * {@link org.eclipse.ajdt.internal.ui.visualiser.AJDTContentProvider#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)}.
 	 */
 	public void testSelectionChanged() {
-		ajdtContentProvider.selectionChanged(null, new AJDTContentProviderTest.MockStructuredSelection(someJavaElement));
+		ajdtContentProvider.selectionChanged(null, new MockStructuredSelection(someJavaElement));
 		assertNotNull("currentProject has not been set", ajdtContentProvider.getCurrentProject()); //$NON-NLS-1$
 
 		assertEquals("getCurrentProject() did not return the expect project instance", javaTestProject, //$NON-NLS-1$
@@ -190,7 +190,7 @@ public class AJDTContentProviderTest extends UITestCase {
 	/*
 	 * Simple mock class used to drive the selectionChanged method.
 	 */
-	private class MockStructuredSelection implements IStructuredSelection {
+	private static class MockStructuredSelection implements IStructuredSelection {
 
 		private Object elementToSelect;
 

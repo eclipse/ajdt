@@ -60,7 +60,7 @@ import org.eclipse.ui.internal.views.log.LogView;
 public class PushinRefactoringTests extends UITestCase {
 
     // gives us access to the findAllITDs method
-    class MockAction extends PushInRefactoringAction {
+    static class MockAction extends PushInRefactoringAction {
         @Override
         protected List<IMember> findAllITDs(IJavaElement[] selection)
                 throws JavaModelException {

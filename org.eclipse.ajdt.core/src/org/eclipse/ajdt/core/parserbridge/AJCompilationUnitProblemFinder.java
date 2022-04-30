@@ -12,7 +12,6 @@
  ******************************************************************************/
 package org.eclipse.ajdt.core.parserbridge;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -164,7 +163,7 @@ public class AJCompilationUnitProblemFinder extends
                              getCompilerOptions(cu), true, false);
             	 }
 
-    		} catch (JavaModelException e) {
+    		} catch (JavaModelException ignored) {
     		}
 	    }
 	    // AspectJ Change End
@@ -765,7 +764,7 @@ public class AJCompilationUnitProblemFinder extends
                 return false;
             }
 
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 
         if (id == IProblem.AbstractMethodMustBeImplemented &&
@@ -988,7 +987,7 @@ public class AJCompilationUnitProblemFinder extends
               return true;  // close enough...can also compare args and type variables
             }
           }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 
 
@@ -1010,7 +1009,7 @@ public class AJCompilationUnitProblemFinder extends
 	                IType type = (IType) elt.getAncestor(IJavaElement.TYPE);
     	            return type != null && type instanceof AspectElement;
     	        }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
         return false;
@@ -1034,7 +1033,7 @@ public class AJCompilationUnitProblemFinder extends
                         return aspectType.isPrivileged();
                     }
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
         return false;

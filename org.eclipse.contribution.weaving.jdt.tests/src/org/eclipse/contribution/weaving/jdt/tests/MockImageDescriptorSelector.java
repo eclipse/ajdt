@@ -15,7 +15,7 @@ public class MockImageDescriptorSelector implements IImageDescriptorSelector {
             boolean isInInterfaceOrAnnotation, int flags,
             boolean useLightIcons, Object element) {
         if (    (element instanceof MockCompilationUnit) ||
-                ((element instanceof IType) && (((IType)element).getParent() instanceof MockCompilationUnit)) || 
+                ((element instanceof IType) && (((IType)element).getParent() instanceof MockCompilationUnit)) ||
                 (element instanceof JavaSearchTypeNameMatch)) {
             isSet = true; // remember that we've been here
             return getImageDescriptor();
@@ -23,16 +23,16 @@ public class MockImageDescriptorSelector implements IImageDescriptorSelector {
             return null;
         }
     }
-    
+
     public static boolean isSet = false;
 
     private static Image IMAGE;
     private static ImageDescriptor DESCRIPTOR;
-    
-    
+
+
     public ImageDescriptor createCompletionProposalImageDescriptor(
             LazyJavaCompletionProposal proposal) {
-        
+
         // XXX not tested for now.
         return null;
     }
@@ -45,10 +45,10 @@ public class MockImageDescriptorSelector implements IImageDescriptorSelector {
             URL url = new URL( pluginInstallURL, localPath );
             DESCRIPTOR = ImageDescriptor.createFromURL( url );
             IMAGE = DESCRIPTOR.createImage();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
-    
+
     private ImageDescriptor getImageDescriptor() {
         if (DESCRIPTOR == null) {
             createImage();
@@ -62,6 +62,6 @@ public class MockImageDescriptorSelector implements IImageDescriptorSelector {
         }
         return IMAGE;
     }
-    
-    
+
+
 }

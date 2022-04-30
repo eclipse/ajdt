@@ -2006,7 +2006,7 @@ public class AjcTask extends MatchingTask {
 				if (out != null) {
 					try {
 						out.close();
-					} catch (Throwable t) {
+					} catch (Throwable ignored1) {
 					}
 				}
 			}

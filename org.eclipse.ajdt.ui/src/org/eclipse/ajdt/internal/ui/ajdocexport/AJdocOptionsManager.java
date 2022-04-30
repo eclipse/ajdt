@@ -34,7 +34,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -835,7 +834,7 @@ public class AJdocOptionsManager {
 			if (objectStreamOutput != null) {
 				try {
 					objectStreamOutput.close();
-				} catch (IOException e) {
+				} catch (IOException ignored) {
 				}
 			}
 		}

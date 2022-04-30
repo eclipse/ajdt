@@ -189,7 +189,7 @@ privileged aspect AJNewTypeWizardPage {
                 IPackageFragment frag = root.createPackageFragment(packName,
                         true, null);
                 pack = frag.getResource();
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
 

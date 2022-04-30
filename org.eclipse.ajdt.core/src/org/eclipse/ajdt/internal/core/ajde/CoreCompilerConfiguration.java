@@ -94,7 +94,6 @@ public class CoreCompilerConfiguration implements ICompilerConfiguration {
 
 
 
-    @SuppressWarnings("unchecked")
     public Map<String, String> getJavaOptionsMap() {
         Map<String, String> optionsMap = null;
 
@@ -102,7 +101,7 @@ public class CoreCompilerConfiguration implements ICompilerConfiguration {
         try {
             javaProject = (JavaProject) project.getNature(JavaCore.NATURE_ID);
             optionsMap = javaProject.getOptions(true);
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
 
         if (optionsMap == null) {
@@ -397,7 +396,7 @@ public class CoreCompilerConfiguration implements ICompilerConfiguration {
 
             }
           }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -412,7 +411,7 @@ public class CoreCompilerConfiguration implements ICompilerConfiguration {
                   resultList.add(child);
                 }
               }
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }
         return resultList;

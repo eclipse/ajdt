@@ -149,7 +149,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
                         fileSystemPathToIContainer.put(commonOutputDir.getAbsolutePath(),
                                 workspaceRoot.getFolder(jProject.getOutputLocation()));
     			    }
-                } catch (JavaModelException e) {
+                } catch (JavaModelException ignored) {
                 }
 			}
 		} else {
@@ -189,7 +189,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
             allSourceFolders.put(rawPath.toOSString(), path.toPortableString());
           }
         }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 	}
 
@@ -277,7 +277,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
                 }
               }
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -387,7 +387,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
             }
           }
         }
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return false;
 	}
@@ -505,7 +505,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
                     }
                 }
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 
 
@@ -521,7 +521,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
                 try {
                     outFile.refreshLocal(IResource.DEPTH_ZERO, null);
                     return;
-                } catch (CoreException e) {
+                } catch (CoreException ignored) {
                 }
             }
         }
@@ -585,7 +585,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
 	            }
 
 	        }
-	    } catch (CoreException e) {
+	    } catch (CoreException ignored) {
 	    }
 	}
 
@@ -637,7 +637,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
 	    binFolderToProject = new HashMap<>();
     try {
             mapProject(jProject);
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         AJLog.logEnd(AJLog.BUILDER_CLASSPATH, "OutputLocationManager: binary folder to declaring project map creation: " + project);
     }
@@ -749,7 +749,7 @@ public class CoreOutputLocationManager implements IOutputLocationManager {
 	                }
 	            }
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		return 0; // DONTKNOW - this will cause the caller to do the .class modtime tests
 	}

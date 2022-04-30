@@ -11,7 +11,6 @@
 
 package org.eclipse.ajdt.ui.tests.editor.contentassist;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 

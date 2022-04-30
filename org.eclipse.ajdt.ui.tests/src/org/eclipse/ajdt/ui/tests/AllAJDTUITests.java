@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Helen Hawkins - initial version
  *     Kris De Volder - PullOutRefactoringTests
@@ -118,13 +118,13 @@ public class AllAJDTUITests {
     public static Test suite() {
         TestSuite suite = new TestSuite(AllAJDTUITests.class.getName());
         //$JUnit-BEGIN$
-        
+
         boolean is50 = System.getProperty("java.version").startsWith("1.5"); //$NON-NLS-1$ //$NON-NLS-2$
-        
+
         // internal.ui.actions tests
         suite.addTest(new TestSuite(AddAJNatureActionTest.class));
         suite.addTest(new TestSuite(RemoveAJNatureActionTest.class));
-        
+
         // internal.ui.preferences tests
         suite.addTest(new TestSuite(AJCompilerPreferencePageTest.class));
         suite.addTest(new TestSuite(AJCompilerPreferencePageTest2.class));
@@ -139,10 +139,10 @@ public class AllAJDTUITests {
         suite.addTest(new TestSuite(AspectJBreakpointRulerActionTest.class));
         suite.addTest(new TestSuite(AspectJEditorIconTest.class));
         suite.addTest(new TestSuite(AJOrganizeImportsTests.class));
-        
+
         // code format tests
         suite.addTest(new TestSuite(CodeFormatTest.class));
-        
+
         // internal.ui.ajde tests
         suite.addTest(new TestSuite(BuildOptionsAdapterTest.class));
         suite.addTest(new TestSuite(ClasspathOrderTest.class));
@@ -152,15 +152,15 @@ public class AllAJDTUITests {
 
         // internal.ui.editor.quickfix tests
         suite.addTest(new TestSuite(AspectJQuickFixTest.class));
-        
+
         // launching tests
         suite.addTest(new TestSuite(AJMainMethodSearchEngineTest.class));
         suite.addTest(new TestSuite(LTWUtilsTest.class));
         suite.addTest(new TestSuite(LTWUtilsTest2.class));
-        
+
         // test classes in lazystart package
         suite.addTest(new TestSuite(ImageDecoratorTest.class));
-        
+
         // ui model tests
         suite.addTest(new TestSuite(BinaryWeavingSupportTest.class));
 
@@ -174,15 +174,15 @@ public class AllAJDTUITests {
         suite.addTest(new TestSuite(Bug273691ContentAssist.class));
         suite.addTest(new TestSuite(Bug280508ContentAssist.class));
         suite.addTest(new TestSuite(ITITContentAssistTests.class));
-        
+
         // test the roo petclinic project
         suite.addTest(new TestSuite(PetClinicTests.class));
-        
+
         // new aspectJ project wizard
         suite.addTest(new TestSuite(AspectJProjectWizardTest.class));
-        
+
         // internal.builder tests
-        suite.addTest(new TestSuite(ProjectDependenciesTest.class));        
+        suite.addTest(new TestSuite(ProjectDependenciesTest.class));
         suite.addTest(new TestSuite(ProjectDependenciesWithJarFilesTest.class));
         suite.addTest(new TestSuite(AdviceMarkersTest.class));
         suite.addTest(new TestSuite(AdviceMarkersTest2.class));
@@ -204,14 +204,14 @@ public class AllAJDTUITests {
         suite.addTest(new TestSuite(ITDinSeparateProjects.class));
         suite.addTest(new TestSuite(ProblemMarkerTest.class));
         suite.addTest(new TestSuite(EnsureAJBuilderTests.class));
-        
+
         // javamodel tests
         suite.addTest(new TestSuite(AJCompilationUnitTest2.class));
         suite.addTest(new TestSuite(Bug154339Test.class));
         if(is50) {
             suite.addTest(new TestSuite(Bug117327Test.class));
         }
-        
+
         // reconciling
         // these are the reconciling tests that depend on UI components.
         // the rest have been moved to the core tests plugin
@@ -228,10 +228,10 @@ public class AllAJDTUITests {
         // debug
         suite.addTest(new TestSuite(JavaConsoleHyperlinkTest.class));
         suite.addTest(new TestSuite(DebugBreakpointsTests.class));
-        
+
         // ras tests
         suite.addTest(new TestSuite(PluginFFDCTest.class));
-        
+
         // Refactoring
         suite.addTest(new TestSuite(RenamePackageTest.class));
         suite.addTest(new TestSuite(OrganizeImportsTest.class));
@@ -252,25 +252,25 @@ public class AllAJDTUITests {
         suite.addTest(new TestSuite(ITDAwareHierarchyTests.class));
         suite.addTest(new TestSuite(ITDAwareHierarchyTests2.class));
 
-        
+
         suite.addTest(new TestSuite(ErrorLogTest.class));
         suite.addTest(new TestSuite(VerificationTest.class));
         suite.addTest(new TestSuite(Bug106813Test.class));
-        
-        
+
+
         // test the predefined project tool
         suite.addTest(new TestSuite(TestForPredefinedProjectsTool.class));
-        
-        
+
+
         // internal.core tests
         suite.addTest(new TestSuite(AJDTUtilsTest.class));
 
 
-        
+
         //$JUnit-END$
         return suite;
     }
-        
+
     /**
      * Prevents AJDTPrefWizard from popping up during tests and simulates normal
      * usage by closing the welcome page, and opening the java perspective
@@ -279,7 +279,7 @@ public class AllAJDTUITests {
         if (setupDone) {
             return;
         }
-        
+
         IWorkbenchWindow window = PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow();
 
@@ -298,27 +298,27 @@ public class AllAJDTUITests {
         try {
             PlatformUI.getWorkbench().showPerspective(JavaUI.ID_PERSPECTIVE,
                     window);
-        } catch (WorkbenchException e) {
+        } catch (WorkbenchException ignored) {
         }
 
         // open Cross Ref view
         try {
             window.getActivePage().showView(XReferenceView.ID);
-        } catch (PartInitException e1) {
+        } catch (PartInitException ignored) {
         }
-        
+
 
 
         // open Console view
         try {
             window.getActivePage().showView("org.eclipse.ui.console.ConsoleView"); //$NON-NLS-1$
-        } catch (PartInitException e1) {
+        } catch (PartInitException ignored) {
         }
 
         waitForJobsToComplete();
         setupDone = true;
     }
-    
+
     private static void waitForJobsToComplete() {
         SynchronizationUtils.joinBackgroudActivities();
     }

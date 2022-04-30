@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Chapman - initial version
@@ -36,86 +36,86 @@ public class AspectJPlugin extends Plugin implements NoFFDC {
 	private static AspectJPlugin plugin;
 
 	// id of this plugin
-	public static final String PLUGIN_ID = "org.eclipse.ajdt.core"; 
+	public static final String PLUGIN_ID = "org.eclipse.ajdt.core";
 
 	// plugin containing aspectjtools.jar, or the contents thereof
-    public static final String TOOLS_PLUGIN_ID = "org.aspectj.ajde"; 
+    public static final String TOOLS_PLUGIN_ID = "org.aspectj.ajde";
 
 	// plugin containing aspectjweaver.jar, or the contents thereof
-    public static final String WEAVER_PLUGIN_ID = "org.aspectj.weaver"; 
+    public static final String WEAVER_PLUGIN_ID = "org.aspectj.weaver";
 
 	// the plugin containing aspectjrt.jar
-	public static final String RUNTIME_PLUGIN_ID = "org.aspectj.runtime"; 
+	public static final String RUNTIME_PLUGIN_ID = "org.aspectj.runtime";
 
-	public static final String ID_BUILDER = PLUGIN_ID + ".ajbuilder"; 
+	public static final String ID_BUILDER = PLUGIN_ID + ".ajbuilder";
 
 	/**
 	 * The name of the default build config file for an AspectJ project
 	 */
-	public static final String DEFAULT_CONFIG_FILE = ".generated.lst"; 
+	public static final String DEFAULT_CONFIG_FILE = ".generated.lst";
 
-	public static final String UI_PLUGIN_ID = "org.eclipse.ajdt.ui"; 	
-	public static final String ID_NATURE = UI_PLUGIN_ID + ".ajnature"; 
+	public static final String UI_PLUGIN_ID = "org.eclipse.ajdt.ui";
+	public static final String ID_NATURE = UI_PLUGIN_ID + ".ajnature";
 
-	public static final String JAVA_NATURE_ID = "org.eclipse.jdt.core.javanature"; 
-	
-	public static final String AJ_FILE_EXT = "aj"; 
-	
-	public static final String ASPECTJRT_CONTAINER = PLUGIN_ID + ".ASPECTJRT_CONTAINER"; 
-	
+	public static final String JAVA_NATURE_ID = "org.eclipse.jdt.core.javanature";
+
+	public static final String AJ_FILE_EXT = "aj";
+
+	public static final String ASPECTJRT_CONTAINER = PLUGIN_ID + ".ASPECTJRT_CONTAINER";
+
 	// AspectJ keywords
-    public static final String[] ajKeywords = { "aspect", "pointcut", "privileged",   
+    public static final String[] ajKeywords = { "aspect", "pointcut", "privileged",
 		// Pointcut designators: methods and constructora
-		"call", "execution", "initialization", "preinitialization" ,    
+		"call", "execution", "initialization", "preinitialization" ,
 		// Pointcut designators: exception handlers
-		"handler", 
+		"handler",
 		// Pointcut designators: fields
-		"get", "set",  
+		"get", "set",
 		// Pointcut designators: static initialization
-		"staticinitialization", 
+		"staticinitialization",
 		// Pointcut designators: object
 		// (this already a Java keyword)
-		"target", "args",  
+		"target", "args",
 		// Pointcut designators: lexical extents
-		"within", "withincode",  
+		"within", "withincode",
 		// Pointcut designators: control flow
-		"cflow", "cflowbelow",  
+		"cflow", "cflowbelow",
 		// Pointcut Designators for annotations
-		"annotation", 
+		"annotation",
 		// Advice
-		"before", "after", "around", "proceed", "throwing" , "returning" ,      
-		"adviceexecution" , 
+		"before", "after", "around", "proceed", "throwing" , "returning" ,
+		"adviceexecution" ,
 		// Declarations
-		"declare", "parents" , "warning" , "error", "soft" , "precedence" , 
+		"declare", "parents" , "warning" , "error", "soft" , "precedence" ,
 		// variables
-		"thisJoinPoint" , "thisJoinPointStaticPart" , "thisEnclosingJoinPointStaticPart" , 
+		"thisJoinPoint" , "thisJoinPointStaticPart" , "thisEnclosingJoinPointStaticPart" ,
 		// Associations
-		"issingleton", "perthis", "pertarget", "percflow", "percflowbelow", "pertypewithin",  
+		"issingleton", "perthis", "pertarget", "percflow", "percflowbelow", "pertypewithin",
 		// Declare annotation
 		"@type", "@method", "@field", "@constructor",
-		
+
 		// Optional keywords
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=373584
 		"lock", "unlock", "thisAspectInstance"
-    }; 
-    
-    
-    public static final String[] declareAnnotationKeywords = { "type", "method", "field", "constructor" };   
-    
+    };
+
+
+    public static final String[] declareAnnotationKeywords = { "type", "method", "field", "constructor" };
+
 	/**
 	 * Folder separator used by Eclipse in paths irrespective if on Windows or
 	 * *nix.
 	 */
-	public static final String NON_OS_SPECIFIC_SEPARATOR = "/"; 
+	public static final String NON_OS_SPECIFIC_SEPARATOR = "/";
 
 	public static final boolean USING_CU_PROVIDER = checkForCUprovider();
-	
+
 
 	/**
 	 * The compiler factory
 	 */
 	private ICompilerFactory compilerFactory;
-	
+
 	/**
 	 * Is true if running with no UI.
 	 */
@@ -138,13 +138,13 @@ public class AspectJPlugin extends Plugin implements NoFFDC {
 				new CompilerConfigResourceChangeListener(),
 				IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
 		setCompilerFactory(new CoreCompilerFactory());
-		
+
 		try {
 		    initializeContentAssistProvider();
 		} catch (Throwable t) {
 		    // ignore, likely that JDT weaving plugin is not available
 		}
-		
+
 		AJProjectModelFacade.installListener();
 	}
 
@@ -194,21 +194,21 @@ public class AspectJPlugin extends Plugin implements NoFFDC {
 	 */
 	public static boolean isAJProject(IProject project) {
 		// Fix for 106707 - check that project is open
-		if(project != null && project.isAccessible()) {			
+		if(project != null && project.isAccessible()) {
 			try {
 				if (project.hasNature(ID_NATURE)) {
 					return true;
 				}
-			} catch (CoreException e) {
+			} catch (CoreException ignored) {
 			}
 		}
 		return false;
 	}
-			
+
 	public void setAJLogger(IAJLogger logger) {
 		AJLog.setLogger(logger);
 	}
-	
+
 	public ICompilerFactory getCompilerFactory() {
 		return compilerFactory;
 	}
@@ -216,15 +216,15 @@ public class AspectJPlugin extends Plugin implements NoFFDC {
 	public void setCompilerFactory(ICompilerFactory compilerFactory) {
 		this.compilerFactory = compilerFactory;
 	}
-	
+
 	public IEclipsePreferences getPreferences() {
         return InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 	}
-	
+
 	public void setHeadless(boolean isHeadless) {
         this.isHeadless = isHeadless;
     }
-	
+
 	public boolean isHeadless() {
         return isHeadless;
     }

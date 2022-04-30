@@ -84,7 +84,7 @@ public class AJMainMethodSearchEngine extends MainMethodSearchEngine {
           }
         }
       }
-      catch (Exception e) {
+      catch (Exception ignored) {
       }
       ajSearchMonitor.internalWorked(ticksPerProject);
       ajSearchMonitor.done();

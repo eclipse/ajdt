@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andy Clement - initial version
  *******************************************************************************/
@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -33,7 +32,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Example implementation of a markup provider.  Loads its information about the markups from 
+ * Example implementation of a markup provider.  Loads its information about the markups from
  * a file.  Manages the list of markups in a hashtable - the hashtable maps the member ID to
  * a list of 'Stripe instances' (markups).
  */
@@ -41,27 +40,27 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 
 	private Map colourMemory = new HashMap();
 	private Map availableColours = new HashMap();
-	
+
 	private Map allocatedColours = new HashMap(); // indexed by RGB
-	
+
 	// Indexed by FULL membername, each entry is a List of Stripe objects.
 	private Hashtable markups = null;
-	
+
 	private SortedSet markupKinds;
-	
-	
+
+
 	/**
 	 * Initialise the markup provider.  This simple implementation does nothing here.
 	 */
-	public void initialise() { 
+	public void initialise() {
 	}
-	
-	
+
+
 	/**
 	 * Get a List of Stripes for the given member, which are its markups.
 	 */
 	public List getMemberMarkups(IMember member) {
-		if(member != null && markups != null){	
+		if(member != null && markups != null){
 			Object o = markups.get(member.getFullname());
 			if(o instanceof List) {
 				return (List) markups.get(member.getFullname());
@@ -87,8 +86,8 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 			stripes.add(s);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Add a markup kind
 	 * @param kind
@@ -96,8 +95,8 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 	public void addMarkupKind(IMarkupKind kind) {
 		markupKinds.add(kind);
 	}
-	
-	
+
+
 	/**
 	 * Process all the Stripes that have been added to deal with the overlapping cases
 	 */
@@ -110,31 +109,31 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 	  }
 	}
 
-	
+
 	/**
 	 * Get the markups for a group. Group markups are a stacked set of member markups.
 	 */
-	public List getGroupMarkups(IGroup group) {		
+	public List getGroupMarkups(IGroup group) {
 		List stripes = new ArrayList();
 		List kids = group.getMembers();
 		int accumulatedOffset = 0;
-		
+
 		// Go through all the children of the group
-		for (Iterator iter = kids.iterator(); iter.hasNext();) {
-			IMember element = (IMember) iter.next();
-			List l = getMemberMarkups(element);
-			if (l != null) {
-				for (Iterator iterator = l.iterator(); iterator.hasNext();) {
-					Stripe elem = (Stripe) iterator.next();
-					stripes.add(new Stripe(elem.getKinds(), elem.getOffset() + accumulatedOffset, elem.getDepth()));
-				}
-			}
-			accumulatedOffset += element.getSize().intValue();
-		}	
+    for (Object kid : kids) {
+      IMember element = (IMember) kid;
+      List l = getMemberMarkups(element);
+      if (l != null) {
+        for (Object o : l) {
+          Stripe elem = (Stripe) o;
+          stripes.add(new Stripe(elem.getKinds(), elem.getOffset() + accumulatedOffset, elem.getDepth()));
+        }
+      }
+      accumulatedOffset += element.getSize();
+    }
 		return stripes;
 	}
-	
-	
+
+
 	/**
 	 * Get all the markup kinds.
 	 * @return a Set of IMarkupKinds
@@ -144,18 +143,18 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 		if (markups==null) return null;
 		if (markupKinds!=null) return markupKinds;
 		markupKinds = new TreeSet();
-		
+
 		Enumeration stripeLists = markups.elements();
 		while (stripeLists.hasMoreElements()) {
 			List stripelist = (List)stripeLists.nextElement();
-			for (Iterator iter = stripelist.iterator(); iter.hasNext();) {
-				Stripe element = (Stripe) iter.next();
-				markupKinds.addAll(element.getKinds());
-			}
+      for (Object o : stripelist) {
+        Stripe element = (Stripe) o;
+        markupKinds.addAll(element.getKinds());
+      }
 		}
 		return markupKinds;
 	}
-	
+
 
 // Color management
 
@@ -166,7 +165,7 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 	 */
 	public Color getColorFor(IMarkupKind kind){
 		Color stripeColour = null;
-		String p = "not unique"; //Note: String not displayed externally //$NON-NLS-1$ 
+		String p = "not unique"; //Note: String not displayed externally //$NON-NLS-1$
 		String key = p + ":" + kind.getFullName(); //$NON-NLS-1$
 		if (colourMemory.containsKey(key)) {
 			stripeColour = (Color) colourMemory.get(key);
@@ -177,7 +176,7 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 		return stripeColour;
 	}
 
-	
+
 	/**
 	 * Set the color for a kind.
 	 * @param kind - the kind
@@ -194,13 +193,13 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 	 * @return new Color
 	 */
 	protected Color getNextColourFor(String p) {
-		if (!availableColours.containsKey(p.toString())) {
+		if (!availableColours.containsKey(p)) {
 			RGB[] rgb = PaletteManager.getCurrentPalette().getPalette().getRGBValues();
 			List colourList = new ArrayList(Arrays.asList(rgb));
-			availableColours.put(p.toString(), colourList);
+			availableColours.put(p, colourList);
 		}
-		
-		List colours = (List) availableColours.get(p.toString());
+
+		List colours = (List) availableColours.get(p);
 		RGB v;
 		if (!colours.isEmpty()) {
 			v = (RGB) colours.get(0);
@@ -208,7 +207,7 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 		} else {
 			v = PaletteManager.getCurrentPalette().getPalette().getRandomRGBValue();
 		}
-				
+
 		Object obj = allocatedColours.get(v);
 		Color c;
 		if ((obj!=null) && (obj instanceof Color)) {
@@ -219,8 +218,8 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 		}
 		return c;
 	}
-	
-	
+
+
 	/**
 	 * Empty the data structures that contain the stripe and kind information
 	 */
@@ -228,8 +227,8 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 		markups = new Hashtable();
 		markupKinds = new TreeSet();
 	}
-	
-	
+
+
 	/**
 	 * Reset the color memory
 	 */
@@ -242,10 +241,10 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 	 * Reset the color memory
 	 */
 	private void disposeColors() {
-		for (Iterator iter = allocatedColours.keySet().iterator(); iter.hasNext();) {
-			Color c = (Color)allocatedColours.get(iter.next());
-			c.dispose();
-		}
+    for (Object o : allocatedColours.keySet()) {
+      Color c = (Color) allocatedColours.get(o);
+      c.dispose();
+    }
 		allocatedColours = new HashMap();
 	}
 

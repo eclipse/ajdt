@@ -139,7 +139,7 @@ public class ITDRenameRefactoringProvider implements IRefactoringProvider {
                 parser.setSource(clone);
                 ASTNode result = parser.createAST(null);
                 return result instanceof CompilationUnit ? (CompilationUnit) result : null;
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
         return null;

@@ -12,7 +12,6 @@
 package org.eclipse.ajdt.core.tests.search;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
@@ -45,7 +44,7 @@ import org.eclipse.jdt.internal.core.search.JavaSearchScope;
  *
  */
 public class AbstractITDSearchTest extends AJDTCoreTestCase {
-    class ITDAwareSearchRequestor extends SearchRequestor {
+    static class ITDAwareSearchRequestor extends SearchRequestor {
         List<SearchMatch> matches = new ArrayList<>();
         @Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {

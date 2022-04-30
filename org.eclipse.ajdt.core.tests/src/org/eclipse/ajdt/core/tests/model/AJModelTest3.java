@@ -13,7 +13,6 @@
 package org.eclipse.ajdt.core.tests.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -135,10 +134,10 @@ public class AJModelTest3 extends AJDTCoreTestCase {
 
 		// check that we found everything we were looking for
 		if (toFind.size() > 0) {
-			String missing = ""; //$NON-NLS-1$
+			StringBuilder missing = new StringBuilder(); //$NON-NLS-1$
       for (String s : toFind) {
-        missing += System.getProperty("line.separator"); //$NON-NLS-1$
-        missing += s;
+        missing.append(System.getProperty("line.separator")); //$NON-NLS-1$
+        missing.append(s);
       }
 			fail("Did not find all expected IProgramElement names. Missing: " + missing); //$NON-NLS-1$
 		}

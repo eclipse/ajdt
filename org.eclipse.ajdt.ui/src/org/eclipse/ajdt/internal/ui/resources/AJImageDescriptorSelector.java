@@ -30,7 +30,7 @@ public class AJImageDescriptorSelector implements IImageDescriptorSelector, NoFF
         } else {
             type = null;
         }
-        
+
         // this little hack will check to see if
         // the element is a pointcut or ITD
         if (element instanceof IMember) {
@@ -57,7 +57,7 @@ public class AJImageDescriptorSelector implements IImageDescriptorSelector, NoFF
                 }
             }
         }
-        
+
         if (type != null && isAspect(type)) {
             // we should be returning an aspect image descriptor
             if (Flags.isPublic(flags)) {
@@ -82,8 +82,8 @@ public class AJImageDescriptorSelector implements IImageDescriptorSelector, NoFF
         }
         return maybeAspect instanceof AspectElement;
     }
-    
-    
+
+
     public ImageDescriptor createCompletionProposalImageDescriptor(LazyJavaCompletionProposal proposal) {
         IJavaElement elt = proposal.getJavaElement();
         if (elt != null && elt.getElementType() == IJavaElement.TYPE && isAspect((IType) elt)) {
@@ -99,7 +99,7 @@ public class AJImageDescriptorSelector implements IImageDescriptorSelector, NoFF
                 } else if (Flags.isPrivate(flags)) {
                     return AspectJImages.ASPECT_PRIVATE.getImageDescriptor();
                 }
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }
         return null;

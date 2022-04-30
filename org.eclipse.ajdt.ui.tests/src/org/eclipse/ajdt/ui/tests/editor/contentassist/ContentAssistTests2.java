@@ -15,7 +15,6 @@ import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
 import org.eclipse.ajdt.internal.core.AJWorkingCopyOwner;
 import org.eclipse.ajdt.ui.tests.UITestCase;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.CompletionProposal;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 
 /**

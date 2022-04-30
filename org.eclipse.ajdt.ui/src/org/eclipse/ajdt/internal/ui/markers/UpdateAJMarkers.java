@@ -153,7 +153,7 @@ public class UpdateAJMarkers {
             subMonitor.worked(1);
           }
         }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
 
 	}
@@ -230,7 +230,7 @@ public class UpdateAJMarkers {
                 }
                 marker.setAttribute(IMarker.MESSAGE, label);
                 marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }
 
@@ -263,7 +263,7 @@ public class UpdateAJMarkers {
                 marker.setAttribute(
                         CustomMarkerImageProvider.IMAGE_LOCATION_ATTRIBUTE,
                         customMarkerType);
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }
     }

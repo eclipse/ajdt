@@ -170,7 +170,7 @@ public class AJSourceIndexerRequestor extends SourceIndexerRequestor {
                     super.acceptUnknownReference(newSplits, fieldInfo.nameSourceStart, fieldInfo.nameSourceEnd - splits[length-1].length -1);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -275,7 +275,7 @@ public class AJSourceIndexerRequestor extends SourceIndexerRequestor {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 }

@@ -11,7 +11,6 @@
 
 package org.eclipse.ajdt.internal.ui.editor.outline;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -219,7 +218,7 @@ public class AJOutlineInformationControl extends AbstractInformationControl {
 		return null;
 	}
 
-	private class OutlineTreeViewer extends TreeViewer {
+	private static class OutlineTreeViewer extends TreeViewer {
 
 		private boolean fIsFiltering= false;
 

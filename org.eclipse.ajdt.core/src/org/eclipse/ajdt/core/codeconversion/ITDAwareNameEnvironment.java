@@ -130,7 +130,7 @@ public class ITDAwareNameEnvironment extends
                 restrictionField.setAccessible(true);
             }
             return (AccessRestriction) restrictionField.get(answer);
-        } catch (IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException e) {
+        } catch (IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException ignored) {
         }
       return null;
     }

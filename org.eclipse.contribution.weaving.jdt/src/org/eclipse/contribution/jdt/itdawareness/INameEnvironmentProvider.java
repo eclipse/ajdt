@@ -40,7 +40,6 @@ public interface INameEnvironmentProvider {
 
     ISourceType transformSourceTypeInfo(ISourceType info);
 
-    @SuppressWarnings("unchecked")
     CompilationUnitDeclaration problemFind(
             CompilationUnit unitElement,
             SourceElementParser parer,

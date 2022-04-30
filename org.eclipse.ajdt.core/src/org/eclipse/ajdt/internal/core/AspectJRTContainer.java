@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ajdt.internal.core;
 
-import java.io.IOException;
-
 import org.eclipse.ajdt.core.AspectJPlugin;
 import org.eclipse.ajdt.core.CoreUtils;
 import org.eclipse.ajdt.core.text.CoreMessages;

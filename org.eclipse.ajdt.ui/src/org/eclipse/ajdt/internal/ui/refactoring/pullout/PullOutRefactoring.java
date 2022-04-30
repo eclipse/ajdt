@@ -169,7 +169,7 @@ public class PullOutRefactoring extends Refactoring {
                     //If not null, it means we already added it, because the aspect is
                     //in the same CU as some pulled out members.
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
         }
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Ford - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class RemoveFromInpathAction extends AJBuildPathAction implements IObject
 					cpEntry = root.getRawClasspathEntry();
 					enable = AspectJCorePreferences.isOnInpath(cpEntry);
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 			action.setEnabled(enable);
 		}

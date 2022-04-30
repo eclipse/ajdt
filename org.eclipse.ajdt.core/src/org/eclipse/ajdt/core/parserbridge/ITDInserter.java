@@ -208,7 +208,7 @@ public class ITDInserter extends ASTVisitor {
                                 } else if (parentElt != null && parentElt.isInterface()) {
                                     interfacesToAdd.add(parent);
                                 }
-                            } catch (JavaModelException e) { }
+                            } catch (JavaModelException ignored) { }
                         }
                         addSuperInterfaces(interfacesToAdd, type);
                     }
@@ -595,7 +595,7 @@ public class ITDInserter extends ASTVisitor {
             if (maybeType != null && maybeType.getElementType() == IJavaElement.TYPE) {
                 return (IType) maybeType;
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         try {
             // try getting by name
@@ -603,7 +603,7 @@ public class ITDInserter extends ASTVisitor {
             if (type != null) {
                 return type;
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         // this type does not exist, but create a mock one anyway
         return unit.getType(typeName);

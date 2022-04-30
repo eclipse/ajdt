@@ -278,7 +278,7 @@ public class ITDAccessorRenameParticipant extends RenameParticipant {
                     scope, requestor, new NullProgressMonitor());
             return requestor.getResults();
         }
-        catch (CoreException e) {
+        catch (CoreException ignored) {
         }
 
       return Collections.emptyList();
@@ -373,7 +373,7 @@ public class ITDAccessorRenameParticipant extends RenameParticipant {
                 thisField = fRenameSetterField;
             }
             return thisField.getBoolean(processor);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }

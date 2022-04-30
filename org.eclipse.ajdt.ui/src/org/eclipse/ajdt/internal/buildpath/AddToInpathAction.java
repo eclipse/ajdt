@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matthew Ford - initial API and implementation
  *******************************************************************************/
@@ -39,14 +39,14 @@ public class AddToInpathAction extends AJBuildPathAction implements IObjectActio
             }
             newEntry = AspectJCorePreferences.ensureHasAttribute(newEntry, AspectJCorePreferences.INPATH_ATTRIBUTE_NAME, AspectJCorePreferences.INPATH_ATTRIBUTE_NAME);
             AspectJCorePreferences.updateClasspathEntry(project, newEntry);
-            
+
 		} else {
 			String jarPath = jarFile.getFullPath().toPortableString();
 			AspectJCorePreferences.addToInPath(project,jarPath,IClasspathEntry.CPE_LIBRARY);
 		}
 		AJDTUtils.refreshPackageExplorer();
 	}
-	
+
 	public void selectionChanged(IAction action, ISelection sel) {
 		boolean enable = false;
 		if (sel instanceof IStructuredSelection) {
@@ -71,7 +71,7 @@ public class AddToInpathAction extends AJBuildPathAction implements IObjectActio
 	                      fileName = jarFile.getName();
 					}
 				}
-			} catch (JavaModelException e) {
+			} catch (JavaModelException ignored) {
 			}
 			action.setEnabled(enable);
 		}

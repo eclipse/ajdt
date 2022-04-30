@@ -81,7 +81,7 @@ public class Builder extends IncrementalProjectBuilder {
 					project
 							.build(IncrementalProjectBuilder.FULL_BUILD,
 									monitor);
-				} catch (CoreException e) {
+				} catch (CoreException ignored) {
 				}
 				return Status.OK_STATUS;
 			}

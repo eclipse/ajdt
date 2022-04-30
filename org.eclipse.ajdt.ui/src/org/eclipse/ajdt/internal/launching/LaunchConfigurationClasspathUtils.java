@@ -302,11 +302,11 @@ public class LaunchConfigurationClasspathUtils {
 						mementos.add(entry.getMemento());
 					wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
 				}
-				catch (CoreException e) { }
+				catch (CoreException ignored) { }
 				wc.doSave();
 			}
 		}
-		catch (CoreException e1) { }
+		catch (CoreException ignored) { }
 	}
 
 }

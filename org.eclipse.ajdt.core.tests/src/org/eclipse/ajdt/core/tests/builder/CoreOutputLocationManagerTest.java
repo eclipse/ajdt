@@ -3,8 +3,8 @@
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation 
+ *
+ * Contributors: IBM Corporation - initial API and implementation
  * 				 Matt Chapman   - initial version
  *               Helen Hawkins - updated for new ajde interface (bug 148190)
  ******************************************************************************/
@@ -77,7 +77,7 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
 				.endsWith("bin")); //$NON-NLS-1$
 		om.buildComplete();
 	}
-	
+
 	public void testOutputLocationManagerBug160846() throws Exception {
 		IProject project = createPredefinedProject("bug160846"); //$NON-NLS-1$
         FileURICache fileCache = new FileURICache(project);
@@ -98,7 +98,7 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
 				.endsWith("test-classes")); //$NON-NLS-1$
 		om.buildComplete();
 	}
-	
+
 	public void testInpathOutLocation() throws Exception {
 	    IProject project1 = createPredefinedProject("ExportAsJar"); //$NON-NLS-1$
 	    IProject project2 = createPredefinedProject("JarOnInpath"); //$NON-NLS-1$
@@ -113,10 +113,10 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
                 .endsWith("InpathOut")); //$NON-NLS-1$
         om.buildComplete();
 	}
-	
-	
-	class MockCoreOutputLocationManager extends CoreOutputLocationManager {
-	    
+
+
+	static class MockCoreOutputLocationManager extends CoreOutputLocationManager {
+
 	    public MockCoreOutputLocationManager(IProject project, FileURICache fileCache) {
             super(project, fileCache);
         }
@@ -126,7 +126,7 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
 	        return super.findDeclaringProject(outputFolder);
 	    }
 	}
-	
+
 	/**
 	 * tests {@link CoreOutputLocationManagaer#findDeclaringProject }
 	 */
@@ -138,7 +138,7 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
         createContainer(base);
 
         MockCoreOutputLocationManager com = new MockCoreOutputLocationManager(base, new FileURICache(base));
-        
+
         checkFileForDeclaringProject(base.getFolder("bin"), com, base);
         checkFileForDeclaringProject(base.getFolder("bin2"), com, base);
         checkFileForDeclaringProject(base.getFolder("binaryFolder"), com, base);
@@ -152,7 +152,7 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
         checkFileForDeclaringProject(level1.getFile("myJar.jar"), com, null);  // jar files are not included
         checkFileForDeclaringProject(level2.getFolder("bin"), com, level2);
 	}
-	
+
 	/**
 	 * tests bug 279497 when a required project uses root as the source folder
 	 * an IllegalArgumentException was being thrown
@@ -160,27 +160,27 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
 	public void testFindDeclaringProjectWithSrcAsRoot() throws Exception {
         IProject base = createPredefinedProject("Bug279497AJ");
         IProject required = createPredefinedProject("Bug279497RootAsSourceFolder");
-        
+
         MockCoreOutputLocationManager com = new MockCoreOutputLocationManager(base, new FileURICache(base));
         checkFileForDeclaringProject(required, com, required);
     }
-	
+
 	void checkFileForDeclaringProject(IResource resource, MockCoreOutputLocationManager com, IProject expected) {
 	    File file = new File(resource.getLocationURI());
 	    IProject actual = com.findDeclaringProject(file);
 	    assertEquals("wrong declaring project found for " + resource, expected, actual);
 	}
-	
+
 
     private void createVariable(IProject base) throws JavaModelException {
-        JavaCore.setClasspathVariable("DECLARING_PARENT_VAR", 
+        JavaCore.setClasspathVariable("DECLARING_PARENT_VAR",
                 base.getFile("myJarVar.jar").getFullPath(), null); //$NON-NLS-1$
     }
 
     private IClasspathContainer createContainer(IProject base) throws JavaModelException {
-        final IClasspathEntry entry = 
+        final IClasspathEntry entry =
             JavaCore.newLibraryEntry(
-                    base.getFile("myJarContainer.jar").getFullPath(), 
+                    base.getFile("myJarContainer.jar").getFullPath(),
                     null, null);
 
         IClasspathContainer container = new IClasspathContainer() {
@@ -197,7 +197,7 @@ public class CoreOutputLocationManagerTest extends AJDTCoreTestCase {
                 return new Path("org.eclipse.jdt.USER_LIBRARY/DECLARING_PROJECT_CONTAINER"); //$NON-NLS-1$
             }
         };
-        JavaCore.setClasspathContainer(container.getPath(), new IJavaProject[] { JavaCore.create(base) }, 
+        JavaCore.setClasspathContainer(container.getPath(), new IJavaProject[] { JavaCore.create(base) },
                 new IClasspathContainer[] { container }, null);
         return container;
     }

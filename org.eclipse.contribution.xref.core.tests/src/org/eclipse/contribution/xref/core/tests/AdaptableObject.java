@@ -28,7 +28,7 @@ public class AdaptableObject implements IAdaptable {
         this.o = o;
     }
 
-    public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
+    public Object getAdapter(Class adapter) {
         if (String.class == adapter) {
             return o;
         }

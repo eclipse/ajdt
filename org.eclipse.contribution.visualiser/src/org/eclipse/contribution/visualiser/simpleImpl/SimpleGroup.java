@@ -1,17 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andy Clement - initial version
  *******************************************************************************/
 package org.eclipse.contribution.visualiser.simpleImpl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.contribution.visualiser.interfaces.IGroup;
@@ -22,7 +21,7 @@ import org.eclipse.contribution.visualiser.text.VisualiserMessages;
  * Simple implementation of a group, see IGroup/IMember for more information.
  */
 public class SimpleGroup implements IGroup {
-	
+
 	protected String name;
 	protected String tooltip;
 	protected List kids = new ArrayList();
@@ -35,8 +34,8 @@ public class SimpleGroup implements IGroup {
 	public SimpleGroup(String n) {
 		name = n;
 	}
-	
-	
+
+
 	/**
 	 * Get the full name for the group.  In this implementation this is
 	 * the same as the name.
@@ -53,8 +52,8 @@ public class SimpleGroup implements IGroup {
 		kids.add(m);
 		m.setContainingGroup(this);
 	}
-	
-	
+
+
 	/**
 	 * Get all the members contained in this group
 	 */
@@ -69,8 +68,8 @@ public class SimpleGroup implements IGroup {
 	public void setName(String string) {
 		name = string;
 	}
-	
-	
+
+
 	/**
 	 * Get the name of this group
 	 */
@@ -85,8 +84,8 @@ public class SimpleGroup implements IGroup {
 	public void setTooltip(String string) {
 		tooltip = string;
 	}
-	
-	
+
+
 	/**
 	 * Get this group's tooltip
 	 */
@@ -104,34 +103,33 @@ public class SimpleGroup implements IGroup {
 	 */
 	public void setSize(int size) {
 	}
-	
-	
+
+
 	/**
 	 * Get the size for this group.  This is the sum of all sizes of its members.
 	 */
 	public Integer getSize() {
 		int s = 0;
-		Iterator i = kids.iterator();
-		while (i.hasNext()) {
-			IMember im = (IMember) i.next();
-			s += im.getSize().intValue();
-		}
-		return new Integer(s);
+    for (Object kid : kids) {
+      IMember im = (IMember) kid;
+      s += im.getSize();
+    }
+		return s;
 	}
 
-	
-	/** 
+
+	/**
 	 * Get the containing group. This currently has no meaning for groups and returns null
-	 * as a group cannot be nested within another group.  
+	 * as a group cannot be nested within another group.
 	 */
 	public IGroup getContainingGroup() {
 		return null;
 	}
-	
-	
+
+
 	/**
-	 * Set the containing group.  Does nothing as a group cannot be nested within another 
-	 * group. 
+	 * Set the containing group.  Does nothing as a group cannot be nested within another
+	 * group.
 	 */
 	public void setContainingGroup(IGroup grp) {}
 

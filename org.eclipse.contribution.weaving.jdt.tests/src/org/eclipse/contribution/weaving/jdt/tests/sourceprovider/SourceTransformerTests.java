@@ -127,7 +127,7 @@ public class SourceTransformerTests extends WeavingTestCase {
     }
 
 
-    class MockType extends BinaryType {
+    static class MockType extends BinaryType {
 
         protected MockType(JavaElement parent, String name) {
             super(parent, name);
@@ -140,7 +140,7 @@ public class SourceTransformerTests extends WeavingTestCase {
 
     }
 
-    class MockSourceMaper extends SourceMapper {
+    static class MockSourceMaper extends SourceMapper {
         boolean sourceMapped = false;
 
         public void mapSource(NamedMember typeOrModule, char[] contents, IBinaryType info) {
@@ -160,7 +160,7 @@ public class SourceTransformerTests extends WeavingTestCase {
 //        }
     }
 
-    class MockBinaryInfo implements IBinaryType {
+    static class MockBinaryInfo implements IBinaryType {
 
         public IBinaryAnnotation[] getAnnotations() {
             return null;

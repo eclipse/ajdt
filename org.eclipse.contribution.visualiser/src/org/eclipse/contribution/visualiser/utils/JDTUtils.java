@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Sian Whiting - initial version
  *******************************************************************************/
@@ -40,13 +40,13 @@ public class JDTUtils {
 				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 			}
 			openInEditor(marker);
-			marker.delete();			
+			marker.delete();
 		}
 		catch (CoreException coreEx) {
 			VisualiserPlugin.logException(coreEx);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Open the editor at the location of the given marker.
 	 * @param marker
@@ -59,7 +59,7 @@ public class JDTUtils {
 			VisualiserPlugin.logException(e);
 		}
 	}
-	
+
 	/**
 	 * Get the line number for the class declaration in the given IJavaElement,
 	 * which should be an ICompilationUnit.  If not found returns 0.
@@ -78,15 +78,15 @@ public class JDTUtils {
 				jme.printStackTrace();
 			}
 		}
-		return 0;		
+		return 0;
 	}
-	
+
 	/**
 	 * Get the line number for the given offset in the given ICompilationUnit
-	 * 
+	 *
 	 * @param ICompilationUnit
 	 * @param offSet
-	 * 
+	 *
 	 * @return int lineNumber
 	 */
 	private static int getLineNumFromOffset(ICompilationUnit cUnit, int offSet){
@@ -102,21 +102,21 @@ public class JDTUtils {
 					sourcetodeclaration.length(),
 					chars,
 					0);
-				for (int i = 0; i < chars.length; i++) {
-					if (chars[i] == '\n') {
-						lines++;
-					}
-				}
+        for (char aChar : chars) {
+          if (aChar == '\n') {
+            lines++;
+          }
+        }
 				return lines + 1;
 			}
 		} catch (JavaModelException jme) {
 			jme.printStackTrace();
 		}
-		return 0;		
+		return 0;
 	}
 
 	public static int getLineNumber(ICompilationUnit cUnit, int offSet) {
 		return getLineNumFromOffset(cUnit, offSet);
 	}
-	
+
 }

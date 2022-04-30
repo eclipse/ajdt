@@ -73,7 +73,7 @@ public class AopXmlPreferencePage extends PropertyPage implements
         }
     }
 
-    private class AopXmlLabelProvider implements ILabelProvider {
+    private static class AopXmlLabelProvider implements ILabelProvider {
 
         private final Image image = AspectJImages.AOP_XML.getImageDescriptor().createImage();
 

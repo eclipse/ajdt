@@ -20,7 +20,6 @@ import org.eclipse.ajdt.internal.ui.text.UIMessages;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -183,7 +182,7 @@ oldToNewNames);
 }
 }
 }
-catch (JavaModelException e) {
+catch (JavaModelException ignored) {
 }
 }
 monitor.worked(1);
@@ -192,7 +191,7 @@ monitor.worked(1);
             RenamingUtils.updateBuildConfigurations(oldToNewNames, project,
               monitor);
         }
-      } catch (JavaModelException e) {
+      } catch (JavaModelException ignored) {
       }
     };
 
@@ -200,7 +199,7 @@ monitor.worked(1);
 				runnable);
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, true, op);
-		} catch (InvocationTargetException | InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException ignored) {
 		}
   }
 
@@ -254,7 +253,7 @@ monitor, oldNamesToNewNames);
 }
 }
 }
-catch (JavaModelException e) {
+catch (JavaModelException ignored) {
 }
 }
 monitor.worked(1);
@@ -263,7 +262,7 @@ monitor.worked(1);
             RenamingUtils.updateBuildConfigurations(oldNamesToNewNames, project,
               monitor);
         }
-      } catch (JavaModelException e) {
+      } catch (JavaModelException ignored) {
       }
     };
 
@@ -271,7 +270,7 @@ monitor.worked(1);
 				runnable);
 		try {
 			new ProgressMonitorDialog(getShell()).run(true, true, op);
-		} catch (InvocationTargetException | InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException ignored) {
 		}
 
   }

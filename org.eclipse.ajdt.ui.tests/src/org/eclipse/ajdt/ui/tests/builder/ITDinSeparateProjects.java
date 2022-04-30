@@ -36,7 +36,7 @@ public class ITDinSeparateProjects extends UITestCase {
             // force the enabling of this warning, which has been disabled earlier
             try {
                 JavaCore.create(project).setOption("org.eclipse.jdt.core.compiler.problem.missingSerialVersion", "warning"); //$NON-NLS-1$ //$NON-NLS-2$
-            } catch (NullPointerException npe) {
+            } catch (NullPointerException ignored) {
             }
 
             project.build(IncrementalProjectBuilder.CLEAN_BUILD, null);

@@ -155,7 +155,7 @@ public class AJMarkersDialog extends Dialog {
 		});
 		try {
 			addAspects(table);
-		} catch (CoreException e1) {
+		} catch (CoreException ignored) {
 		}
 		iconsColumn.pack();
 		aspectsColumn.pack();
@@ -165,8 +165,8 @@ public class AJMarkersDialog extends Dialog {
 
 	private void addAspects(Table table) throws CoreException {
 		List<? extends AJCompilationUnit> ajcus = AJCompilationUnitManager.INSTANCE.getAJCompilationUnits(JavaCore.create(project));
-    for (Object o : ajcus) {
-      AJCompilationUnit unit = (AJCompilationUnit) o;
+    for (AJCompilationUnit o : ajcus) {
+      AJCompilationUnit unit = o;
       IType[] types = unit.getAllTypes();
       for (IType type : types) {
         if (type instanceof AspectElement) {
@@ -212,7 +212,7 @@ public class AJMarkersDialog extends Dialog {
 		int flags = Flags.AccPublic;
 		try {
 			flags = type.getFlags();
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		if (Flags.isPublic(flags)) {
 			return AspectJImages.instance().getRegistry().get(AspectJImages.ASPECT_PUBLIC.getImageDescriptor());
@@ -230,10 +230,10 @@ public class AJMarkersDialog extends Dialog {
 		if(type.getPackageFragment().isDefaultPackage()) {
 			return type.getElementName() + " - " + UIMessages.AJMarkersDialog_defaultPackage;	 //$NON-NLS-1$
 		} else {
-			String name = type.getPackageFragment().getElementName();
+			StringBuilder name = new StringBuilder(type.getPackageFragment().getElementName());
       for (char[] enclosingType : enclosingTypes) {
-        name += "."; //$NON-NLS-1$
-        name += new String(enclosingType);
+        name.append("."); //$NON-NLS-1$
+        name.append(new String(enclosingType));
       }
 			return type.getElementName() + " - " + name; //$NON-NLS-1$
 		}
@@ -241,16 +241,16 @@ public class AJMarkersDialog extends Dialog {
 
 	public static String getFullyQualifiedAspectName(IType type) {
 		char[][] enclosingTypes = AJDTUtils.getEnclosingTypes(type);
-		String name = type.getPackageFragment().getElementName();
-		if(name != null && !name.equals("")) { //$NON-NLS-1$
-			name += "."; //$NON-NLS-1$
+		StringBuilder name = new StringBuilder(type.getPackageFragment().getElementName());
+		if(name != null && !name.toString().equals("")) { //$NON-NLS-1$
+			name.append("."); //$NON-NLS-1$
 		}
     for (char[] enclosingType : enclosingTypes) {
-      name += new String(enclosingType);
-      name += "."; //$NON-NLS-1$
+      name.append(new String(enclosingType));
+      name.append("."); //$NON-NLS-1$
     }
-		name += type.getElementName();
-		return name;
+		name.append(type.getElementName());
+		return name.toString();
 	}
 
 	protected void okPressed() {
@@ -507,7 +507,7 @@ public class AJMarkersDialog extends Dialog {
 	/**
 	 * Dialog used to select gif or png image files from the project
 	 */
-	public class MarkerImageSelectionDialog extends Dialog {
+	public static class MarkerImageSelectionDialog extends Dialog {
 
     	private String selection;
     	private String fileName;
@@ -595,7 +595,7 @@ public class AJMarkersDialog extends Dialog {
                 }
               }
 							return children.toArray();
-						} catch (CoreException e) {
+						} catch (CoreException ignored) {
 						}
 					}
 					return new Object[0];

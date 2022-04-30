@@ -151,7 +151,7 @@ public class JavaCorrectionAssistant extends QuickAssistAssistant {
 			return super.showPossibleQuickAssists();
 
 
-		ArrayList resultingAnnotations= new ArrayList(20);
+		ArrayList<Annotation> resultingAnnotations= new ArrayList<>(20);
 		try {
 			Point selectedRange= fViewer.getSelectedRange();
 			int currOffset= selectedRange.x;
@@ -167,7 +167,7 @@ public class JavaCorrectionAssistant extends QuickAssistAssistant {
 		} catch (BadLocationException e) {
 			JavaPlugin.log(e);
 		}
-		fCurrentAnnotations= (Annotation[]) resultingAnnotations.toArray(new Annotation[0]);
+		fCurrentAnnotations= resultingAnnotations.toArray(new Annotation[0]);
 
 		return super.showPossibleQuickAssists();
 	}
@@ -185,55 +185,58 @@ public class JavaCorrectionAssistant extends QuickAssistAssistant {
 		return document.getLineInformationOfOffset(invocationLocation);
 	}
 
-	public static int collectQuickFixableAnnotations(ITextEditor editor, int invocationLocation, boolean goToClosest, ArrayList resultingAnnotations) throws BadLocationException {
-		IAnnotationModel model= JavaUI.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
-		if (model == null) {
+	public static int collectQuickFixableAnnotations(
+		ITextEditor editor,
+		int invocationLocation,
+		boolean goToClosest,
+		ArrayList<Annotation> resultingAnnotations
+	) throws BadLocationException
+	{
+		IAnnotationModel model = JavaUI.getDocumentProvider().getAnnotationModel(editor.getEditorInput());
+		if (model == null)
 			return invocationLocation;
-		}
 
 		ensureUpdatedAnnotations(editor);
 
-		Iterator<Annotation> iter= model.getAnnotationIterator();
+		Iterator<Annotation> iter = model.getAnnotationIterator();
 		if (goToClosest) {
-			IRegion lineInfo= getRegionOfInterest(editor, invocationLocation);
-			if (lineInfo == null) {
+			IRegion lineInfo = getRegionOfInterest(editor, invocationLocation);
+			if (lineInfo == null)
 				return invocationLocation;
-			}
-			int rangeStart= lineInfo.getOffset();
-			int rangeEnd= rangeStart + lineInfo.getLength();
+			int rangeStart = lineInfo.getOffset();
+			int rangeEnd = rangeStart + lineInfo.getLength();
 
-			ArrayList allAnnotations= new ArrayList();
-			ArrayList allPositions= new ArrayList();
-			int bestOffset= Integer.MAX_VALUE;
+			ArrayList<Annotation> allAnnotations = new ArrayList<>();
+			ArrayList<Position> allPositions = new ArrayList<>();
+			int bestOffset = Integer.MAX_VALUE;
 			while (iter.hasNext()) {
-				Annotation annot= (Annotation) iter.next();
+				Annotation annot = iter.next();
 				if (JavaCorrectionProcessor.isQuickFixableType(annot)) {
-					Position pos= model.getPosition(annot);
+					Position pos = model.getPosition(annot);
 					if (pos != null && isInside(pos.offset, rangeStart, rangeEnd)) { // inside our range?
 						allAnnotations.add(annot);
 						allPositions.add(pos);
-						bestOffset= processAnnotation(annot, pos, invocationLocation, bestOffset);
+						bestOffset = processAnnotation(annot, pos, invocationLocation, bestOffset);
 					}
 				}
 			}
 			if (bestOffset == Integer.MAX_VALUE) {
 				return invocationLocation;
 			}
-			for (int i= 0; i < allPositions.size(); i++) {
-				Position pos= (Position) allPositions.get(i);
-				if (isInside(bestOffset, pos.offset, pos.offset + pos.length)) {
+			for (int i = 0; i < allPositions.size(); i++) {
+				Position pos = allPositions.get(i);
+				if (isInside(bestOffset, pos.offset, pos.offset + pos.length))
 					resultingAnnotations.add(allAnnotations.get(i));
-				}
 			}
 			return bestOffset;
-		} else {
+		}
+		else {
 			while (iter.hasNext()) {
-				Annotation annot= (Annotation) iter.next();
+				Annotation annot = iter.next();
 				if (JavaCorrectionProcessor.isQuickFixableType(annot)) {
-					Position pos= model.getPosition(annot);
-					if (pos != null && isInside(invocationLocation, pos.offset, pos.offset + pos.length)) {
+					Position pos = model.getPosition(annot);
+					if (pos != null && isInside(invocationLocation, pos.offset, pos.offset + pos.length))
 						resultingAnnotations.add(annot);
-					}
 				}
 			}
 			return invocationLocation;

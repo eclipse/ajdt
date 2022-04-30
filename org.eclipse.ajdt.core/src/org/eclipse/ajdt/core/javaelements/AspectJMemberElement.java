@@ -127,7 +127,7 @@ protected char getHandleMementoDelimiter() {
 public String getKey() {
 	try {
 		return getKey(this, true);
-	} catch (JavaModelException e) {
+	} catch (JavaModelException ignored) {
 	}
 	return ""; //$NON-NLS-1$
 }

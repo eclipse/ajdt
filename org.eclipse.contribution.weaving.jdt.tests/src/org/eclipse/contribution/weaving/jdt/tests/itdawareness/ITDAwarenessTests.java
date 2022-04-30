@@ -101,7 +101,6 @@ public class ITDAwarenessTests extends WeavingTestCase {
     }
 
 
-    @SuppressWarnings("unchecked")
     public void testFindProblemsInJavaProject() throws Exception {
         IFile nothingJava = java.getFile("src/nothing/Nothing.java");
         ICompilationUnit nothingCU = (ICompilationUnit) JavaCore.create(nothingJava);
@@ -112,7 +111,6 @@ public class ITDAwarenessTests extends WeavingTestCase {
         assertFalse("Should not have triggered problem finding through the aspects", nameEnvironmentProvider.problemFindingDone);
     }
 
-    @SuppressWarnings("unchecked")
     public void testFindProblemsInMockProject() throws Exception {
         IFile nothingMock = mock.getFile("src/nothing/Nothing.java");
         ICompilationUnit nothingCU = (ICompilationUnit) JavaCore.create(nothingMock);
@@ -136,7 +134,7 @@ public class ITDAwarenessTests extends WeavingTestCase {
         if (completions.length < 1 || completions.length > 3) {
             StringBuilder sb = new StringBuilder();
           for (ICompletionProposal completion : completions) {
-            sb.append("\n" + completion.getDisplayString());
+            sb.append("\n").append(completion.getDisplayString());
           }
             fail("Should have found 1, 2, or 3 completion proposals, but instead found: " + completions.length + sb);
         }

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Sian January - initial implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.texteditor.IAnnotationImageProvider;
 import org.eclipse.ui.texteditor.SimpleMarkerAnnotation;
 
 public class CustomMarkerImageProvider implements IAnnotationImageProvider {
-	
+
 	public static final String IMAGE_LOCATION_ATTRIBUTE = "Image_Location"; //$NON-NLS-1$
 
 	public static final ImageDescriptor[] sampleImageDescriptors = new ImageDescriptor[] {
@@ -45,7 +45,7 @@ public class CustomMarkerImageProvider implements IAnnotationImageProvider {
 		AspectJImages.JUNIT_SAMPLE.getImageDescriptor(),
 		AspectJImages.PROGRESS_SAMPLE.getImageDescriptor()
 	};
-	
+
 	public static final String[] sampleImageLocations = new String[] {
 		"SAMPLE_0", //$NON-NLS-1$
 		"SAMPLE_1", //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class CustomMarkerImageProvider implements IAnnotationImageProvider {
 			UIMessages.CustomMarkerImageProvider_Circle,
 			UIMessages.CustomMarkerImageProvider_Clock,
 			UIMessages.CustomMarkerImageProvider_Cog,
-			UIMessages.CustomMarkerImageProvider_Cross, 
+			UIMessages.CustomMarkerImageProvider_Cross,
 			UIMessages.CustomMarkerImageProvider_Debug,
 			UIMessages.CustomMarkerImageProvider_Document,
 			UIMessages.CustomMarkerImageProvider_Exclamation,
@@ -83,7 +83,7 @@ public class CustomMarkerImageProvider implements IAnnotationImageProvider {
 			UIMessages.CustomMarkerImageProvider_JUnit,
 			UIMessages.CustomMarkerImageProvider_Progress
 		};
-	
+
 	public Image getManagedImage(Annotation annotation) {
 		if(annotation instanceof SimpleMarkerAnnotation) {
 			String imageLocation = ((SimpleMarkerAnnotation)annotation).getMarker().getAttribute(IMAGE_LOCATION_ATTRIBUTE, null);
@@ -113,21 +113,21 @@ public class CustomMarkerImageProvider implements IAnnotationImageProvider {
 	public ImageDescriptor getImageDescriptor(String imageDescritporId) {
 		if(imageDescritporId.startsWith("SAMPLE")) { //$NON-NLS-1$
 			String[] split = imageDescritporId.split("_"); //$NON-NLS-1$
-			int index = Integer.parseInt(split[1]);	
+			int index = Integer.parseInt(split[1]);
 			return sampleImageDescriptors[index];
 		}
 		return null;
 	}
 
 	public static Image getImage(String imageLocation) {
-		IFile file = AspectJPlugin.getWorkspace().getRoot().getFile(new Path(imageLocation));							
+		IFile file = AspectJPlugin.getWorkspace().getRoot().getFile(new Path(imageLocation));
 		ImageDescriptor id;
 		try {
 			id = ImageDescriptor.createFromURL(file.getLocationURI().toURL());
 			return AspectJImages.instance().getRegistry().get(id);
-		} catch (MalformedURLException e) {
+		} catch (MalformedURLException ignored) {
 		}
-		return null;		
+		return null;
 	}
 
 }

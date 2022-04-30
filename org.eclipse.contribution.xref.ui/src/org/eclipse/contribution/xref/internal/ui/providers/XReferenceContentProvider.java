@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Helen Hawkins   - iniital version
@@ -13,6 +13,7 @@ package org.eclipse.contribution.xref.internal.ui.providers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class XReferenceContentProvider
 			return new Object[0];
 		if (parent.equals(input)) {
 			return getChildren(invisibleRoot);
-		}  
+		}
 		return getChildren(parent);
 	}
 
@@ -93,19 +94,18 @@ public class XReferenceContentProvider
 			IXReferenceAdapter xreferenceAdapter = (IXReferenceAdapter) input;
 			createXRefTree(xreferenceAdapter);
 		} else if (input != null && (input instanceof List)) {
-			for (Iterator iter = ((List)input).iterator(); iter.hasNext();) {
-				Object o = iter.next();
-				if (o instanceof IXReferenceAdapter) {
-					createXRefTree((IXReferenceAdapter)o);
-				}
-			}
+      for (Object o : (List) input) {
+        if (o instanceof IXReferenceAdapter) {
+          createXRefTree((IXReferenceAdapter) o);
+        }
+      }
 		} else if (input != null) {
 			TreeParent root = new TreeParent(input.getClass().getName());
 			root.setData(input);
 			invisibleRoot.addChild(root);
 		}
 	}
-	
+
 	private void createXRefTree(IXReferenceAdapter xreferenceAdapter) {
 		TreeParent root = new TreeParent(xreferenceAdapter.toString());
 		root.setData(xreferenceAdapter.getReferenceSource());
@@ -132,76 +132,72 @@ public class XReferenceContentProvider
 			IJavaElement[] extra = xreferenceAdapter.getExtraChildren(je);
 			List l = new ArrayList();
 			IJavaElement[] children = je.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				l.add(children[i]);
-			}
+      Collections.addAll(l, children);
 			if (extra!=null) {
-				for (int i = 0; i < extra.length; i++) {
-					l.add(extra[i]);
-				}
+        Collections.addAll(l, extra);
 			}
 			children = (IJavaElement[])l.toArray(new IJavaElement[]{});
-			for (int i = 0; i < children.length; i++) {
-				IJavaElement child = children[i];
-				IAdaptable a = child;
-				IXReferenceAdapter xrefAdapterChild = null;
-				if (a != null) {
-					xrefAdapterChild =
-						(IXReferenceAdapter) a.getAdapter(
-							IXReferenceAdapter.class);
-				}
-				if (xrefAdapterChild != null) {
-					TreeParent childNode =
-						new TreeParent(xrefAdapterChild.toString());
-					childNode.setData(
-						xrefAdapterChild.getReferenceSource());
-					Collection xrc = xrefAdapterChild.getXReferences();
-					if (!xrc.isEmpty()) {
-						parent.addChild(childNode);
-						addXReferencesToTree(childNode, xrc);
-						JavaElement subJe = (JavaElement)child;
-						hasChildren = true;
-						
-						if ((xreferenceAdapter.getExtraChildren(subJe) != null
-								&& xreferenceAdapter.getExtraChildren(subJe).length > 0) 
-								|| subJe.getChildren().length > 0) {
-							addChildren(childNode,subJe,xreferenceAdapter);
-						}
-						
-					} else {
-						JavaElement subJe = (JavaElement)child;
-						if (addChildren(childNode,subJe,xreferenceAdapter)) {
-							parent.addChild(childNode);
-							hasChildren = true;
-						}
-					}
-				}
-			}
+      for (IJavaElement child : children) {
+        IAdaptable a = child;
+        IXReferenceAdapter xrefAdapterChild = null;
+        if (a != null) {
+          xrefAdapterChild =
+            a.getAdapter(
+              IXReferenceAdapter.class);
+        }
+        if (xrefAdapterChild != null) {
+          TreeParent childNode =
+            new TreeParent(xrefAdapterChild.toString());
+          childNode.setData(
+            xrefAdapterChild.getReferenceSource());
+          Collection xrc = xrefAdapterChild.getXReferences();
+          if (!xrc.isEmpty()) {
+            parent.addChild(childNode);
+            addXReferencesToTree(childNode, xrc);
+            JavaElement subJe = (JavaElement) child;
+            hasChildren = true;
+
+            if ((xreferenceAdapter.getExtraChildren(subJe) != null
+                 && xreferenceAdapter.getExtraChildren(subJe).length > 0)
+                || subJe.getChildren().length > 0)
+            {
+              addChildren(childNode, subJe, xreferenceAdapter);
+            }
+
+          }
+          else {
+            JavaElement subJe = (JavaElement) child;
+            if (addChildren(childNode, subJe, xreferenceAdapter)) {
+              parent.addChild(childNode);
+              hasChildren = true;
+            }
+          }
+        }
+      }
 		} catch (JavaModelException e) {
 			// don't care about this exception
 		}
-		return hasChildren;		
+		return hasChildren;
 	}
-		
+
 	private void addXReferencesToTree(
 		TreeParent parent,
 		Collection xreferences) {
-		Iterator xri = xreferences.iterator();
-		while (xri.hasNext()) {
-			IXReference xr = (IXReference) xri.next();
-			TreeParent relName = new TreeParent(xr.getName());
-			if (xr instanceof IDeferredXReference) {
-				addEvaluateChild(relName, (IDeferredXReference) xr);
-			}
-			Iterator li = xr.getAssociates();
-			while (li.hasNext()) {
-				Object associate = li.next();
-				TreeObject leaf = new TreeObject(associate.toString());
-				leaf.setData(associate);
-				relName.addChild(leaf);
-			}
-			parent.addChild(relName);
-		}
+    for (Object xreference : xreferences) {
+      IXReference xr = (IXReference) xreference;
+      TreeParent relName = new TreeParent(xr.getName());
+      if (xr instanceof IDeferredXReference) {
+        addEvaluateChild(relName, (IDeferredXReference) xr);
+      }
+      Iterator li = xr.getAssociates();
+      while (li.hasNext()) {
+        Object associate = li.next();
+        TreeObject leaf = new TreeObject(associate.toString());
+        leaf.setData(associate);
+        relName.addChild(leaf);
+      }
+      parent.addChild(relName);
+    }
 	}
 
 	private void addEvaluateChild(TreeParent parent, IDeferredXReference r) {

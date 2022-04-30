@@ -115,7 +115,7 @@ public class AspectJProjectPropertiesPage extends PropertyPage implements IStatu
         }
     }
 
-    private class ConfigurePathBlockJob extends UIJob {
+    private static class ConfigurePathBlockJob extends UIJob {
         PathBlock block;
         ConfigurePathBlockJob(PathBlock block) {
             super("Configure " + block.getBlockTitle());
@@ -563,7 +563,7 @@ public class AspectJProjectPropertiesPage extends PropertyPage implements IStatu
 		super.dispose();
 		try {
 		    thisProject.getWorkspace().removeResourceChangeListener(fListener);
-		} catch(Exception e) {
+		} catch(Exception ignored) {
 		}
 	}
 

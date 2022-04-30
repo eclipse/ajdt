@@ -106,7 +106,7 @@ public class AspectJCorePreferences {
 		}
 		try {
 			projectNode.flush();
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
 	}
 
@@ -120,7 +120,7 @@ public class AspectJCorePreferences {
 		}
 		try {
 			projectNode.flush();
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
 	}
 
@@ -234,7 +234,7 @@ public class AspectJCorePreferences {
           }
         }
       }
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return false;
 	}
@@ -312,7 +312,7 @@ public class AspectJCorePreferences {
 				IClasspathEntry outFolder = JavaCore.newLibraryEntry(outputLocation, null, requiredProj.getFullPath());
 				actualEntries.add(outFolder);
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return actualEntries;
 	}
@@ -474,7 +474,7 @@ public class AspectJCorePreferences {
           }
         }
       }
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return false;
 	}
@@ -517,7 +517,7 @@ public class AspectJCorePreferences {
 					addToAspectPath(project, entry);
 				}
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -566,7 +566,7 @@ public class AspectJCorePreferences {
 		projectNode.put(pathKind, "visited");
 		try {
 			projectNode.flush();
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException ignored) {
 		}
 	}
 
@@ -674,7 +674,7 @@ public class AspectJCorePreferences {
 			} else {
 				addEntryToJavaBuildPath(jp, attribute, jarPath, eKind);
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -789,7 +789,7 @@ public class AspectJCorePreferences {
         } // !attributeFound && useResolvedPath && cp[i].getEntryKind()
         // == IClasspathEntry.CPE_CONTAINER
       } // for (int i = 0; i < cp.length; i++)
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 		return new String[] { pathString.toString(), contentString.toString(), entryString.toString() };
 	}
@@ -872,7 +872,7 @@ public class AspectJCorePreferences {
 				}
 			}
 			jp.setRawClasspath(cp, null);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -915,7 +915,7 @@ public class AspectJCorePreferences {
 				}
 			}
 			jp.setRawClasspath(cp, null);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -974,7 +974,7 @@ public class AspectJCorePreferences {
 			if (changed) {
 				javaProject.setRawClasspath(cp, null);
 			}
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 
@@ -1011,7 +1011,7 @@ public class AspectJCorePreferences {
 				newCP[originalCP.length] = cp;
 				jp.setRawClasspath(newCP, new NullProgressMonitor());
 			}
-		} catch (JavaModelException | NumberFormatException e) {
+		} catch (JavaModelException | NumberFormatException ignored) {
 		}
   }
 
@@ -1170,7 +1170,7 @@ public class AspectJCorePreferences {
 			System.arraycopy(entries, 0, newEntries, 0, entries.length);
 			newEntries[entries.length] = newEntry;
 			jProject.setRawClasspath(newEntries, null);
-		} catch (JavaModelException e) {
+		} catch (JavaModelException ignored) {
 		}
 	}
 }

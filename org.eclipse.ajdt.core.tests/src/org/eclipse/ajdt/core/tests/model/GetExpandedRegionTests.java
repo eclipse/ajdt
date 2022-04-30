@@ -21,7 +21,7 @@ import org.eclipse.ajdt.internal.core.contentassist.ContentAssistProvider;
  */
 public class GetExpandedRegionTests extends AJDTCoreTestCase {
 
-    class MockContentAssistProvider extends ContentAssistProvider {
+    static class MockContentAssistProvider extends ContentAssistProvider {
         // make accessible
         protected String getExpandedRegion(int offset, int length,
                 char[] contents) {

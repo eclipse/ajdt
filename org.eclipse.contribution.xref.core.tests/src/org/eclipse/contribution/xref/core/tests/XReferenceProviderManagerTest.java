@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.contribution.xref.core.tests;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.contribution.xref.core.IXReferenceProvider;

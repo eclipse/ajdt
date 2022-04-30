@@ -63,11 +63,11 @@ public class ProblemFinderTests7 extends AJDTCoreTestCase {
     }
 
     public void testProblemFinding0() throws Exception {
-        problemFind((ICompilationUnit) allCUnits.get(0));
+        problemFind(allCUnits.get(0));
     }
 
     public void testProblemFinding1() throws Exception {
-        problemFind((ICompilationUnit) allCUnits.get(1));
+        problemFind(allCUnits.get(1));
     }
 
     public void testProblemFinding2() throws Exception {

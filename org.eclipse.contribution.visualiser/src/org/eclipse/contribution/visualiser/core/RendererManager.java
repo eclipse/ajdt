@@ -1,17 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Matt Chapman - initial version
  *******************************************************************************/
 package org.eclipse.contribution.visualiser.core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.contribution.visualiser.VisualiserPlugin;
@@ -27,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * The renderer manager parses the contents of the defined extensions to the
  * extension-point org.eclipse.contribution.visualiser.renderers.
- * 
+ *
  * @author mchapman
  */
 public class RendererManager {
@@ -44,7 +43,7 @@ public class RendererManager {
 
 	/**
 	 * Get a list of all the registered renderers
-	 * 
+	 *
 	 * @return a list of RendererDefinition objects
 	 */
 	public static List /* RendererDefinition */getAllRendererDefinitions() {
@@ -57,7 +56,7 @@ public class RendererManager {
 	/**
 	 * Get the current renderer, either as set by the preferences, or if not set
 	 * the default renderer
-	 * 
+	 *
 	 * @return the current renderer
 	 */
 	public static RendererDefinition getCurrentRenderer() {
@@ -65,13 +64,12 @@ public class RendererManager {
 			String name = VisualiserPreferences.getRendererName();
 			if ((name != null) && (name.length() > 0)) {
 				// find the renderer with the given name
-				for (Iterator iter = getAllRendererDefinitions().iterator(); iter
-						.hasNext();) {
-					RendererDefinition r = (RendererDefinition) iter.next();
-					if (r.getName().equals(name)) {
-						current = r;
-					}
-				}
+        for (Object o : getAllRendererDefinitions()) {
+          RendererDefinition r = (RendererDefinition) o;
+          if (r.getName().equals(name)) {
+            current = r;
+          }
+        }
 			}
 			if (current == null) {
 				// didn't find the given renderer, revert to default
@@ -83,25 +81,24 @@ public class RendererManager {
 
 	/**
 	 * Return the renderer definition with the given name, or null if not found
-	 * 
+	 *
 	 * @param name
 	 * @return the RendererDefinition with the given name
 	 */
 	public static RendererDefinition getRendererByName(String name) {
-		for (Iterator iter = getAllRendererDefinitions().iterator(); iter
-				.hasNext();) {
-			RendererDefinition r = (RendererDefinition) iter.next();
-			if (r.getName().equals(name)) {
-				return r;
-			}
-		}
+    for (Object o : getAllRendererDefinitions()) {
+      RendererDefinition r = (RendererDefinition) o;
+      if (r.getName().equals(name)) {
+        return r;
+      }
+    }
 		return null;
 	}
 
 	/**
 	 * Search for a registered renderer with the given name and if found, sets
 	 * that renderer to be the current one
-	 * 
+	 *
 	 * @param name
 	 *            the name of the renderer
 	 */
@@ -115,22 +112,23 @@ public class RendererManager {
 	/**
 	 * Get the defined default renderer (should only be used when the user
 	 * hasn't specified a renderer)
-	 * 
+	 *
 	 * @return the default RendererDefinition
 	 */
 	public static RendererDefinition getDefaultRenderer() {
 		if (renderers == null) {
 			initialiseRendererDefinitions();
 		}
-		for (Iterator iter = renderers.iterator(); iter.hasNext();) {
-			RendererDefinition r = (RendererDefinition) iter.next();
-			if (r.getRenderer() instanceof DefaultVisualiserRenderer) {
-				if (r.getRenderer().getClass().getName().equals(
-						DEFAULT_RENDERER_CLASS)) {
-					return r;
-				}
-			}
-		}
+    for (Object renderer : renderers) {
+      RendererDefinition r = (RendererDefinition) renderer;
+      if (r.getRenderer() instanceof DefaultVisualiserRenderer) {
+        if (r.getRenderer().getClass().getName().equals(
+          DEFAULT_RENDERER_CLASS))
+        {
+          return r;
+        }
+      }
+    }
 		return null;
 	}
 
@@ -143,21 +141,22 @@ public class RendererManager {
 				.getExtensionPoint(RENDERER_EXTENSION);
 		IExtension[] exs = exP.getExtensions();
 
-		for (int i = 0; i < exs.length; i++) {
-			IConfigurationElement[] ces = exs[i].getConfigurationElements();
-			for (int j = 0; j < ces.length; j++) {
-				try {
-					Object ext = ces[j].createExecutableExtension("class"); //$NON-NLS-1$
-					if (ext instanceof IVisualiserRenderer) {
-						String name = ces[j].getAttribute("name"); //$NON-NLS-1$
-						RendererDefinition rd = new RendererDefinition(name,
-								(IVisualiserRenderer) ext);
-						renderers.add(rd);
-					}
-				} catch (CoreException e) {
-					VisualiserPlugin.logException(e);
-				}
-			}
-		}
+    for (IExtension ex : exs) {
+      IConfigurationElement[] ces = ex.getConfigurationElements();
+      for (IConfigurationElement ce : ces) {
+        try {
+          Object ext = ce.createExecutableExtension("class"); //$NON-NLS-1$
+          if (ext instanceof IVisualiserRenderer) {
+            String name = ce.getAttribute("name"); //$NON-NLS-1$
+            RendererDefinition rd = new RendererDefinition(name,
+              (IVisualiserRenderer) ext);
+            renderers.add(rd);
+          }
+        }
+        catch (CoreException e) {
+          VisualiserPlugin.logException(e);
+        }
+      }
+    }
 	}
 }

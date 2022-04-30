@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.core.AspectJPlugin;
@@ -415,8 +414,7 @@ public class AJdocWizard extends Wizard implements IExportWizard {
 			}
 			out.close();
 
-			String[] args = vmArgs
-				.toArray(new String[0]);
+			String[] args = vmArgs.toArray(new String[0]);
 
 			process = Runtime.getRuntime().exec(args);
 			if (process != null) {

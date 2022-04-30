@@ -32,13 +32,13 @@ public class VisualiserHelp {
 		XRefUIHelpListener listener= new XRefUIHelpListener(viewer, contextId);
 		viewer.getControl().addHelpListener(listener);
 	}
-	
+
 	/**
 	 * Creates and returns a help context provider for the given part.
-	 * 
+	 *
 	 * @param part the part for which to create the help context provider
 	 * @param contextId	the optional context ID used to retrieve static help
-	 * @return the help context provider 
+	 * @return the help context provider
 	 */
 	public static IContextProvider getHelpContextProvider(IWorkbenchPart part, String contextId) {
 		IStructuredSelection selection;
@@ -55,15 +55,15 @@ public class VisualiserHelp {
 
 		private StructuredViewer fViewer;
 		private String fContextId;
-		
+
 		public XRefUIHelpListener(StructuredViewer viewer, String contextId) {
 			fViewer= viewer;
 			fContextId= contextId;
 		}
-		
+
 		/*
 		 * @see HelpListener#helpRequested(HelpEvent)
-		 * 
+		 *
 		 */
 		public void helpRequested(HelpEvent e) {
 			try {
@@ -71,9 +71,9 @@ public class VisualiserHelp {
 				ISelection selection= fViewer.getSelection();
 				if (selection instanceof IStructuredSelection) {
 					selected= ((IStructuredSelection)selection).toArray();
-				}				
+				}
 				JavadocHelpContext.displayHelp(fContextId, selected);
-			} catch (CoreException x) {
+			} catch (CoreException ignored) {
 			}
 		}
 	}
@@ -93,7 +93,7 @@ public class VisualiserHelp {
 			if (fSelected != null && fSelected.length > 0) {
 				try {
 					context= new JavadocHelpContext(context, fSelected);
-				} catch (JavaModelException e) {
+				} catch (JavaModelException ignored) {
 				}
 			}
 			return context;

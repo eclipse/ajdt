@@ -107,7 +107,7 @@ public class ITDAwareSelectionRequestor implements ISelectionRequestor {
                     }
                 }
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 
@@ -226,7 +226,7 @@ public class ITDAwareSelectionRequestor implements ISelectionRequestor {
                 }
             }
 
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 
@@ -294,7 +294,7 @@ public class ITDAwareSelectionRequestor implements ISelectionRequestor {
                     }
                 }
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 

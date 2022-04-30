@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ajdt.internal.ui.wizards;
 
-import java.io.IOException;
-
 import org.eclipse.ajdt.internal.ui.wizards.exports.AJJarPackageData;
 import org.eclipse.ajdt.internal.ui.wizards.exports.AJJarPackageWizard;
 import org.eclipse.ajdt.internal.ui.wizards.exports.AJJarPackagerUtil;
@@ -26,7 +24,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.xml.sax.SAXException;
 
 /**
  * This action delegate opens the JAR Package Wizard and initializes

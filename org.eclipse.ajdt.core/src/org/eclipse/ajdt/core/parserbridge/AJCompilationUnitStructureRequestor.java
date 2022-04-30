@@ -1110,7 +1110,7 @@ public class AJCompilationUnitStructureRequestor extends
             IntLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTIntLiteralMinValue(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.IntLiteral) {
@@ -1121,7 +1121,7 @@ public class AJCompilationUnitStructureRequestor extends
             IntLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTIntLiteral(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.FalseLiteral) {
@@ -1129,7 +1129,7 @@ public class AJCompilationUnitStructureRequestor extends
             FalseLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTFalseLiteral(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.NullLiteral) {
@@ -1137,7 +1137,7 @@ public class AJCompilationUnitStructureRequestor extends
             NullLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTNullLiteral(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.TrueLiteral) {
@@ -1145,7 +1145,7 @@ public class AJCompilationUnitStructureRequestor extends
             TrueLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTTrueLiteral(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.LongLiteralMinValue) {
@@ -1156,7 +1156,7 @@ public class AJCompilationUnitStructureRequestor extends
             LongLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTLongLiteralMinValue(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.LongLiteral) {
@@ -1167,7 +1167,7 @@ public class AJCompilationUnitStructureRequestor extends
             LongLiteral castedJDT = null;
             try {
                 castedJDT = CompilerASTNodeCompatibilityWrapper.createJDTLongLiteral(castedAJ);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             jdtExpr = castedJDT;
         } else if (ajExpr instanceof org.aspectj.org.eclipse.jdt.internal.compiler.ast.StringLiteral) {

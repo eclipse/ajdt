@@ -141,7 +141,7 @@ public class BreakpointLocationVerifierJob extends Job {
 				return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, ActionMessages.BreakpointLocationVerifierJob_not_valid_location, null);
 			}
 		}
-    catch (BadLocationException | CoreException e) {
+    catch (BadLocationException | CoreException ignored) {
     }
     return new Status(IStatus.OK, JDIDebugUIPlugin.getUniqueIdentifier(), IStatus.OK, ActionMessages.BreakpointLocationVerifierJob_breakpoint_set, null);
 

@@ -77,7 +77,7 @@ public class SaveBCAction implements IWorkbenchWindowActionDelegate {
 						}
 						try {
 							newFile.delete(true, null);
-						} catch (CoreException e1) {
+						} catch (CoreException ignored) {
 						}
 
 					}
@@ -86,7 +86,7 @@ public class SaveBCAction implements IWorkbenchWindowActionDelegate {
 			}
 			try {
 				currentProject.refreshLocal(1, null);
-			} catch (CoreException e) {
+			} catch (CoreException ignored) {
 			}
 		}
 	}

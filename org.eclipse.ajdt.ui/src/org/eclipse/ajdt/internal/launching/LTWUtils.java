@@ -113,7 +113,7 @@ public class LTWUtils {
           }
         }
       }
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 
 	}

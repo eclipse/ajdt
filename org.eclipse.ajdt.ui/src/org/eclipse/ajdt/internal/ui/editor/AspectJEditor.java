@@ -169,7 +169,7 @@ public class AspectJEditor extends CompilationUnitEditor {
     }
 
 
-    public Object getAdapter(@SuppressWarnings("rawtypes") Class key) {
+    public Object getAdapter(Class key) {
         if (key.equals(ITextOperationTarget.class)) {
             // use our own wrapper around the one returned by the superclass
             return new AJTextOperationTarget((ITextOperationTarget) super
@@ -199,7 +199,7 @@ public class AspectJEditor extends CompilationUnitEditor {
     //the layer it gets displayed on, but it fixes the context menu so we
     //are still able to choose "open super implementation" when right-clicking
     //the vertical ruler (Matt/Luzius)
-    class AnnotationAccessWrapper implements IAnnotationAccessExtension {
+    static class AnnotationAccessWrapper implements IAnnotationAccessExtension {
 
         private IAnnotationAccessExtension wrapped;
 
@@ -459,7 +459,7 @@ public class AspectJEditor extends CompilationUnitEditor {
                 if (unit != null) {
                     unit.discardWorkingCopy();
                 }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
 
         }

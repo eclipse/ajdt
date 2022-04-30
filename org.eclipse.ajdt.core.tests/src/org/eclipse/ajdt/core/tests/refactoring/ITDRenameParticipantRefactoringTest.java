@@ -346,7 +346,7 @@ public class ITDRenameParticipantRefactoringTest extends
                 thisField = fRenameSetterField;
             }
             thisField.setBoolean(processor, true);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

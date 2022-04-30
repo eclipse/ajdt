@@ -48,7 +48,7 @@ public class EnsureAJBuilder implements IResourceChangeListener {
             };
             try {
                 event.getDelta().accept(visitor);
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }
     }

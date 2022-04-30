@@ -13,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ajdt.core.AspectJPlugin;
@@ -427,8 +426,7 @@ public class Bug99133Test extends AJDTCoreTestCase {
         newEntries.add(entry);
       }
     }
-		IClasspathEntry[] newCP = newEntries
-				.toArray(new IClasspathEntry[0]);
+		IClasspathEntry[] newCP = newEntries.toArray(new IClasspathEntry[0]);
 		javaProject.setRawClasspath(newCP, null);
 	}
 

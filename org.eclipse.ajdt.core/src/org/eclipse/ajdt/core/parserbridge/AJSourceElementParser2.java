@@ -1033,7 +1033,7 @@ private void setCategoriesField(char[][] newCategories) {
 			categoriesField.setAccessible(true);
 		}
 		categoriesField.set(javadocParser, newCategories);
-	} catch (Exception e) {
+	} catch (Exception ignored) {
 	}
 }
 // AspectJ Change end

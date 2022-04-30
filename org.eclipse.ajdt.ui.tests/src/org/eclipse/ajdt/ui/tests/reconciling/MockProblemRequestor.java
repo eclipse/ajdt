@@ -1,7 +1,6 @@
 package org.eclipse.ajdt.ui.tests.reconciling;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class MockProblemRequestor implements IProblemRequestor {
         sb.append("\n\t").append(entry.getKey().toString()).append(" --> "); //$NON-NLS-1$
         CategorizedProblem[] probs = (CategorizedProblem[]) entry.getValue();
         for (CategorizedProblem prob : probs) {
-          sb.append("\n\t\t" + prob.toString());
+          sb.append("\n\t\t").append(prob.toString());
         }
       }
         sb.append("\n]\n"); //$NON-NLS-1$

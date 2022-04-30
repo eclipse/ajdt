@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2009 SpringSource and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andrew Eisenberg - initial API and implementation
  *******************************************************************************/
@@ -24,11 +24,11 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * @author Andrew Eisenberg
  * @created Jan 20, 2009
- * 
+ *
  * Tests the enablement and disablement of the weaving service as best we can
  */
 public class WeavingServiceEnablementTests extends WeavingTestCase {
-    class MockWeavableProjectListener extends WeavableProjectListener {
+    static class MockWeavableProjectListener extends WeavableProjectListener {
         boolean weavableProjectFound = false;
 //        @Override
 //        public void handleEvent(LifecycleEvent event) throws CoreException {
@@ -46,7 +46,7 @@ public class WeavingServiceEnablementTests extends WeavingTestCase {
             weavableProjectFound = true;
         }
     }
-    
+
     /**
      * Tests that weaving is asked to be turned on when a weavable nature is
      * added and when a project that has a weavable nature is opened
@@ -60,15 +60,15 @@ public class WeavingServiceEnablementTests extends WeavingTestCase {
         try {
             IProject newProj = ResourcesPlugin.getWorkspace().getRoot().getProject("NewProject");
             newProj.create(null);
-            
+
             assertFalse("Weavable project should not have been found", mock.weavableProjectFound);
             newProj.close(null);
             newProj.open(null);
             assertFalse("Weavable project should not have been found", mock.weavableProjectFound);
-            
+
             addNature(newProj);
             assertTrue("Weavable project was not found", mock.weavableProjectFound);
-            
+
             mock.weavableProjectFound = false;
             newProj.close(null);
             newProj.open(null);
@@ -78,7 +78,7 @@ public class WeavingServiceEnablementTests extends WeavingTestCase {
             WeavableProjectListener.setInstance(orig);
         }
     }
-    
+
     private void addNature(IProject project) throws CoreException {
         IProjectDescription description = project.getDescription();
         String[] newNatures = new String[1];
@@ -86,5 +86,5 @@ public class WeavingServiceEnablementTests extends WeavingTestCase {
         description.setNatureIds(newNatures);
         project.setDescription(description, null);
     }
-    
+
 }

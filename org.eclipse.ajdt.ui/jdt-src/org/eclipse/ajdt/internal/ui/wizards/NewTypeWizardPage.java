@@ -2225,7 +2225,7 @@ public abstract class NewTypeWizardPage extends NewContainerWizardPage {
 	}
 
 	private void writeSuperInterfaces(StringBuffer buf, ImportsManager imports) {
-		List interfaces= getSuperInterfaces();
+		List<String> interfaces= getSuperInterfaces();
 		int last= interfaces.size() - 1;
 		if (last >= 0) {
 		    if (fTypeKind != INTERFACE_TYPE) {
@@ -2233,7 +2233,7 @@ public abstract class NewTypeWizardPage extends NewContainerWizardPage {
 			} else {
 				buf.append(" extends "); //$NON-NLS-1$
 			}
-			String[] intfs= (String[]) interfaces.toArray(new String[0]);
+			String[] intfs= interfaces.toArray(new String[0]);
 			ITypeBinding[] bindings;
 			if (fCurrType != null) {
 				bindings= TypeContextChecker.resolveSuperInterfaces(intfs, fCurrType, getSuperInterfacesStubTypeContext());
@@ -2379,7 +2379,7 @@ public abstract class NewTypeWizardPage extends NewContainerWizardPage {
 				next= scanner.getNextToken();
 			}
 			return next == ITerminalSymbols.TokenNameEOF;
-		} catch (InvalidInputException e) {
+		} catch (InvalidInputException ignored) {
 		}
 		return false;
 	}

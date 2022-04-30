@@ -137,7 +137,7 @@ public class AspectsConvertingParserTest extends AJDTCoreTestCase {
 	 * @author andrew
 	 *
 	 */
-    class MockITDConvertingParser extends AspectsConvertingParser {
+  static class MockITDConvertingParser extends AspectsConvertingParser {
         public MockITDConvertingParser(char[] content) {
             super(content);
         }
@@ -147,7 +147,7 @@ public class AspectsConvertingParserTest extends AJDTCoreTestCase {
         }
     }
 
-  class MockDeclareConvertingParser extends AspectsConvertingParser {
+  static class MockDeclareConvertingParser extends AspectsConvertingParser {
         public MockDeclareConvertingParser(char[] content) {
             super(content);
         }

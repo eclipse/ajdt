@@ -17,7 +17,6 @@ import org.aspectj.asm.IProgramElement;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ILocalVariable;
 import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.JavaModelException;
@@ -104,7 +103,7 @@ public class MethodIntertypeElement extends IntertypeElement
                   }
               };
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         return null;
     }

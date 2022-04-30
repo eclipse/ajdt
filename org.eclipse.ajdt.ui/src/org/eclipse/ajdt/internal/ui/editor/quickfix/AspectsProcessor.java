@@ -52,7 +52,7 @@ class AspectsProcessor {
             try {
               IDE.openEditor(page,
                   input, AspectJEditor.ASPECTJ_EDITOR_ID);
-            } catch (PartInitException e) {
+            } catch (PartInitException ignored) {
             }
           });
 				}
@@ -73,7 +73,7 @@ class AspectsProcessor {
 				if (editor instanceof ITextEditor) {
 					try {
 						AJDTUtils.addAspectJNature(project, true);
-					} catch (CoreException e) {
+					} catch (CoreException ignored) {
 					}
 				}
 			}

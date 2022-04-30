@@ -11,7 +11,6 @@
 package org.eclipse.ajdt.internal.ui.resources;
 
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;

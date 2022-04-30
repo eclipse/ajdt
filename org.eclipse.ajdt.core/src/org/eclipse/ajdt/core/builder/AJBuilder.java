@@ -405,7 +405,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                     }
                 }
             }
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
         return ifile;
     }
@@ -480,7 +480,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
               }
                 desc.setBuildSpec(commands);
                 project.setDescription(desc, null);
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
 
             }
             AJLog.logEnd(AJLog.BUILDER, "Augmenting aspect path with args from builder");
@@ -732,7 +732,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                 IFolder folder = project.getWorkspace().getRoot().getFolder(new Path(inpathOutFolderStr));
                 folder.refreshLocal(IResource.DEPTH_INFINITE, null);
             }
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
         AJLog.logEnd(AJLog.BUILDER, "Refresh after build");
     }
@@ -1346,7 +1346,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                         resource.delete(true, null);
                         // num deleted will not include counts from children of deleted folders
                         numDeleted++;
-                    } catch(ResourceException e) {
+                    } catch(ResourceException ignored) {
                     }
                     return false;
                 }
@@ -1357,7 +1357,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
       WipeResources visitor = new WipeResources();
         try {
             outputResource.accept(visitor);
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
         return visitor.numDeleted;
     }
@@ -1377,7 +1377,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                         // non-class file
                         resource.delete(true, null);
                         numDeleted++;
-                    } catch (ResourceException e) {}
+                    } catch (ResourceException ignored) {}
                     return false;
                 } else if (resource.getFileExtension() != null
                         && resource.getFileExtension().equals(fileExtension)) {
@@ -1385,7 +1385,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                         // class file
                         resource.delete(true, null);
                         numDeleted++;
-                    } catch (ResourceException e) {}
+                    } catch (ResourceException ignored) {}
                 }
                 // continue visit to children
                 return true;
@@ -1394,7 +1394,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
       WipeResources visitor = new WipeResources();
         try {
             outputResource.accept(visitor);
-        } catch (CoreException e) {}
+        } catch (CoreException ignored) {}
         return visitor.numDeleted;
      }
 
@@ -1469,7 +1469,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
             }
           }// end if dependent has a Java nature
         }
-        catch (CoreException | BackingStoreException e) {
+        catch (CoreException | BackingStoreException ignored) {
         }
       }
     }
@@ -1619,7 +1619,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                     resource.deleteMarkers(managedMarker, true, IResource.DEPTH_INFINITE);
                 }
             }
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
         if (resource != null) {
             AJLog.log(AJLog.BUILDER,"Removed problems and tasks for project "+resource.getName()); //$NON-NLS-1$
@@ -1853,7 +1853,7 @@ public class AJBuilder extends IncrementalProjectBuilder {
                     }
                 }
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 

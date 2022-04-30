@@ -11,8 +11,6 @@
 
 package org.eclipse.ajdt.internal.launching;
 
-import java.util.Iterator;
-
 import org.eclipse.ajdt.internal.ui.text.UIMessages;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathEntry;
 import org.eclipse.jdt.internal.debug.ui.classpath.ClasspathGroup;

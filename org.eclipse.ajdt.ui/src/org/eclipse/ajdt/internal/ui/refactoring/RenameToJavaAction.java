@@ -83,7 +83,7 @@ updateBuildConfigs(monitor, project, name);
 			try {
 				new ProgressMonitorDialog(AspectJUIPlugin.getDefault()
 						.getDisplay().getActiveShell()).run(true, true, op);
-			} catch (InvocationTargetException | InterruptedException e) {
+			} catch (InvocationTargetException | InterruptedException ignored) {
 			}
     }
 	}
@@ -97,8 +97,8 @@ updateBuildConfigs(monitor, project, name);
 	private void updateBuildConfigs(IProgressMonitor monitor, IProject project,
 			String name) {
 		List<IFile> buildConfigs = AJProperties.getAJPropertiesFiles(project);
-    for (Object config : buildConfigs) {
-      IFile buildConfig = (IFile) config;
+    for (IFile config : buildConfigs) {
+      IFile buildConfig = config;
       BufferedReader br;
       try {
         br = new BufferedReader(new InputStreamReader(buildConfig
@@ -120,13 +120,13 @@ updateBuildConfigs(monitor, project, name);
         buildConfig.setContents(new ReaderInputStream(reader), true,
           true, monitor);
       }
-      catch (IOException | CoreException ioe) {
+      catch (IOException | CoreException ignored) {
       }
       finally {
         try {
           br.close();
         }
-        catch (IOException ioe) {
+        catch (IOException ignored) {
         }
       }
     }

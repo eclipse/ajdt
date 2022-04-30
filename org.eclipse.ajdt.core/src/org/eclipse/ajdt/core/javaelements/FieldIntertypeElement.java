@@ -58,7 +58,7 @@ public class FieldIntertypeElement extends IntertypeElement implements IField {
                   return true;
               }
           };
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
         return null;
     }

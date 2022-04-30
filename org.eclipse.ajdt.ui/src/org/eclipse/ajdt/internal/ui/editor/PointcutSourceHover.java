@@ -22,14 +22,12 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.jdt.internal.ui.javaeditor.JavaEditor;
 import org.eclipse.jdt.internal.ui.text.java.hover.AbstractJavaEditorTextHover;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
@@ -74,7 +72,7 @@ public class PointcutSourceHover extends AbstractJavaEditorTextHover implements
 							}
 							return ((ISourceReference) pc).getSource();
 						}
-					} catch (JavaModelException e) {
+					} catch (JavaModelException ignored) {
 					}
 				}
 			}

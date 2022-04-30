@@ -55,7 +55,7 @@ public class CompilerConfigResourceChangeListener implements IResourceChangeList
 				if (cd == null) {
 					try {
 						delta.accept(myDeltaVisitor);
-					} catch (CoreException e) {
+					} catch (CoreException ignored) {
 					}
 				} else {
           for (IResourceDelta iResourceDelta : cd) {
@@ -77,7 +77,7 @@ public class CompilerConfigResourceChangeListener implements IResourceChangeList
                 }
               }
             }
-            catch (CoreException e) {
+            catch (CoreException ignored) {
             }
           }
 				}

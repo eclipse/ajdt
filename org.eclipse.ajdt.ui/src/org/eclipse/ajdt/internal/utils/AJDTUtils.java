@@ -18,7 +18,6 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 
 import org.aspectj.asm.IProgramElement;
@@ -172,7 +171,7 @@ public class AJDTUtils {
         };
         try {
             op.run(null);
-        } catch (InvocationTargetException | InterruptedException ex) {
+        } catch (InvocationTargetException | InterruptedException ignored) {
         }
     }
 
@@ -372,7 +371,7 @@ public class AJDTUtils {
                   return true;
                 }
               }
-            } catch (CoreException e) {}
+            } catch (CoreException ignored) {}
         }
         return false;
     }
@@ -404,7 +403,7 @@ public class AJDTUtils {
                                     UIMessages.myEclipse_natureDetected_message);
                 }
             }
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
     }
 
@@ -448,7 +447,7 @@ public class AJDTUtils {
               }
             }
           }
-        } catch (CoreException e) {
+        } catch (CoreException ignored) {
         }
     }
 
@@ -496,7 +495,7 @@ public class AJDTUtils {
 //              project.build(IncrementalProjectBuilder.FULL_BUILD,
 //                      AspectJPlugin.ID_BUILDER, null, null);
 
-            } catch (CoreException e) {
+            } catch (CoreException ignored) {
             }
         }// end if we got a reference to the manifest editor
         else {
@@ -733,7 +732,7 @@ public class AJDTUtils {
                     jp.setRawClasspath(cpEntry, null);
                 }
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 
@@ -775,7 +774,7 @@ public class AJDTUtils {
                         }
                       }
                     }
-                    catch (JavaModelException e) {
+                    catch (JavaModelException ignored) {
                     }
                   }
                     if (excludeList.size() > 0) {
@@ -791,7 +790,7 @@ public class AJDTUtils {
             if (changed) {
                 jp.setRawClasspath(cpEntry, null);
             }
-        } catch (JavaModelException e) {
+        } catch (JavaModelException ignored) {
         }
     }
 
@@ -817,7 +816,7 @@ public class AJDTUtils {
                   "aspectjrt.jar")) //$NON-NLS-1$
                   return true;
               }
-            } catch (JavaModelException e) {
+            } catch (JavaModelException ignored) {
             }
             return false;
         }
@@ -1159,7 +1158,7 @@ public class AJDTUtils {
             project.deleteMarkers(IMarker.TASK, true,
                             (recurse ? IResource.DEPTH_INFINITE
                                     : IResource.DEPTH_ZERO));
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 

@@ -150,10 +150,10 @@ public class AdviceMarkersTest4 extends UITestCase {
       }
 			// check that we found everything we were looking for
 			if (tofindMsg.size() > 0) {
-				String missing = ""; //$NON-NLS-1$
+				StringBuilder missing = new StringBuilder(); //$NON-NLS-1$
         for (String s : tofindMsg) {
-          missing += System.getProperty("line.separator"); //$NON-NLS-1$
-          missing += s;
+          missing.append(System.getProperty("line.separator")); //$NON-NLS-1$
+          missing.append(s);
         }
 				fail("Did not find all expected markers of type " //$NON-NLS-1$
 						+ markerTypes[i] + ". Missing: " + missing); //$NON-NLS-1$

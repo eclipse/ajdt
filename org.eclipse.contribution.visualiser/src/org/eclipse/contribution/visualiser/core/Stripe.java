@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andy Clement - initial version
  *     Matt Chapman - added compare method
@@ -32,7 +32,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Returns true if the given Object is equal to this stripe
-	 * 
+	 *
 	 * @param that
 	 * @return true iff the given Object is equal to this stripe
 	 */
@@ -55,7 +55,7 @@ public class Stripe implements Comparable {
 	public int hashCode() {
 		// To obey the contract, return a hashcode that is a function of all the
 		// variables used in the equals method.
-		
+
 		int result = 17; 	// Begin with a non-zero number so that result is not
 							// zero. (Value not important).
 		result = 37 * result + depth; 	// Multiply by 37 (value not relevant) to
@@ -74,7 +74,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Stripe constructor when the stripe is of the minimum depth (1).
-	 * 
+	 *
 	 * @param k
 	 *            The kind of stripe
 	 * @param i
@@ -89,7 +89,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Stripe constructor where the kind, offset and depth can be specified.
-	 * 
+	 *
 	 * @param k
 	 *            The kind of the stripe
 	 * @param o
@@ -107,7 +107,7 @@ public class Stripe implements Comparable {
 	/**
 	 * Stripe constructor where the kinds, offset and depth can be specified.
 	 * The input list 'kinds' should be a list of strings.
-	 * 
+	 *
 	 * @param ks
 	 *            The kinds of the stripe, should be strings
 	 * @param o
@@ -124,7 +124,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Getter for the kinds of this stripe.
-	 * 
+	 *
 	 * @return List of strings representing kinds
 	 */
 	public List getKinds() {
@@ -133,7 +133,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Add the given kinds to this stripe
-	 * 
+	 *
 	 * @param list
 	 */
 	public void addKinds(List list) {
@@ -143,7 +143,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Set the list of kinds for this Stripe to the given argument
-	 * 
+	 *
 	 * @param list
 	 */
 	public void setKinds(List list) {
@@ -153,7 +153,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Get the offset for this Stripe
-	 * 
+	 *
 	 * @return the offset for this Stripe
 	 */
 	public int getOffset() {
@@ -162,7 +162,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Get this Stripe's depth
-	 * 
+	 *
 	 * @return this Stripe's depth
 	 */
 	public int getDepth() {
@@ -179,20 +179,20 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Get a string representation of the kinds in this Stripe
-	 * 
+	 *
 	 * @return a string representation of the kinds in this Stripe
 	 */
 	public String stringifyKinds() {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < kinds.size(); i++) {
-			sb.append(" " + kinds.get(i) + " "); //$NON-NLS-1$ //$NON-NLS-2$
-		}
+		StringBuilder sb = new StringBuilder();
+    for (Object kind : kinds) {
+      sb.append(" ").append(kind).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 		return sb.toString();
 	}
 
 	/**
 	 * Set the offset for this Stripe
-	 * 
+	 *
 	 * @param offset
 	 */
 	public void setOffset(int offset) {
@@ -202,7 +202,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Set the depth for this Stripe
-	 * 
+	 *
 	 * @param i
 	 */
 	public void setDepth(int i) {
@@ -220,7 +220,7 @@ public class Stripe implements Comparable {
 
 	/**
 	 * Returns true if this Stripe has the given kind
-	 * 
+	 *
 	 * @param kind
 	 * @return true iff this Stripe has the given kind
 	 */

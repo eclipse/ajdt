@@ -13,7 +13,6 @@ package org.eclipse.ajdt.internal.ui.wizards.exports;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
