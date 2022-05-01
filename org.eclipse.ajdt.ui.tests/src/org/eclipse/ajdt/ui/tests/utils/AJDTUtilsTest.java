@@ -382,7 +382,7 @@ public class AJDTUtilsTest extends UITestCase {
 
 	public static class MyJobChangeListener implements IJobChangeListener {
 
-		private final List scheduledBuilds = new ArrayList();
+		private final List<Job> scheduledBuilds = new ArrayList<>();
 
 		public void aboutToRun(IJobChangeEvent event) {
 		}

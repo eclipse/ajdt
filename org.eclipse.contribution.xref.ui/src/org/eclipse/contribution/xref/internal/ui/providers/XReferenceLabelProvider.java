@@ -36,19 +36,19 @@ public class XReferenceLabelProvider extends LabelProvider {
 
 	public XReferenceLabelProvider() {
 		labelProvider = new DecoratingLabelProvider(
-				new JavaElementLabelProvider(), XReferenceUIPlugin.getDefault()
-						.getWorkbench().getDecoratorManager().getLabelDecorator());
+			new JavaElementLabelProvider(),
+			XReferenceUIPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()
+		);
 	}
 
 	private boolean addedListener = false;
 
-	private ListenerList fListeners;
+	private ListenerList<ILabelProviderListener> fListeners;
 
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
-		if (fListeners == null) {
-			fListeners = new ListenerList();
-		}
+		if (fListeners == null)
+			fListeners = new ListenerList<>();
 		fListeners.add(listener);
 		if (!addedListener) {
 			addedListener = true;
@@ -61,43 +61,36 @@ public class XReferenceLabelProvider extends LabelProvider {
 
 	private void fireLabelChanged() {
 		if (fListeners != null && !fListeners.isEmpty()) {
-			LabelProviderChangedEvent event = new LabelProviderChangedEvent(
-					this);
+			LabelProviderChangedEvent event = new LabelProviderChangedEvent(this);
 			Object[] listeners = fListeners.getListeners();
-      for (Object listener : listeners) {
-        ((ILabelProviderListener) listener)
-          .labelProviderChanged(event);
-      }
+			for (Object listener : listeners)
+				((ILabelProviderListener) listener).labelProviderChanged(event);
 		}
 	}
 
 	public String getText(Object obj) {
 		String ret = obj.toString();
 		Object data = ((TreeObject) obj).getData();
-		if ((data != null) && !(data instanceof IDeferredXReference)) {
+		if ((data != null) && !(data instanceof IDeferredXReference))
 			ret = labelProvider.getText(data);
-		}
 		return ret;
 	}
 
 	public Image getImage(Object obj) {
 		Object data = ((TreeObject) obj).getData();
-		if (data != null) {
-			if (data instanceof IDeferredXReference) {
+		if (data != null)
+			if (data instanceof IDeferredXReference)
 				return XReferenceUIPlugin.getDefault().getEvaluateImage();
-			} else if (data instanceof IXReferenceNode) {
-				return labelProvider.getImage(((IXReferenceNode) data)
-						.getJavaElement());
-			} else {
+			else if (data instanceof IXReferenceNode)
+				return labelProvider.getImage(((IXReferenceNode) data).getJavaElement());
+			else
 				return (labelProvider.getImage(data));
-			}
-		}
 		return XReferenceUIPlugin.getDefault().getXReferenceImage();
 	}
 
 	public void dispose() {
 		fListeners = null;
-		if(labelProvider != null) {
+		if (labelProvider != null) {
 			labelProvider.dispose();
 			labelProvider = null;
 		}

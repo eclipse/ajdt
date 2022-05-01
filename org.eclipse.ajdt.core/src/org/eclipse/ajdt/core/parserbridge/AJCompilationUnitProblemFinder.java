@@ -184,7 +184,6 @@ public class AJCompilationUnitProblemFinder extends
 	        IProgressMonitor monitor)
 	        throws JavaModelException {
         return processAJ(unitElement, null/*use default Parser*/, workingCopyOwner, problems, creatingAST, reconcileFlags, monitor);
-
 	}
 
 	public static CompilationUnitDeclaration processAJ( // AspectJ Change

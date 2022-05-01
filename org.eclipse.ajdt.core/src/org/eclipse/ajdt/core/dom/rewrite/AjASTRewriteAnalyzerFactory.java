@@ -29,7 +29,7 @@ import org.eclipse.text.edits.TextEdit;
  */
 @Deprecated
 public class AjASTRewriteAnalyzerFactory implements IASTRewriteAnalyzerFactory {
-//	public ASTVisitor getASTRewriteAnalyzer(IDocument document, TextEdit rootEdit, RewriteEventStore eventStore, 
+//	public ASTVisitor getASTRewriteAnalyzer(IDocument document, TextEdit rootEdit, RewriteEventStore eventStore,
 //			NodeInfoStore nodeInfos, Map options, TargetSourceRangeComputer extendedSourceRangeComputer) {
 //		return new AjASTRewriteAnalyzer(document,rootEdit,eventStore,nodeInfos,options,extendedSourceRangeComputer);
 //	}
@@ -37,7 +37,7 @@ public class AjASTRewriteAnalyzerFactory implements IASTRewriteAnalyzerFactory {
 	public ASTVisitor getASTRewriteAnalyzer(char[] content2,
 			LineInformation lineInfo2, String lineDelim, TextEdit result,
 			RewriteEventStore eventStore2, NodeInfoStore nodeStore,
-			List comments, Map options, TargetSourceRangeComputer xsrComputer) {
+			List<?> comments, Map<String, String> options, TargetSourceRangeComputer xsrComputer) {
 		return new AjASTRewriteAnalyzer(content2,lineInfo2,lineDelim,result,eventStore2,nodeStore,comments,options,xsrComputer);
 	}
 }

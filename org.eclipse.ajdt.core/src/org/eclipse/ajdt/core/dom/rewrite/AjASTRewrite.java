@@ -207,7 +207,7 @@ public class AjASTRewrite {
 //		}
 //		return result;
 //	}
-	public TextEdit rewriteAST(IDocument document, Map options) throws IllegalArgumentException {
+	public TextEdit rewriteAST(IDocument document, Map<String, String> options) throws IllegalArgumentException {
 		if (document == null) {
 			throw new IllegalArgumentException();
 		}
@@ -222,7 +222,7 @@ public class AjASTRewrite {
 		String lineDelim= TextUtilities.getDefaultLineDelimiter(document);
 
 		ASTNode astRoot= rootNode.getRoot();
-		List commentNodes= astRoot instanceof CompilationUnit ? ((CompilationUnit) astRoot).getCommentList() : null;
+		List<?> commentNodes= astRoot instanceof CompilationUnit ? ((CompilationUnit) astRoot).getCommentList() : null;
 		return internalRewriteAST(content, lineInfo, lineDelim, commentNodes, options, rootNode);
 	}
 
@@ -284,7 +284,14 @@ public class AjASTRewrite {
 		return internalRewriteAST(content, lineInfo, lineDelim, astRoot.getCommentList(), options, rootNode);
 	}
 
-	private TextEdit internalRewriteAST(char[] content, LineInformation lineInfo, String lineDelim, List<?> commentNodes, Map options, ASTNode rootNode) {
+	private TextEdit internalRewriteAST(
+		char[] content,
+		LineInformation lineInfo,
+		String lineDelim,
+		List<?> commentNodes,
+		Map<String, String> options,
+		ASTNode rootNode
+	) {
 		TextEdit result= new MultiTextEdit();
 		//validateASTNotModified(rootNode);
 
@@ -293,7 +300,9 @@ public class AjASTRewrite {
 
 		// AspectJ extension - ask the factory in ASTRewriteAnalyzer for a visitor rather than building it directly.
 		// ASTRewriteAnalyzer visitor= new ASTRewriteAnalyzer(content, lineInfo, lineDelim, result, this.eventStore, this.nodeStore, commentNodes, options, sourceRangeComputer);
-		ASTVisitor visitor = AjASTRewriteAnalyzer.getAnalyzerVisitor(content, lineInfo, lineDelim, result, this.eventStore, this.nodeStore, commentNodes, options, sourceRangeComputer);
+		ASTVisitor visitor = AjASTRewriteAnalyzer.getAnalyzerVisitor(
+      content, lineInfo, lineDelim, result, this.eventStore, this.nodeStore, commentNodes, options, sourceRangeComputer
+    );
 		// End AspectJ Extension
 
 		rootNode.accept(visitor); // throws IllegalArgumentException

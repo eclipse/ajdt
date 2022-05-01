@@ -24,86 +24,80 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class SimpleContentProvider implements IContentProvider {
 
-	private List groups = null;
-
+	private List<IGroup> groups = null;
 
 	/**
 	 * Returns all registered groups
-	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllGroups()
+	 *
 	 * @return List of IGroups
+	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllGroups()
 	 */
-	public List getAllGroups() {
+	public List<IGroup> getAllGroups() {
 		return groups;
 	}
 
-
 	/**
-	 * Returns all IMembers contained in the given IGroup
-	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers(IGroup)
-	 */
-	public List getAllMembers(IGroup group) {
+   * Returns all IMembers contained in the given IGroup
+   *
+   * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers(IGroup)
+   */
+	public List<IMember> getAllMembers(IGroup group) {
 		return group.getMembers();
 	}
 
-
 	/**
-	 * Returns the List of all IMembers in all registered groups
-	 */
-	public List getAllMembers() {
-		List grps = getAllGroups();
-		List members = new ArrayList();
-		if (grps == null) return members;
-    for (Object value : grps) {
-      IGroup grp = (IGroup) value;
-      List membersInGroup = getAllMembers(grp);
-      for (Object o : membersInGroup) {
-        IMember im = (IMember) o;
-        members.add(im);
-      }
-    }
+   * Returns the List of all IMembers in all registered groups
+   */
+	public List<IMember> getAllMembers() {
+		List<IGroup> grps = getAllGroups();
+		List<IMember> members = new ArrayList<>();
+		if (grps == null)
+			return members;
+		for (IGroup group : grps) {
+			List<IMember> membersInGroup = getAllMembers(group);
+			members.addAll(membersInGroup);
+		}
 		return members;
 	}
-
 
 	/**
 	 * Initialise the content provider.  This is a default imploementation and
 	 * so does nothing.
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#initialise()
 	 */
-	public void initialise() {
-
-	}
-
+	public void initialise() {}
 
 	/**
 	 * Register a group
+	 *
 	 * @param grp
 	 */
 	public void addGroup(IGroup grp) {
-	  if (groups == null) groups = new ArrayList();
-	  groups.add(grp);
+		if (groups == null)
+			groups = new ArrayList<>();
+		groups.add(grp);
 	}
-
 
 	/**
 	 * Get the total number of groups registered
+	 *
 	 * @return the number of groups
 	 */
 	public int numberOfGroupsDefined() {
-		return (groups==null?0:groups.size());
+		return (groups == null ? 0 : groups.size());
 	}
-
 
 	/**
 	 * Process a mouse click on a member belonging to this provider.  This is a default
 	 * implementation and so does nothing and returns true to allow the visualiser
 	 * to perform it's default mouse click operation.
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#processMouseclick(IMember, boolean, int)
 	 */
-	public boolean processMouseclick(IMember member, boolean markupWasClicked,int buttonClicked) {
+	public boolean processMouseclick(IMember member, boolean markupWasClicked, int buttonClicked) {
 		return true;
 	}
-
 
 	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getMemberViewIcon()
@@ -111,7 +105,6 @@ public class SimpleContentProvider implements IContentProvider {
 	public ImageDescriptor getMemberViewIcon() {
 		return null;
 	}
-
 
 	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getGroupViewIcon()
@@ -132,7 +125,6 @@ public class SimpleContentProvider implements IContentProvider {
 	 */
 	public void activate() {
 	}
-
 
 	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#deactivate()

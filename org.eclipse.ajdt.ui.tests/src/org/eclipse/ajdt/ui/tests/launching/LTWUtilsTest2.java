@@ -52,12 +52,11 @@ public class LTWUtilsTest2 extends UITestCase{
 		waitForJobsToComplete();
 		IJavaProject jp = JavaCore.create(project);
 		IPackageFragmentRoot[] roots = jp.getAllPackageFragmentRoots();
-		List srcRoots = new ArrayList();
-    for (IPackageFragmentRoot root : roots) {
-      if (!(root instanceof JarPackageFragmentRoot)) {
-        srcRoots.add(root);
-      }
-    }
+		List<IPackageFragmentRoot> srcRoots = new ArrayList<>();
+		for (IPackageFragmentRoot root : roots) {
+			if (!(root instanceof JarPackageFragmentRoot))
+				srcRoots.add(root);
+		}
 		assertEquals("There should be one src directory",1,srcRoots.size()); //$NON-NLS-1$
 		List<IType> aspects = LTWUtils.getAspects((IPackageFragmentRoot)srcRoots.get(0));
 		assertEquals("There should be two aspects",2,aspects.size()); //$NON-NLS-1$

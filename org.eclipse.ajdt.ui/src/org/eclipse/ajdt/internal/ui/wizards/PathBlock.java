@@ -673,7 +673,7 @@ public abstract class PathBlock {
 
 
     private CPListElement[] openVariableSelectionDialog() {
-        List existingElements = fPathList.getElements();
+        List<CPListElement> existingElements = fPathList.getElements();
         ArrayList<IPath> existingPaths = new ArrayList<>(existingElements.size());
       for (Object existingElement : existingElements) {
         CPListElement elem = (CPListElement) existingElement;
@@ -738,7 +738,7 @@ public abstract class PathBlock {
           ArrayList<IJavaProject> selectable = new ArrayList<>(Arrays.asList(fCurrJProject.getJavaModel().getJavaProjects()));
             selectable.remove(fCurrJProject);
 
-            List elements= fPathList.getElements();
+            List<CPListElement> elements= fPathList.getElements();
             for (int i= 0; i < elements.size(); i++) {
                 CPListElement curr= (CPListElement) elements.get(0);
                 if (curr.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
@@ -795,7 +795,7 @@ public abstract class PathBlock {
             } catch (JavaModelException ignored) {}
         }
 
-        List cplist = fPathList.getElements();
+        List<CPListElement> cplist = fPathList.getElements();
     for (Object o : cplist) {
       CPListElement elem = (CPListElement) o;
       if (elem.getEntryKind() == IClasspathEntry.CPE_LIBRARY) {

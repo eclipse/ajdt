@@ -54,140 +54,137 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 		}
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.contribution.visualiser.simpleImpl.SimpleContentProvider#getAllMembers()
 	 */
-	public List getAllMembers() {
-		if(updateNeeded) {
+	public List<IMember> getAllMembers() {
+		if (updateNeeded) {
 			updateData();
 			IMarkupProvider mProv = ProviderManager.getMarkupProvider();
-			if(mProv instanceof MarkerMarkupProvider) {
-				((MarkerMarkupProvider)mProv).updateMarkups(super.getAllGroups());
+			if (mProv instanceof MarkerMarkupProvider) {
+				((MarkerMarkupProvider) mProv).updateMarkups(super.getAllGroups());
 			}
 		}
 		return super.getAllMembers();
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.contribution.visualiser.simpleImpl.SimpleContentProvider#getAllGroups()
 	 */
-	public List getAllGroups() {
-		if(updateNeeded) {
+	public List<IGroup> getAllGroups() {
+		if (updateNeeded) {
 			updateData();
 			IMarkupProvider mProv = ProviderManager.getMarkupProvider();
-			if(mProv instanceof MarkerMarkupProvider) {
-				((MarkerMarkupProvider)mProv).updateMarkups(super.getAllGroups());
-			}
+			if (mProv instanceof MarkerMarkupProvider)
+				((MarkerMarkupProvider) mProv).updateMarkups(super.getAllGroups());
 		}
 		return super.getAllGroups();
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.contribution.visualiser.simpleImpl.SimpleContentProvider#getAllMembers(org.eclipse.contribution.visualiser.interfaces.IGroup)
 	 */
-	public List getAllMembers(IGroup group) {
-		if(updateNeeded) {
+	public List<IMember> getAllMembers(IGroup group) {
+		if (updateNeeded) {
 			updateData();
 			IMarkupProvider mProv = ProviderManager.getMarkupProvider();
-			if(mProv instanceof MarkerMarkupProvider) {
-				((MarkerMarkupProvider)mProv).updateMarkups(super.getAllGroups());
-			}
+			if (mProv instanceof MarkerMarkupProvider)
+				((MarkerMarkupProvider) mProv).updateMarkups(super.getAllGroups());
 		}
 		return super.getAllMembers(group);
 	}
 
-
 	/**
 	 * Workbench selection has changed
+	 *
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(!(ProviderManager.getContentProvider().equals(this))){
+		if (!(ProviderManager.getContentProvider().equals(this)))
 			return;
-		}
 		boolean updateRequired = false;
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structuredSelection =
-				(IStructuredSelection) selection;
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object o = structuredSelection.getFirstElement();
 
 			if (o != null) {
 				if (o instanceof IResource) {
-				    IResource r = (IResource) o;
+					IResource r = (IResource) o;
 					if (selectedResource != r) { //Fix for bug 80920 - test to see whether or not the selection has *actually* changed.
 						selectedResource = r;
 						updateRequired = true;
 					}
-				} else if (o instanceof IJavaElement) {
+				}
+				else if (o instanceof IJavaElement) {
 					try {
-						IResource r = ((IJavaElement)o).getCorrespondingResource();
+						IResource r = ((IJavaElement) o).getCorrespondingResource();
 						if (selectedResource != r) { //Fix for bug 80920 - test to see whether or not the selection has *actually* changed.
 							selectedResource = r;
 							updateRequired = true;
 						}
-					} catch (JavaModelException jme) {
+					}
+					catch (JavaModelException jme) {
 						jme.printStackTrace();
 					}
 				}
 			}
 		}
-		if(updateRequired && selectedResource != null) {
+		if (updateRequired && selectedResource != null) {
 			updateNeeded = true;
 			VisualiserPlugin.refresh();
 		}
 	}
 
-
 	/**
 	 * Update the data
 	 */
 	private void updateData() {
-		if(selectedResource instanceof IContainer) {
+		if (selectedResource instanceof IContainer) {
 			resetModel();
 			IResource[] children;
 			try {
-				children = ((IContainer)selectedResource).members();
+				children = ((IContainer) selectedResource).members();
 
 				boolean membersAreContainers = false;
-        for (IResource iResource : children) {
-          if (iResource instanceof IContainer) {
-            membersAreContainers = true;
-          }
-        }
-				if(!membersAreContainers) {
-					IGroup group = new SimpleGroup(selectedResource.getName());
-          for (IResource resource : children) {
-            createNewMember(group, resource);
-          }
-					addGroup(group);
-				} else {
-          for (IResource child : children) {
-            if (child instanceof IContainer) {
-              IGroup group = new SimpleGroup(child.getName());
-              addChildrenRecursively(group, (IContainer) child);
-              addGroup(group);
-            }
-          }
+				for (IResource iResource : children) {
+					if (iResource instanceof IContainer) {
+						membersAreContainers = true;
+					}
 				}
-			} catch (CoreException e) {
+				if (!membersAreContainers) {
+					IGroup group = new SimpleGroup(selectedResource.getName());
+					for (IResource resource : children) {
+						createNewMember(group, resource);
+					}
+					addGroup(group);
+				}
+				else {
+					for (IResource child : children) {
+						if (child instanceof IContainer) {
+							IGroup group = new SimpleGroup(child.getName());
+							addChildrenRecursively(group, (IContainer) child);
+							addGroup(group);
+						}
+					}
+				}
+			}
+			catch (CoreException e) {
 				e.printStackTrace();
 			}
-		} else if (selectedResource instanceof IFile){
+		}
+		else if (selectedResource instanceof IFile) {
 			try {
 				resetModel();
 				IGroup group = new SimpleGroup(selectedResource.getParent().getName());
 				createNewMember(group, selectedResource);
 				addGroup(group);
-			} catch (CoreException ce) {
+			}
+			catch (CoreException ce) {
 				ce.printStackTrace();
 			}
 		}
 		updateNeeded = false;
 	}
-
 
 	/**
 	 * @param group
@@ -196,19 +193,19 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 	private void addChildrenRecursively(IGroup group, IContainer container) {
 		try {
 			IResource[] children = container.members();
-      for (IResource resource : children) {
-        if (resource instanceof IFile) {
-          createNewMember(group, resource);
-        }
-        else if (resource instanceof IContainer) {
-          addChildrenRecursively(group, (IContainer) resource);
-        }
-      }
-		} catch (CoreException e) {
+			for (IResource resource : children) {
+				if (resource instanceof IFile) {
+					createNewMember(group, resource);
+				}
+				else if (resource instanceof IContainer) {
+					addChildrenRecursively(group, (IContainer) resource);
+				}
+			}
+		}
+		catch (CoreException e) {
 			e.printStackTrace();
 		}
 	}
-
 
 	/**
 	 * @param group
@@ -216,38 +213,37 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 	 * @throws CoreException
 	 */
 	private void createNewMember(IGroup group, IResource resource) throws CoreException {
-		if(resource instanceof IFile) {
+		if (resource instanceof IFile) {
 			int length = 0;
 			IMember member = new ResourceMember(resource.getName(), resource);
-			 BufferedReader in
-	          = new BufferedReader(new InputStreamReader(((IFile)resource).getContents()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(((IFile) resource).getContents()));
 			try {
-				while(in.readLine() != null) {
+				while (in.readLine() != null) {
 					length++;
 				}
 				member.setSize(length);
 				group.add(member);
 				in.close();
-			} catch (IOException e1) {
+			}
+			catch (IOException e1) {
 				e1.printStackTrace();
 			}
 		}
 	}
 
-
 	/**
 	 * Process a mouse click on a member belonging to this provider.  This implemetation
 	 * opens the associated resource in the editor.
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#processMouseclick(IMember, boolean, int)
 	 */
-	public boolean processMouseclick(IMember member, boolean markupWasClicked,int buttonClicked) {
-		if( buttonClicked == 1 && !markupWasClicked && member instanceof ResourceMember) {
-			JDTUtils.openInEditor(((ResourceMember)member).getResource(), 0);
+	public boolean processMouseclick(IMember member, boolean markupWasClicked, int buttonClicked) {
+		if (buttonClicked == 1 && !markupWasClicked && member instanceof ResourceMember) {
+			JDTUtils.openInEditor(((ResourceMember) member).getResource(), 0);
 			return false;
 		}
 		return true;
 	}
-
 
 	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getMemberViewIcon()
@@ -255,7 +251,6 @@ public class ResourceContentProvider extends SimpleContentProvider implements IS
 	public ImageDescriptor getMemberViewIcon() {
 		return VisualiserImages.FILE_VIEW;
 	}
-
 
 	/**
 	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getGroupViewIcon()

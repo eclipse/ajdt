@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class SelectAllAction extends Action {
 
-	private TreeViewer fViewer;
+	private final TreeViewer fViewer;
 
 	public SelectAllAction(TreeViewer viewer) {
 		super();
@@ -36,20 +36,18 @@ public class SelectAllAction extends Action {
 	}
 
 	public void run() {
-		ArrayList allVisible = new ArrayList();
+		ArrayList<TreeItem> allVisible = new ArrayList<>();
 		Tree tree = fViewer.getTree();
 		collectExpandedAndVisible(tree.getItems(), allVisible);
-		tree.setSelection((TreeItem[]) allVisible
-				.toArray(new TreeItem[0]));
+		tree.setSelection(allVisible.toArray(new TreeItem[0]));
 	}
 
-	private void collectExpandedAndVisible(TreeItem[] items, List result) {
-    for (TreeItem item : items) {
-      result.add(item);
-      if (item.getExpanded()) {
-        collectExpandedAndVisible(item.getItems(), result);
-      }
-    }
+	private void collectExpandedAndVisible(TreeItem[] items, List<TreeItem> result) {
+		for (TreeItem item : items) {
+			result.add(item);
+			if (item.getExpanded())
+				collectExpandedAndVisible(item.getItems(), result);
+		}
 	}
 
 }

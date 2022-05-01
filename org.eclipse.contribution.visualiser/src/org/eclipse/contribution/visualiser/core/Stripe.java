@@ -22,9 +22,9 @@ import org.eclipse.contribution.visualiser.text.VisualiserMessages;
  * The stripe class represents a mark on a bar, stripes can be any depth and be
  * of multiple 'kinds' (kinds map to colors).
  */
-public class Stripe implements Comparable {
+public class Stripe implements Comparable<Stripe> {
 
-	private List kinds;
+	private List<IMarkupKind> kinds;
 
 	private int offset;
 
@@ -44,9 +44,7 @@ public class Stripe implements Comparable {
 			return false;
 		if (offset != stripe.offset)
 			return false;
-		if (!stringifyKinds().equals(stripe.stringifyKinds()))
-			return false;
-		return true;
+		return stringifyKinds().equals(stripe.stringifyKinds());
 	}
 
 	/**
@@ -69,7 +67,7 @@ public class Stripe implements Comparable {
 	 * Default constructor
 	 */
 	public Stripe() {
-		kinds = new ArrayList();
+		kinds = new ArrayList<>();
 	}
 
 	/**
@@ -81,7 +79,7 @@ public class Stripe implements Comparable {
 	 *            The offset down the bar where the stripe starts
 	 */
 	public Stripe(IMarkupKind k, int i) {
-		kinds = new ArrayList();
+		kinds = new ArrayList<>();
 		kinds.add(k);
 		offset = i;
 		depth = 1;
@@ -98,7 +96,7 @@ public class Stripe implements Comparable {
 	 *            The depth of the stripe
 	 */
 	public Stripe(IMarkupKind k, int o, int d) {
-		kinds = new ArrayList();
+		kinds = new ArrayList<>();
 		kinds.add(k);
 		offset = o;
 		depth = d;
@@ -115,8 +113,8 @@ public class Stripe implements Comparable {
 	 * @param d
 	 *            The depth of the stripe
 	 */
-	public Stripe(List ks, int o, int d) {
-		kinds = new ArrayList();
+	public Stripe(List<IMarkupKind> ks, int o, int d) {
+		kinds = new ArrayList<>();
 		kinds.addAll(ks);
 		offset = o;
 		depth = d;
@@ -127,7 +125,7 @@ public class Stripe implements Comparable {
 	 *
 	 * @return List of strings representing kinds
 	 */
-	public List getKinds() {
+	public List<IMarkupKind> getKinds() {
 		return kinds;
 	}
 
@@ -136,7 +134,7 @@ public class Stripe implements Comparable {
 	 *
 	 * @param list
 	 */
-	public void addKinds(List list) {
+	public void addKinds(List<IMarkupKind> list) {
 		if (list != null)
 			kinds.addAll(list);
 	}
@@ -146,8 +144,8 @@ public class Stripe implements Comparable {
 	 *
 	 * @param list
 	 */
-	public void setKinds(List list) {
-		kinds = new ArrayList();
+	public void setKinds(List<IMarkupKind> list) {
+		kinds = new ArrayList<>();
 		kinds.addAll(list);
 	}
 
@@ -184,9 +182,8 @@ public class Stripe implements Comparable {
 	 */
 	public String stringifyKinds() {
 		StringBuilder sb = new StringBuilder();
-    for (Object kind : kinds) {
-      sb.append(" ").append(kind).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-    }
+		for (IMarkupKind kind : kinds)
+			sb.append(" ").append(kind).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
 		return sb.toString();
 	}
 
@@ -227,7 +224,7 @@ public class Stripe implements Comparable {
 	public boolean hasKind(IMarkupKind kind) {
 		int found = -1;
 		for (int i = 0; i < kinds.size() && found == -1; i++) {
-			IMarkupKind element = (IMarkupKind) kinds.get(i);
+			IMarkupKind element = kinds.get(i);
 			if (element.equals(kind))
 				found = i;
 		}
@@ -240,12 +237,11 @@ public class Stripe implements Comparable {
 	 * considered equal and 1 if this Stripe is greater than the argument
 	 * Stripe.
 	 */
-	public int compareTo(Object other) {
-		if (getOffset() < ((Stripe) other).getOffset()) {
+	public int compareTo(Stripe other) {
+		if (getOffset() < other.getOffset())
 			return -1;
-		} else if (getOffset() > ((Stripe) other).getOffset()) {
+		else if (getOffset() > other.getOffset())
 			return 1;
-		}
 		return 0;
 	}
 

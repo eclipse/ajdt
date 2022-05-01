@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.contribution.visualiser.VisualiserPlugin;
 import org.eclipse.contribution.visualiser.interfaces.IMarkupKind;
@@ -24,6 +25,7 @@ import org.eclipse.contribution.visualiser.internal.help.IVisualiserHelpContextI
 import org.eclipse.contribution.visualiser.internal.help.VisualiserHelp;
 import org.eclipse.contribution.visualiser.internal.preference.VisualiserPreferences;
 import org.eclipse.contribution.visualiser.renderers.PatternVisualiserRenderer;
+import org.eclipse.contribution.visualiser.simpleImpl.SimpleMarkupKind;
 import org.eclipse.contribution.visualiser.text.VisualiserMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -80,10 +82,10 @@ public class Menu extends ViewPart {
 	private Composite canvas;
 	private ScrolledComposite scrollpane;
 	private GridLayout layout = new GridLayout(4, false);
-    private static IMarkupProvider vmp;
-	private static Hashtable kindActive = null;
+		private static IMarkupProvider vmp;
+	private static Hashtable<Object, Boolean> kindActive = null;
 	private boolean uptodate = false;
-	private Map kinds;
+	private Map<String, IMarkupKind> kinds;
 		 private static Job updateJob;
 
 	/**
@@ -99,9 +101,8 @@ public class Menu extends ViewPart {
 	 * @param vmp
 	 */
 	public void setVisMarkupProvider(IMarkupProvider vmp) {
-		if(Menu.vmp != null) {
-			kinds = new HashMap();
-			}
+		if(Menu.vmp != null)
+			kinds = new HashMap<>();
 		Menu.vmp = vmp;
 	}
 
@@ -172,9 +173,8 @@ public class Menu extends ViewPart {
 		checkboxListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!(VisualiserPlugin.visualiser == null)) {
-					for (int i = 0; i < colors.length; i++) {
+					for (int i = 0; i < colors.length; i++)
 						kindActive.put(labels[i].getData(), checkboxes[i].getSelection());
-					}
 					VisualiserPlugin.visualiser.updateDisplay(false);
 				}
 			}
@@ -276,14 +276,14 @@ public class Menu extends ViewPart {
 	 * Select the checkboxes whose names are in the given List then
 	 * update the visualiser
 	 */
-	protected void onlyShow(List names) {
-		if(names==null){
+	protected void onlyShow(List<String> names) {
+		if(names==null)
 			showNone();
-		} else if(names.size()==0){
+		else if(names.size() == 0)
 			showNone();
-		} else if(names.size() == checkboxes.length){
+		else if(names.size() == checkboxes.length)
 			showAll();
-		} else {
+		else {
 			for(int i=0; i<labels.length; i++){
 				if(names.contains(labels[i].getText())){
 					checkboxes[i].setSelection(true);
@@ -304,9 +304,11 @@ public class Menu extends ViewPart {
 	 * @return true if the kind is active
 	 */
 	public boolean getActive(IMarkupKind kind) {
-		if (kindActive==null) return true;
-		if(kindActive.get(kind) == null) return true;
-		return (Boolean) kindActive.get(kind);
+		if (kindActive == null)
+			return true;
+		if (kindActive.get(kind) == null)
+			return true;
+		return kindActive.get(kind);
 	}
 
 
@@ -316,17 +318,14 @@ public class Menu extends ViewPart {
 	 * @return true if the kind with the given name is active
 	 */
 	public boolean getActive(String kindName) {
-		if(kinds == null) {
+		if(kinds == null)
 			return true;
-		}
-		IMarkupKind kind = (IMarkupKind)kinds.get(kindName);
-		if(kind == null) {
+		IMarkupKind kind = kinds.get(kindName);
+		if(kind == null)
 			return true;
-		}
-		if(kindActive.get(kind) == null) {
+		if(kindActive.get(kind) == null)
 			return true;
-		}
-		return (Boolean) kindActive.get(kind);
+		return kindActive.get(kind);
 	}
 
 	/**
@@ -345,28 +344,28 @@ public class Menu extends ViewPart {
 			// ClassCastException is thrown if provider has not returned a set
 			// of IMarkupKinds from getAllMarkupKinds().
 		Display.getDefault().syncExec(() -> {
-      if(getSite().getPage().isPartVisible(VisualiserPlugin.menu)) {
-        getUpdateJob().schedule();
-      } else {
-        update();
-      }
-    });
+			if(getSite().getPage().isPartVisible(VisualiserPlugin.menu)) {
+				getUpdateJob().schedule();
+			} else {
+				update();
+			}
+		});
 
 	}
 
 		 private synchronized Job getUpdateJob() {
-		 		 if (updateJob == null) {
-	 		 		 updateJob = new UIJob(VisualiserMessages.Jobs_VisualiserMenuUpdate){
- 		 		 		 public IStatus runInUIThread(IProgressMonitor monitor) {
-	 		 		 		if ((canvas==null) || canvas.isDisposed()) {
-	 		 		 			return Status.OK_STATUS;
-	 		 		 		}
-	 		 		 		update();
-	 		 		 		return Status.OK_STATUS;
- 		 		 		 }
-	 		 		 };
-		 		 }
-		 		 return updateJob;
+				 if (updateJob == null) {
+					 updateJob = new UIJob(VisualiserMessages.Jobs_VisualiserMenuUpdate){
+						 public IStatus runInUIThread(IProgressMonitor monitor) {
+							if ((canvas==null) || canvas.isDisposed()) {
+								return Status.OK_STATUS;
+							}
+							update();
+							return Status.OK_STATUS;
+						 }
+					 };
+				 }
+				 return updateJob;
 		 }
 
 	/**
@@ -376,12 +375,12 @@ public class Menu extends ViewPart {
 	private int getNumberToShow(Set markupCategories) {
 		int num = 0;
 		if (markupCategories == null) return 0;
-    for (Object markupCategory : markupCategories) {
-      IMarkupKind element = (IMarkupKind) markupCategory;
-      if (element.showInMenu()) {
-        num++;
-      }
-    }
+		for (Object markupCategory : markupCategories) {
+			IMarkupKind element = (IMarkupKind) markupCategory;
+			if (element.showInMenu()) {
+				num++;
+			}
+		}
 		return num;
 	}
 
@@ -393,9 +392,9 @@ public class Menu extends ViewPart {
 		if(canvas!=null){
 			Control[] children = canvas.getChildren();
 			if (children.length > 0) {
-        for (Control child : children) {
-          child.dispose();
-        }
+				for (Control child : children) {
+					child.dispose();
+				}
 			}
 		}
 	}
@@ -406,80 +405,79 @@ public class Menu extends ViewPart {
 	 */
 	private void update() {
 		clear();
-		 Set markupKinds = vmp.getAllMarkupKinds();
-		 int numKindsToShow = getNumberToShow(markupKinds);
-		 if (markupKinds==null) return;
-		 buttons = new Button[numKindsToShow];
-		 checkboxes = new Button[numKindsToShow];
-		 labels = new Label[numKindsToShow];
-		 icons = new Label[numKindsToShow];
-		 shells = new Shell[numKindsToShow];
-		 colorSquares = new Image[numKindsToShow];
-		 colorDialogs = new ColorDialog[numKindsToShow];
-		 colors = new Color[numKindsToShow];
+		SortedSet<? extends IMarkupKind> markupKinds = vmp.getAllMarkupKinds();
+		int numKindsToShow = getNumberToShow(markupKinds);
+		if (markupKinds == null)
+			return;
+		buttons = new Button[numKindsToShow];
+		checkboxes = new Button[numKindsToShow];
+		labels = new Label[numKindsToShow];
+		icons = new Label[numKindsToShow];
+		shells = new Shell[numKindsToShow];
+		colorSquares = new Image[numKindsToShow];
+		colorDialogs = new ColorDialog[numKindsToShow];
+		colors = new Color[numKindsToShow];
 
+		kindActive = new Hashtable<>();
+		kinds = new HashMap<>();
 
-		 kindActive = new Hashtable();
-		 kinds = new HashMap();
+		int i = 0;
+		for (IMarkupKind markupKind : markupKinds) {
+			kinds.put(markupKind.getName(), markupKind);
+			if (markupKind.showInMenu()) {
+				int imageSize = 12;
+				colors[i] = vmp.getColorFor(markupKind);
+				if (colors[i] == null) {
+					throw new NullPointerException(VisualiserMessages.getColorForError);
+				}
+				if (!VisualiserPreferences.getUsePatterns()) {
+					buttons[i] = new Button(canvas, SWT.PUSH);
+					buttons[i].setToolTipText(VisualiserMessages.Change_color_for + " " + markupKind.getName()); //$NON-NLS-1$
+					shells[i] = buttons[i].getShell();
+					colorDialogs[i] = new ColorDialog(shells[i]);
+					Display display = shells[i].getDisplay();
+					colorSquares[i] = new Image(display, imageSize, imageSize);
+					buttons[i].setImage(colorSquares[i]);
+					buttons[i].addSelectionListener(selectionListener);
+					Image image = buttons[i].getImage();
+					drawImage(image, colors[i]);
+					buttons[i].setImage(image);
+				}
+				else {
+					// We're using patterns so make a plain label rather than a button
+					Label l = new Label(canvas, SWT.NONE);
+					colorSquares[i] = new Image(canvas.getDisplay(), imageSize, imageSize);
+					l.setImage(colorSquares[i]);
+					l.setToolTipText(VisualiserMessages.Pattern_for + " " + markupKind.getName()); //$NON-NLS-1$
+					Image image = l.getImage();
+					drawImage(image, colors[i]);
+					l.setImage(image);
+				}
+				checkboxes[i] = new Button(canvas, SWT.CHECK);
+				checkboxes[i].addSelectionListener(checkboxListener);
+				checkboxes[i].setSelection(true);
 
-		 int i = 0;
-    for (Object markupKind : markupKinds) {
-      IMarkupKind element = (IMarkupKind) markupKind;
-      kinds.put(element.getName(), element);
-      if (element.showInMenu()) {
-        int imageSize = 12;
-        colors[i] = vmp.getColorFor(element);
-        if (colors[i] == null) {
-          throw new NullPointerException(VisualiserMessages.getColorForError);
-        }
-        if (!VisualiserPreferences.getUsePatterns()) {
-          buttons[i] = new Button(canvas, SWT.PUSH);
-          buttons[i].setToolTipText(VisualiserMessages.Change_color_for + " " + element.getName()); //$NON-NLS-1$
-          shells[i] = buttons[i].getShell();
-          colorDialogs[i] = new ColorDialog(shells[i]);
-          Display display = shells[i].getDisplay();
-          colorSquares[i] = new Image(display, imageSize, imageSize);
-          buttons[i].setImage(colorSquares[i]);
-          buttons[i].addSelectionListener(selectionListener);
-          Image image = buttons[i].getImage();
-          drawImage(image, colors[i]);
-          buttons[i].setImage(image);
-        }
-        else {
-          // We're using patterns so make a plain label rather than a button
-          Label l = new Label(canvas, SWT.NONE);
-          colorSquares[i] = new Image(canvas.getDisplay(), imageSize, imageSize);
-          l.setImage(colorSquares[i]);
-          l.setToolTipText(VisualiserMessages.Pattern_for + " " + element.getName()); //$NON-NLS-1$
-          Image image = l.getImage();
-          drawImage(image, colors[i]);
-          l.setImage(image);
-        }
-        checkboxes[i] = new Button(canvas, SWT.CHECK);
-        checkboxes[i].addSelectionListener(checkboxListener);
-        checkboxes[i].setSelection(true);
-
-        icons[i] = new Label(canvas, SWT.NONE);
-        icons[i].setImage(element.getIcon());
-        labels[i] = new Label(canvas, SWT.NONE);
-        labels[i].setText(element.getName());
-        labels[i].setData(element);
-        labels[i].setToolTipText(element.getFullName());
-        i++;
-      }
-      kindActive.put(element, Boolean.TRUE);
-    }
-		 canvas.layout();
-		 canvas.setSize(canvas.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
-		 uptodate = true;
+				icons[i] = new Label(canvas, SWT.NONE);
+				icons[i].setImage(markupKind.getIcon());
+				labels[i] = new Label(canvas, SWT.NONE);
+				labels[i].setText(markupKind.getName());
+				labels[i].setData(markupKind);
+				labels[i].setToolTipText(markupKind.getFullName());
+				i++;
+			}
+			kindActive.put(markupKind, Boolean.TRUE);
+		}
+		canvas.layout();
+		canvas.setSize(canvas.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		uptodate = true;
 	}
+
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
 	public void setFocus() {
-		if(scrollpane != null) {
+		if(scrollpane != null)
 			scrollpane.setFocus();
-		}
 	}
 
 
@@ -487,16 +485,17 @@ public class Menu extends ViewPart {
 	 * Dispose of the menu when closed.
 	 */
 	public void dispose() {
-	    canvas = null;
+			canvas = null;
 		updateJob = null;
 		VisualiserPlugin.getDefault().removeMenu();
 	}
 
-	public Object getAdapter(Class key) {
-		if (key.equals(IContextProvider.class)) {
-			return VisualiserHelp.getHelpContextProvider(this, IVisualiserHelpContextIds.VISUALISER_MENU_VIEW);
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.equals(IContextProvider.class)) {
+			// TODO: Is this cast correct?
+			return (T) VisualiserHelp.getHelpContextProvider(this, IVisualiserHelpContextIds.VISUALISER_MENU_VIEW);
 		}
-		return super.getAdapter(key);
+		return super.getAdapter(adapter);
 	}
 
 }

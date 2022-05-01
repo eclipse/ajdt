@@ -137,7 +137,7 @@ public class XReferenceInplaceDialog {
 	private Text filterText;
 	private StringMatcher stringMatcher;
 	private Font statusTextFont;
-	private List filteredElements = new ArrayList();
+	private List<TreeParent> filteredElements = new ArrayList<>();
 
 	/**
 	 * Remembers the bounds for this information control.
@@ -975,19 +975,16 @@ public class XReferenceInplaceDialog {
 		/*
 		 * (non-Javadoc) Method declared on ViewerFilter.
 		 */
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			StringMatcher matcher = getMatcher();
 			if (matcher == null || !(viewer instanceof TreeViewer))
 				return true;
 			TreeViewer treeViewer = (TreeViewer) viewer;
 
-			String matchName = ((ILabelProvider) treeViewer.getLabelProvider())
-					.getText(element);
+			String matchName = ((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
 			if (matchName != null && matcher.match(matchName)) {
-				if (element instanceof TreeParent) {
-					filteredElements.add(element);
-				}
+				if (element instanceof TreeParent)
+					filteredElements.add((TreeParent) element);
 				return true;
 			}
 			return hasUnfilteredChild(treeViewer, element);
@@ -1012,21 +1009,18 @@ public class XReferenceInplaceDialog {
 		 */
 		public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 			int size = elements.length;
-			ArrayList out = new ArrayList(size);
-      for (Object element : elements) {
-        if (filteredElements.contains(parent)) {
-          if (element instanceof TreeParent) {
-            filteredElements.add(element);
-          }
-          out.add(element);
-        }
-        else if (filteredElements.contains(element)) {
-          out.add(element);
-        }
-        else if (select(viewer, parent, element)) {
-          out.add(element);
-        }
-      }
+			List<Object> out = new ArrayList<>(size);
+			for (Object element : elements) {
+				if (filteredElements.contains(parent)) {
+					if (element instanceof TreeParent)
+						filteredElements.add((TreeParent) element);
+					out.add(element);
+				}
+				else if (filteredElements.contains(element))
+					out.add(element);
+				else if (select(viewer, parent, element))
+					out.add(element);
+			}
 			return out.toArray();
 		}
 	}
@@ -1073,12 +1067,11 @@ public class XReferenceInplaceDialog {
 			Point minSize = new Point(0, 0);
 
 			if (children != null) {
-        for (Control child : children) {
-          Point size = child.computeSize(wHint, hHint,
-            flushCache);
-          minSize.x = Math.max(minSize.x, size.x);
-          minSize.y = Math.max(minSize.y, size.y);
-        }
+				for (Control child : children) {
+					Point size = child.computeSize(wHint, hHint, flushCache);
+					minSize.x = Math.max(minSize.x, size.x);
+					minSize.y = Math.max(minSize.y, size.y);
+				}
 			}
 
 			minSize.x += fBorderSize * 2 + 3;
@@ -1098,11 +1091,10 @@ public class XReferenceInplaceDialog {
 					composite.getClientArea().height);
 
 			if (children != null) {
-        for (Control child : children) {
-          child.setSize(minSize.x - fBorderSize * 2, minSize.y
-                                                     - fBorderSize * 2);
-          child.setLocation(fBorderSize, fBorderSize);
-        }
+				for (Control child : children) {
+					child.setSize(minSize.x - fBorderSize * 2, minSize.y - fBorderSize * 2);
+					child.setLocation(fBorderSize, fBorderSize);
+				}
 			}
 		}
 	}

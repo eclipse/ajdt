@@ -419,7 +419,8 @@ public class ITDAwareSourceTypeInfo extends SourceTypeElementInfo {
                                 // a default implementation for an interface method
                                 // use IMethod.isSimilar
                                 if (childMethods == null) {
-                                    childMethods = (List<IMethod>) type.getChildrenOfType(IJavaElement.METHOD);
+                                  //noinspection unchecked
+                                  childMethods = (List<IMethod>) type.getChildrenOfType(IJavaElement.METHOD);
                                 }
                                 for (IMethod method : childMethods) {
                                     if (method.isSimilar((IMethod) member)) {

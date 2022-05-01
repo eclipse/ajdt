@@ -49,34 +49,26 @@ public class VerificationTest extends UITestCase {
 	}
 
 	public void testViewsAreValid() {
-		List /* IConfigurationElement */extToTest = new ArrayList();
-		IExtensionPoint[] allExP = Platform.getExtensionRegistry()
-				.getExtensionPoints();
+		List<IConfigurationElement> extToTest = new ArrayList<>();
+		IExtensionPoint[] allExP = Platform.getExtensionRegistry().getExtensionPoints();
     for (IExtensionPoint exP : allExP) {
       IExtension[] exs = exP.getExtensions();
       for (IExtension ex : exs) {
         IConfigurationElement[] ces = ex.getConfigurationElements();
         for (IConfigurationElement ce : ces) {
           String className = ce.getAttribute("class"); //$NON-NLS-1$
-          if ((className != null)
-              && className.startsWith("org.eclipse.ajdt"))
-          { //$NON-NLS-1$
+          if ((className != null) && className.startsWith("org.eclipse.ajdt")) //$NON-NLS-1$
             extToTest.add(ce);
-          }
           IConfigurationElement[] sub = ce.getChildren();
           for (IConfigurationElement iConfigurationElement : sub) {
             String subClassName = iConfigurationElement.getAttribute("class"); //$NON-NLS-1$
-            if ((subClassName != null)
-                && subClassName.startsWith("org.eclipse.ajdt"))
-            { //$NON-NLS-1$
+            if ((subClassName != null) && subClassName.startsWith("org.eclipse.ajdt")) //$NON-NLS-1$
               extToTest.add(iConfigurationElement);
-            }
           }
         }
       }
     }
-    for (Object o : extToTest) {
-      IConfigurationElement elem = (IConfigurationElement) o;
+    for (IConfigurationElement elem : extToTest) {
       String className = elem.getAttribute("class"); //$NON-NLS-1$
       IExtension decl = elem.getDeclaringExtension();
       // only attempt to resolve classes defined in ajdt.ui plugin
@@ -88,7 +80,6 @@ public class VerificationTest extends UITestCase {
           e.printStackTrace();
           fail("Failed to resolve class: " + elem.getAttribute("class") //$NON-NLS-1$//$NON-NLS-2$
                + " declared under extension point: " + decl.getExtensionPointUniqueIdentifier()); //$NON-NLS-1$
-
         }
       }
     }
@@ -97,17 +88,15 @@ public class VerificationTest extends UITestCase {
 	private boolean isViewDefined(String viewID) {
 		String viewExtension = "org.eclipse.ui.views"; //$NON-NLS-1$
 
-		IExtensionPoint exP = Platform.getExtensionRegistry()
-				.getExtensionPoint(viewExtension);
+		IExtensionPoint exP = Platform.getExtensionRegistry().getExtensionPoint(viewExtension);
 		IExtension[] exs = exP.getExtensions();
 
     for (IExtension ex : exs) {
       IConfigurationElement[] ces = ex.getConfigurationElements();
       for (IConfigurationElement ce : ces) {
         String id = ce.getAttribute("id"); //$NON-NLS-1$
-        if (id.equals(viewID)) {
+        if (id.equals(viewID))
           return true;
-        }
       }
     }
 		return false;

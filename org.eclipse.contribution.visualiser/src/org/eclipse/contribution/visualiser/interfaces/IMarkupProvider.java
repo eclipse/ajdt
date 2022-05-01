@@ -45,13 +45,13 @@ public interface IMarkupProvider {
 	/**
 	 * Return a list of all stripes in effect on this member.
 	 */
-  List getMemberMarkups(IMember member);
+  List<Stripe> getMemberMarkups(IMember member);
 
 
 	/**
 	 * Return a list of all stripes in effect on all members of the group.
 	 */
-  List getGroupMarkups(IGroup group);
+  List<Stripe> getGroupMarkups(IGroup group);
 
 
 	/**
@@ -59,7 +59,7 @@ public interface IMarkupProvider {
 	 * in the visualisation.  This is used by the visualiser menu.
 	 * The return value is a set of IMarkupKinds.
 	 */
-  SortedSet getAllMarkupKinds();
+  SortedSet<? extends IMarkupKind> getAllMarkupKinds();
 
 
 	/**

@@ -29,9 +29,8 @@ public class AdaptableString implements IAdaptable {
     }
 
     public Object getAdapter(Class adapter) {
-        if (String.class == adapter) {
+        if (String.class == adapter)
             return val;
-        }
         return null;
     }
 

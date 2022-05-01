@@ -13,6 +13,7 @@ package org.eclipse.ajdt.ui.tests.reconciling;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.ajdt.core.AspectJCore;
 import org.eclipse.ajdt.core.javaelements.AJCompilationUnit;
@@ -27,87 +28,103 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.compiler.CategorizedProblem;
 import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.core.CompilationUnitProblemFinder;
 import org.eclipse.jdt.internal.core.DefaultWorkingCopyOwner;
 
 /**
  * Tests AJCompilationUnitProblemFinder and ITDAwareness
- *
+ * <p>
  * Specifically tests that return types on ITD methods do not need to
  * be fully qualified.  See bug 265986
  *
  * @author andrew
- *
  */
 public class ProblemFinderTests12 extends AJDTCoreTestCase {
-    List<ICompilationUnit> allCUnits = new ArrayList<>();
-    IProject proj;
-    protected void setUp() throws Exception {
-        super.setUp();
-        setAutobuilding(false);
-        proj = createPredefinedProject("Bug265986-ITDMissingType"); //$NON-NLS-1$
-        proj.build(IncrementalProjectBuilder.FULL_BUILD, null);
+  List<ICompilationUnit> allCUnits = new ArrayList<>();
+  IProject proj;
 
-        IFolder src = proj.getFolder("src");
+  protected void setUp() throws Exception {
+    super.setUp();
+    setAutobuilding(false);
+    proj = createPredefinedProject("Bug265986-ITDMissingType"); //$NON-NLS-1$
+    proj.build(IncrementalProjectBuilder.FULL_BUILD, null);
 
-        IResourceVisitor visitor = resource -> {
-            if (resource.getType() == IResource.FILE &&
-                    (resource.getName().endsWith("java") ||
-                            resource.getName().endsWith("aj"))) {
-                allCUnits.add(createUnit((IFile) resource));
-            }
-            return true;
-        };
-        src.accept(visitor);
-        proj.build(IncrementalProjectBuilder.FULL_BUILD, null);
+    IFolder src = proj.getFolder("src");
 
-        joinBackgroudActivities();
+    IResourceVisitor visitor = resource -> {
+      if (resource.getType() == IResource.FILE &&
+          (resource.getName().endsWith("java") ||
+           resource.getName().endsWith("aj")))
+      {
+        allCUnits.add(createUnit((IFile) resource));
+      }
+      return true;
+    };
+    src.accept(visitor);
+    proj.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+    joinBackgroudActivities();
+  }
+
+  private ICompilationUnit createUnit(IFile file) {
+    return (ICompilationUnit) AspectJCore.create(file);
+  }
+
+  protected void tearDown() throws Exception {
+    super.tearDown();
+    setAutobuilding(true);
+  }
+
+  public void testProblemFindingAll() throws Exception {
+    StringBuilder sb = new StringBuilder();
+    for (ICompilationUnit element : allCUnits) {
+      sb.append(problemFind(element));
     }
-
-    private ICompilationUnit createUnit(IFile file) {
-        return (ICompilationUnit) AspectJCore.create(file);
+    if (sb.length() > 0) {
+      fail(sb.toString());
     }
+  }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        setAutobuilding(true);
+  private String problemFind(ICompilationUnit unit) throws Exception {
+    Map<String, CategorizedProblem[]> problems = doFind(unit);
+    MockProblemRequestor.filterAllWarningProblems(problems);
+    if (MockProblemRequestor.countProblems(problems) > 0) {
+      return "Should not have any problems in " + unit + " but found:\n" + MockProblemRequestor.printProblems(problems) + "\n"; //$NON-NLS-1$
     }
+    else {
+      return "";
+    }
+  }
 
-    public void testProblemFindingAll() throws Exception {
-        StringBuilder sb = new StringBuilder();
-        for (ICompilationUnit element : allCUnits) {
-            sb.append(problemFind(element));
-        }
-        if (sb.length() > 0) {
-            fail(sb.toString());
-        }
+  private Map<String, CategorizedProblem[]> doFind(ICompilationUnit unit)
+    throws JavaModelException
+  {
+    HashMap<String, CategorizedProblem[]> problems = new HashMap<>();
+    if (unit instanceof AJCompilationUnit) {
+      AJCompilationUnitProblemFinder.processAJ(
+        (AJCompilationUnit) unit,
+        AJWorkingCopyOwner.INSTANCE,
+        problems,
+        true,
+        ICompilationUnit.ENABLE_BINDINGS_RECOVERY | ICompilationUnit.ENABLE_STATEMENTS_RECOVERY | ICompilationUnit.FORCE_PROBLEM_DETECTION,
+        null
+      );
     }
-
-    private String problemFind(ICompilationUnit unit) throws Exception {
-        HashMap problems = doFind(unit);
-        MockProblemRequestor.filterAllWarningProblems(problems);
-        if (MockProblemRequestor.countProblems(problems) > 0) {
-            return "Should not have any problems in " + unit + " but found:\n" + MockProblemRequestor.printProblems(problems) + "\n"; //$NON-NLS-1$
-        } else {
-            return "";
-        }
+    else {
+      // Requires JDT Weaving
+      CompilationUnitProblemFinder.process(
+        (CompilationUnit) unit,
+        null,
+        DefaultWorkingCopyOwner.PRIMARY,
+        problems,
+        true,
+        ICompilationUnit.ENABLE_BINDINGS_RECOVERY | ICompilationUnit.ENABLE_STATEMENTS_RECOVERY | ICompilationUnit.FORCE_PROBLEM_DETECTION,
+        null
+      );
     }
-    private HashMap doFind(ICompilationUnit unit)
-            throws JavaModelException {
-        HashMap problems = new HashMap();
-        if (unit instanceof AJCompilationUnit) {
-            AJCompilationUnitProblemFinder.processAJ((AJCompilationUnit) unit,
-                    AJWorkingCopyOwner.INSTANCE, problems, true,
-                    ICompilationUnit.ENABLE_BINDINGS_RECOVERY | ICompilationUnit.ENABLE_STATEMENTS_RECOVERY | ICompilationUnit.FORCE_PROBLEM_DETECTION, null);
-        } else {
-            // Requires JDT Weaving
-            CompilationUnitProblemFinder.process((CompilationUnit) unit, null,
-                    DefaultWorkingCopyOwner.PRIMARY, problems, true,
-                    ICompilationUnit.ENABLE_BINDINGS_RECOVERY | ICompilationUnit.ENABLE_STATEMENTS_RECOVERY | ICompilationUnit.FORCE_PROBLEM_DETECTION, null);
-        }
-        return problems;
-    }
-
+    return problems;
+  }
 
 }

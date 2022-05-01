@@ -18,11 +18,11 @@ import java.util.ArrayList;
  */
 public class TreeParent extends TreeObject {
 
-	private ArrayList children;
+	private final ArrayList<TreeObject> children;
 
 	public TreeParent(String name) {
 		super(name);
-		children = new ArrayList();
+		children = new ArrayList<>();
 	}
 
 	public void addChild(TreeObject child) {
@@ -36,8 +36,7 @@ public class TreeParent extends TreeObject {
 	}
 
 	public TreeObject[] getChildren() {
-		return (TreeObject[]) children.toArray(
-      new TreeObject[0]);
+		return children.toArray(new TreeObject[0]);
 	}
 
 	public boolean hasChildren() {

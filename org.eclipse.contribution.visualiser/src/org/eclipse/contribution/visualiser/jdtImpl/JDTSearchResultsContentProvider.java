@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Helen Hawkins - initial version
  *******************************************************************************/
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.contribution.visualiser.core.ProviderManager;
+import org.eclipse.contribution.visualiser.interfaces.IMember;
 import org.eclipse.contribution.visualiser.jdtImpl.JDTSearchResultsMarkupProvider.VisualiserPropertyListener;
 import org.eclipse.jdt.internal.ui.search.JavaSearchResult;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -27,27 +28,27 @@ import org.eclipse.search2.internal.ui.SearchView;
 public class JDTSearchResultsContentProvider extends JDTContentProvider {
 
 	private static VisualiserPropertyListener visListenerInstance = null;
-	
+
 	private ISearchResultViewPart searchView = null;
-	
+
 
 	/**
-	 * Get all members - returns null if last search to populate the search view 
-	 * wasn't a java search.
-	 * 
-	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers()
-	 */
-	public List getAllMembers() {
+   * Get all members - returns null if last search to populate the search view
+   * wasn't a java search.
+   *
+   * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers()
+   */
+	public List<IMember> getAllMembers() {
 		if(ProviderManager.getMarkupProvider() instanceof JDTSearchResultsMarkupProvider) {
 			((JDTSearchResultsMarkupProvider)ProviderManager.getMarkupProvider()).resetMarkupsAndKinds();
 			updateSearchInformation();
 			if (!((JDTSearchResultsMarkupProvider)ProviderManager.getMarkupProvider()).isJavaSearch()) {
-				return new ArrayList();
+				return new ArrayList<>();
 			}
 		}
 		return super.getAllMembers();
 	}
-	
+
 	private void updateSearchInformation() {
 		if (SearchPlugin.getActivePage() != null && NewSearchUI.getSearchResultView() != null) {
 			if (searchView == null) {
@@ -57,7 +58,7 @@ public class JDTSearchResultsContentProvider extends JDTContentProvider {
 				visListenerInstance = new VisualiserPropertyListener();
 			}
 			if (visListenerInstance == null) {
-				visListenerInstance = new VisualiserPropertyListener();					
+				visListenerInstance = new VisualiserPropertyListener();
 			}
 			searchView.addPropertyListener(visListenerInstance);
 			if (searchView instanceof SearchView) {
@@ -67,10 +68,10 @@ public class JDTSearchResultsContentProvider extends JDTContentProvider {
 					((JDTSearchResultsMarkupProvider)ProviderManager.getMarkupProvider()).setJavaSearchResult((JavaSearchResult)sv.getCurrentSearchResult());
 				} else {
 					((JDTSearchResultsMarkupProvider)ProviderManager.getMarkupProvider()).setJavaSearch(false);
-					((JDTSearchResultsMarkupProvider)ProviderManager.getMarkupProvider()).setJavaSearchResult(null);						
+					((JDTSearchResultsMarkupProvider)ProviderManager.getMarkupProvider()).setJavaSearchResult(null);
 				}
 			}
-		}		
+		}
 	}
-	
+
 }

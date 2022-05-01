@@ -311,17 +311,17 @@ public class ProjectDependenciesUtils {
 					IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, false,
 					IResource.DEPTH_INFINITE);
 			if (javaModelMarkers.length > 0) {
-        for (IMarker marker : javaModelMarkers) {
-          int markerSeverity = marker.getAttribute(IMarker.SEVERITY,
-            -1);
-          String markerMessage = marker.getAttribute(IMarker.MESSAGE,
-            "no message"); //$NON-NLS-1$
-          if (markerSeverity == IMarker.SEVERITY_ERROR
-              && markerMessage.equals(errorMessage))
-          {
-            return true;
-          }
-        }
+				for (IMarker marker : javaModelMarkers) {
+					int markerSeverity = marker.getAttribute(IMarker.SEVERITY,
+						-1);
+					String markerMessage = marker.getAttribute(IMarker.MESSAGE,
+						"no message"); //$NON-NLS-1$
+					if (markerSeverity == IMarker.SEVERITY_ERROR
+							&& markerMessage.equals(errorMessage))
+					{
+						return true;
+					}
+				}
 			}
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -349,38 +349,39 @@ public class ProjectDependenciesUtils {
 		}
 	}
 
-	public static void removeProjectDependency(
-			IJavaProject projectWhichHasDependency, IProject projectDependedOn) {
+	public static void removeProjectDependency(IJavaProject projectWhichHasDependency, IProject projectDependedOn) {
 		try {
-			IClasspathEntry[] cpEntry = projectWhichHasDependency
-					.getRawClasspath();
-			List newEntries = new ArrayList();
+			IClasspathEntry[] cpEntries = projectWhichHasDependency.getRawClasspath();
+			List<IClasspathEntry> newEntries = new ArrayList<>();
 
-      for (IClasspathEntry entry : cpEntry) {
-        if (entry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
-          if (!entry.getPath().equals(projectDependedOn.getFullPath())
-              && !entry.getPath().equals(projectDependedOn.getFullPath().makeAbsolute()))
-          {
-            newEntries.add(entry);
-          }
-        }
-        else {
-          newEntries.add(entry);
-        }
-      }
-			IClasspathEntry[] newCP = (IClasspathEntry[]) newEntries.toArray(new IClasspathEntry[0]);
+			for (IClasspathEntry cpEntry : cpEntries) {
+				if (cpEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
+					if (
+						!cpEntry.getPath().equals(projectDependedOn.getFullPath()) &&
+						!cpEntry.getPath().equals(projectDependedOn.getFullPath().makeAbsolute())
+					)
+						newEntries.add(cpEntry);
+				}
+				else
+					newEntries.add(cpEntry);
+			}
+			IClasspathEntry[] newCP = newEntries.toArray(new IClasspathEntry[0]);
 			projectWhichHasDependency.setRawClasspath(newCP, null);
 			waitForJobsToComplete();
 			waitForJobsToComplete();
-		} catch (JavaModelException e) {
+		}
+		catch (JavaModelException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void addPluginDependency(IProject projectToHaveDependency,
-			String importID, BlockingProgressMonitor monitor) {
-		ManifestEditor manEd = AJDTUtils
-				.getPDEManifestEditor(projectToHaveDependency);
+	public static void addPluginDependency(
+		IProject projectToHaveDependency,
+		String importID,
+		BlockingProgressMonitor monitor
+	)
+	{
+		ManifestEditor manEd = AJDTUtils.getPDEManifestEditor(projectToHaveDependency);
 		AJDTUtils.getAndPrepareToChangePDEModel(projectToHaveDependency);
 		if (manEd != null) {
 			IPluginModel model = (IPluginModel) manEd.getAggregateModel();
@@ -391,19 +392,22 @@ public class ProjectDependenciesUtils {
 				monitor.waitForCompletion();
 				monitor.reset();
 				projectToHaveDependency.build(
-						IncrementalProjectBuilder.FULL_BUILD, "Java Builder", //$NON-NLS-1$
-						null, monitor);
+					IncrementalProjectBuilder.FULL_BUILD,
+					"Java Builder", //$NON-NLS-1$
+					null,
+					monitor
+				);
 				monitor.waitForCompletion();
-			} catch (CoreException e) {
+			}
+			catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private static void addImportToPDEModel(IPluginModel model,
-			String importId, BlockingProgressMonitor monitor)
-			throws CoreException {
-
+	private static void addImportToPDEModel(IPluginModel model, String importId, BlockingProgressMonitor monitor)
+		throws CoreException
+	{
 		IPluginImport importNode = model.getPluginFactory().createImport();
 		importNode.setId(importId);
 		model.getPluginBase().getImports();
@@ -415,20 +419,19 @@ public class ProjectDependenciesUtils {
 		//monitor.waitForCompletion();
 	}
 
-	public static boolean projectHasPluginDependency(IProject projectWhichHasDependency,
-			String pluginIdOfRequiredProject) throws JavaModelException {
+	public static boolean projectHasPluginDependency(IProject projectWhichHasDependency, String pluginIdOfRequiredProject)
+		throws JavaModelException
+	{
 		ManifestEditor manEd = AJDTUtils.getPDEManifestEditor(projectWhichHasDependency);
 		AJDTUtils.getAndPrepareToChangePDEModel(projectWhichHasDependency);
 		if (manEd != null) {
 			IPluginModel model = (IPluginModel) manEd.getAggregateModel();
 			IPluginImport[] imports = model.getPluginBase().getImports();
-      for (IPluginImport import1 : imports) {
-        if (import1.getId().equals(pluginIdOfRequiredProject)) {
-          return true;
-        }
-      }
+			for (IPluginImport import1 : imports) {
+				if (import1.getId().equals(pluginIdOfRequiredProject))
+					return true;
+			}
 		}
-
 		return false;
 	}
 

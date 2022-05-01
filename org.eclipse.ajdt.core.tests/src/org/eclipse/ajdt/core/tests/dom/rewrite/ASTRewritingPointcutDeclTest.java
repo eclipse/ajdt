@@ -734,8 +734,7 @@ public class ASTRewritingPointcutDeclTest extends AJDTCoreTestCase {
 		}
 	}
 
-	public void check(AjASTRewrite rewrite, Document doc, String expected,
-			Map optionsMap) {
+	public void check(AjASTRewrite rewrite, Document doc, String expected, Map<String, String> optionsMap) {
 		TextEdit edits = rewrite.rewriteAST(doc, optionsMap);
 		try {
 			edits.apply(doc);
@@ -796,8 +795,7 @@ public class ASTRewritingPointcutDeclTest extends AJDTCoreTestCase {
 	protected String evaluateRewrite(ICompilationUnit cu, AjASTRewrite rewrite)
 			throws Exception {
 		Document document = new Document(cu.getSource());
-		TextEdit res = rewrite.rewriteAST(document, cu.getJavaProject()
-				.getOptions(true));
+		TextEdit res = rewrite.rewriteAST(document, cu.getJavaProject().getOptions(true));
 
 		res.apply(document);
 		return document.get();

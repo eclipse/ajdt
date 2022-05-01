@@ -55,7 +55,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class Visualiser extends ViewPart {
 
-    private VisualiserCanvas visCanvas;
+	private VisualiserCanvas visCanvas;
 
 	protected IContentProvider contentP;
 
@@ -65,7 +65,7 @@ public class Visualiser extends ViewPart {
 
 	private ImageDescriptor memberViewImage = VisualiserImages.MEMBER_VIEW;
 
-	private List data = null;
+	private List<? extends IMember> data = null;
 
 	// actions
 	private Action limitAction;
@@ -109,18 +109,18 @@ public class Visualiser extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		try {
-		    // attempt to open the visualizer menu whenever the visualizer itself is opened.
-	        IViewPart view = getSite().getWorkbenchWindow().getWorkbench().getViewRegistry().find(VisualiserPlugin.VIEWS_MENU).createView();
-	        getSite().getPage().activate(view);
-		} catch (Exception e) {
-		    VisualiserPlugin.logException(e);
-        }
+			// attempt to open the visualizer menu whenever the visualizer itself is opened.
+			IViewPart view = getSite().getWorkbenchWindow().getWorkbench().getViewRegistry().find(VisualiserPlugin.VIEWS_MENU).createView();
+			getSite().getPage().activate(view);
+		}
+		catch (Exception e) {
+			VisualiserPlugin.logException(e);
+		}
 		visCanvas = new VisualiserCanvas(parent, this);
 		visCanvas.addPaintListener(event -> {
-      if(!upToDate) {
-        VisualiserPlugin.refresh();
-      }
-    });
+			if (!upToDate)
+				VisualiserPlugin.refresh();
+		});
 		makeActions();
 		contributeToActionBars();
 		memberViewAction.setChecked(true);
@@ -128,15 +128,15 @@ public class Visualiser extends ViewPart {
 
 		// Add an empty ISelectionProvider so that this view works with dynamic help (bug 104331)
 		getSite().setSelectionProvider(new ISelectionProvider() {
-			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-			}
+			public void addSelectionChangedListener(ISelectionChangedListener listener) { }
+
 			public ISelection getSelection() {
 				return null;
 			}
-			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-			}
-			public void setSelection(ISelection selection) {
-			}
+
+			public void removeSelectionChangedListener(ISelectionChangedListener listener) { }
+
+			public void setSelection(ISelection selection) { }
 		});
 	}
 
@@ -198,9 +198,9 @@ public class Visualiser extends ViewPart {
 	private void makeActionPreferences() {
 		preferencesAction = new Action() {
 			public void run() {
-				String id= "org.eclipse.contribution.visualiser.prefspage"; //$NON-NLS-1$
+				String id = "org.eclipse.contribution.visualiser.prefspage"; //$NON-NLS-1$
 				PreferencesUtil.createPreferenceDialogOn(Visualiser.this.getViewSite().getShell(),
-						id, new String[] { id }, null).open();
+					id, new String[] { id }, null).open();
 			}
 		};
 		preferencesAction.setText(VisualiserMessages.Preferences_24);
@@ -219,19 +219,14 @@ public class Visualiser extends ViewPart {
 			}
 
 			public void run() {
-				if (!inLimitMode)
-					inLimitMode = true;
-				else
-					inLimitMode = false;
-
+				inLimitMode = !inLimitMode;
 				setChecked(inLimitMode);
 				updateDisplay(false); // aspectDrawing.limit(canvas,
-									  // in_limit_mode);
+				// in_limit_mode);
 			}
 		};
 		limitAction.setText(VisualiserMessages.Limit_view_9);
-		limitAction
-				.setToolTipText(VisualiserMessages.Limits_visualisation_to_affected_bars_only_10);
+		limitAction.setToolTipText(VisualiserMessages.Limits_visualisation_to_affected_bars_only_10);
 		limitAction.setImageDescriptor(VisualiserImages.LIMIT_MODE);
 	}
 
@@ -248,9 +243,9 @@ public class Visualiser extends ViewPart {
 				if (fitToView) {
 					zString = zoomString;
 					setZoomString(VisualiserMessages.Zoom_fittoview);
-				} else {
-					setZoomString(zString);
 				}
+				else
+					setZoomString(zString);
 				updateDisplay(false);
 				zoomInAction.setEnabled(!fitToView);
 				zoomOutAction.setEnabled(!fitToView);
@@ -263,7 +258,7 @@ public class Visualiser extends ViewPart {
 		fitToViewAction.setText(VisualiserMessages.Absolute_Proportions);
 		fitToViewAction.setToolTipText(VisualiserMessages.Absolute_Proportions);
 		fitToViewAction
-				.setImageDescriptor(VisualiserImages.FIT_TO_VIEW);
+			.setImageDescriptor(VisualiserImages.FIT_TO_VIEW);
 	}
 
 	/**
@@ -295,13 +290,10 @@ public class Visualiser extends ViewPart {
 			}
 
 			public void run() {
+				setChecked(true);
 				if (!(inGroupView)) {
-
-					setChecked(true);
 					memberViewAction.setChecked(false);
 					inGroupView = true;
-				} else {
-					setChecked(true);
 				}
 				activateGroupView();
 				updateDisplay(false);
@@ -314,7 +306,6 @@ public class Visualiser extends ViewPart {
 
 	/**
 	 * Make the zoom-out action
-	 *
 	 */
 	private void makeActionZoomout() {
 		zoomOutAction = new Action() {
@@ -326,7 +317,6 @@ public class Visualiser extends ViewPart {
 		zoomOutAction.setToolTipText(VisualiserMessages.Zooms_out_7);
 		zoomOutAction.setImageDescriptor(VisualiserImages.ZOOM_OUT);
 	}
-
 
 	/**
 	 * Make the zoom-in action
@@ -345,6 +335,7 @@ public class Visualiser extends ViewPart {
 	public void zoominSetEnabled(boolean enabled) {
 		zoomInAction.setEnabled(enabled);
 	}
+
 	public void zoomoutSetEnabled(boolean enabled) {
 		zoomOutAction.setEnabled(enabled);
 	}
@@ -380,7 +371,7 @@ public class Visualiser extends ViewPart {
 
 	private void refreshTitle() {
 		String s = VisualiserMessages.Visualiser
-				+ " - " + title; //$NON-NLS-1$
+							 + " - " + title; //$NON-NLS-1$
 		if ((zoomString != null) && (zoomString.length() > 0)) {
 			s += " (" + zoomString + ")"; //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -432,7 +423,7 @@ public class Visualiser extends ViewPart {
 	public void dispose() {
 		super.dispose();
 		redrawJob = null;
-		VisualiserPlugin.visualiser=null;
+		VisualiserPlugin.visualiser = null;
 		visCanvas.dispose();
 		visCanvas = null;
 	}
@@ -442,28 +433,28 @@ public class Visualiser extends ViewPart {
 	 * menu has changed.
 	 */
 	public void draw() {
- 		 getVisualiserRedrawJob().schedule();
+		getVisualiserRedrawJob().schedule();
 	}
 
-	 private synchronized Job getVisualiserRedrawJob() {
- 		 if (redrawJob == null) {
-	 		 redrawJob = new UIJob(VisualiserMessages.Jobs_VisualiserRedraw) {
+	private synchronized Job getVisualiserRedrawJob() {
+		if (redrawJob == null) {
+			redrawJob = new UIJob(VisualiserMessages.Jobs_VisualiserRedraw) {
 
- 		 		 public IStatus runInUIThread(IProgressMonitor monitor) {
- 		 		 		if ((visCanvas!=null) && !visCanvas.isDisposed()) {
- 		 		 			visCanvas.redraw(data);
- 		 		 			upToDate = true;
- 		 		 		}
- 		 		 		return Status.OK_STATUS;
- 		 		 }
-	 		 };
- 		 }
- 		 return redrawJob;
-	 }
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if ((visCanvas != null) && !visCanvas.isDisposed()) {
+						visCanvas.redraw(data);
+						upToDate = true;
+					}
+					return Status.OK_STATUS;
+				}
+			};
+		}
+		return redrawJob;
+	}
 
-	 public void updateDisplay(boolean updateMenu) {
-	 	updateDisplay(updateMenu, new NullProgressMonitor());
-	 }
+	public void updateDisplay(boolean updateMenu) {
+		updateDisplay(updateMenu, new NullProgressMonitor());
+	}
 
 	/**
 	 * Update the display
@@ -471,19 +462,10 @@ public class Visualiser extends ViewPart {
 	public void updateDisplay(final boolean updateMenu, IProgressMonitor monitor) {
 		monitor.beginTask(VisualiserMessages.Jobs_Update, 3);
 		monitor.setTaskName(VisualiserMessages.Jobs_GettingData);
-		if (inGroupView) {
-			if (inLimitMode) {
-				data = limitData(contentP.getAllGroups());
-			} else {
-				data = contentP.getAllGroups();
-			}
-		} else {
-			if (inLimitMode) {
-				data = limitData(contentP.getAllMembers());
-			} else {
-				data = contentP.getAllMembers();
-			}
-		}
+		if (inGroupView)
+			data = inLimitMode ? limitData(contentP.getAllGroups()) : contentP.getAllGroups();
+		else
+			data = inLimitMode ? limitData(contentP.getAllMembers()) : contentP.getAllMembers();
 		monitor.worked(1);
 		monitor.setTaskName(VisualiserMessages.Jobs_UpdatingMenu);
 		if (VisualiserPlugin.menu != null && updateMenu) {
@@ -499,49 +481,45 @@ public class Visualiser extends ViewPart {
 	/**
 	 * Shorten the input data to only those bars that have active kinds.
 	 */
-	private List limitData(List data) {
+	private List<? extends IMember> limitData(List<? extends IMember> data) {
 		if (data == null)
 			return null;
 		log(3, "In limit processing: Input size: " + data.size()); //$NON-NLS-1$
-		List activeBars = new ArrayList();
-    for (Object element : data) {
-      if (element instanceof IGroup) {
-        IGroup aGroup = (IGroup) element;
-        List stripes = markupP.getGroupMarkups(aGroup);
-        if (containsActiveStripe(stripes))
-          activeBars.add(element);
-      }
-      else {
-        IMember aMember = (IMember) element;
-        List stripes = markupP.getMemberMarkups(aMember);
-        if (containsActiveStripe(stripes))
-          activeBars.add(element);
-      }
-    }
+		List<IMember> activeBars = new ArrayList<>();
+		for (IMember element : data) {
+			if (element instanceof IGroup) {
+				IGroup aGroup = (IGroup) element;
+				List<Stripe> stripes = markupP.getGroupMarkups(aGroup);
+				if (containsActiveStripe(stripes))
+					activeBars.add(aGroup);
+			}
+			else {
+				List<Stripe> stripes = markupP.getMemberMarkups(element);
+				if (containsActiveStripe(stripes))
+					activeBars.add(element);
+			}
+		}
 		log(3, "Finished limit processing: Output size: " + activeBars.size()); //$NON-NLS-1$
 		return activeBars;
 	}
 
-	private static boolean containsActiveStripe(List stripes) {
+	private static boolean containsActiveStripe(List<Stripe> stripes) {
 		if (stripes == null)
 			return false;
 		// Go through the stripes in the list
-    for (Object stripe : stripes) {
-      Stripe element = (Stripe) stripe;
-      List kinds = element.getKinds();
-      // Go through the kinds in each stripe
-      for (Object o : kinds) {
-        IMarkupKind kind = (IMarkupKind) o;
-        // If any kind is active, return true
-        if (VisualiserPlugin.menu == null) {
-          // If menu is null we assume all kinds are active
-          return true;
-        }
-        else if (VisualiserPlugin.menu.getActive(kind)) {
-          return true;
-        }
-      }
-    }
+		for (Stripe stripe : stripes) {
+			List<IMarkupKind> kinds = stripe.getKinds();
+			// Go through the kinds in each stripe
+			for (IMarkupKind kind : kinds) {
+				// If any kind is active, return true
+				if (VisualiserPlugin.menu == null) {
+					// If menu is null we assume all kinds are active
+					return true;
+				}
+				else if (VisualiserPlugin.menu.getActive(kind))
+					return true;
+			}
+		}
 		return false;
 	}
 
@@ -554,9 +532,9 @@ public class Visualiser extends ViewPart {
 	public void setVisContentProvider(IContentProvider vcp) {
 		contentP = vcp;
 		memberViewImage = vcp.getMemberViewIcon() == null ? VisualiserImages.MEMBER_VIEW
-				: vcp.getMemberViewIcon();
+			: vcp.getMemberViewIcon();
 		groupViewImage = vcp.getGroupViewIcon() == null ? VisualiserImages.GROUP_VIEW
-				: vcp.getGroupViewIcon();
+			: vcp.getGroupViewIcon();
 		if (groupViewAction != null) {
 			groupViewAction.setImageDescriptor(groupViewImage);
 		}
@@ -572,8 +550,7 @@ public class Visualiser extends ViewPart {
 	/**
 	 * Set the current markup provider
 	 *
-	 * @param vmp -
-	 *            the current IMarkupProvider
+	 * @param vmp the current IMarkupProvider
 	 */
 	public void setVisMarkupProvider(IMarkupProvider vmp) {
 		markupP = vmp;
@@ -581,60 +558,52 @@ public class Visualiser extends ViewPart {
 
 	/**
 	 * Only show kinds affecting the member or group with the given name
+	 *
 	 * @param name
 	 */
 	protected void onlyShowColorsAffecting(String name) {
-		List names = new ArrayList();
-		List members = contentP.getAllMembers();
+		List<String> names = new ArrayList<>();
+		List<IMember> members = contentP.getAllMembers();
 		boolean found = false;
-    for (Object item : members) {
-      IMember member = (IMember) item;
-      if (member.getToolTip().equals(name)) {
-        found = true;
-        List markups = markupP.getMemberMarkups(member);
-        if (markups == null) {
-          VisualiserPlugin.menu.onlyShow(null);
-          return;
-        }
-        for (Object markup : markups) {
-          Stripe stripe = (Stripe) markup;
-          List kinds = stripe.getKinds();
-          for (Object o : kinds) {
-            IMarkupKind kind = (IMarkupKind) o;
-            if (!names.contains(kind.getName())) {
-              names.add(kind.getName());
-            }
-          }
-        }
-      }
+		for (IMember member : members) {
+			if (member.getToolTip().equals(name)) {
+				found = true;
+				List<Stripe> markups = markupP.getMemberMarkups(member);
+				if (markups == null) {
+					VisualiserPlugin.menu.onlyShow(null);
+					return;
+				}
+				for (Stripe markup : markups) {
+					List<IMarkupKind> kinds = markup.getKinds();
+					for (IMarkupKind kind : kinds) {
+						if (!names.contains(kind.getName()))
+							names.add(kind.getName());
+					}
+				}
+			}
 
-    }
-		if(!found){   // name is name of a group, not a member.
-			List groups = contentP.getAllGroups();
-      for (Object value : groups) {
-        IGroup group = (IGroup) value;
-        if (group.getToolTip().equals(name)) {
-          List markups = markupP.getGroupMarkups(group);
-          if (markups == null) {
-            VisualiserPlugin.menu.onlyShow(null);
-            return;
-          }
-          for (Object markup : markups) {
-            Stripe stripe = (Stripe) markup;
-            List kinds = stripe.getKinds();
-            for (Object o : kinds) {
-              IMarkupKind kind = (IMarkupKind) o;
-              if (!names.contains(kind.getName())) {
-                names.add(kind.getName());
-              }
-            }
-          }
-        }
-      }
+		}
+		if (!found) {   // name is name of a group, not a member.
+			List<IGroup> groups = contentP.getAllGroups();
+			for (IGroup value : groups) {
+				if (value.getToolTip().equals(name)) {
+					List<Stripe> markups = markupP.getGroupMarkups(value);
+					if (markups == null) {
+						VisualiserPlugin.menu.onlyShow(null);
+						return;
+					}
+					for (Stripe markup : markups) {
+						List<IMarkupKind> kinds = markup.getKinds();
+						for (IMarkupKind kind : kinds) {
+							if (!names.contains(kind.getName()))
+								names.add(kind.getName());
+						}
+					}
+				}
+			}
 		}
 		VisualiserPlugin.menu.onlyShow(names);
 	}
-
 
 	/**
 	 * Handle a click that has occurred on the bar chart.
@@ -643,20 +612,13 @@ public class Visualiser extends ViewPart {
 	 * @param stripe
 	 * @param buttonClicked
 	 */
-	protected void handleClick(IMember member, Stripe stripe,
-			int buttonClicked) {
-
-		boolean proceed = contentP.processMouseclick((member != null ? member
-				: null), (stripe != null ? true : false), buttonClicked);
+	protected void handleClick(IMember member, Stripe stripe, int buttonClicked) {
+		boolean proceed = contentP.processMouseclick(member, stripe != null, buttonClicked);
 
 		if (stripe != null)
-			proceed = markupP.processMouseclick(
-					(member != null ? member : null), stripe,
-					buttonClicked)
-					&& proceed;
+			proceed = markupP.processMouseclick(member, stripe, buttonClicked) && proceed;
 
 		if (proceed) {
-
 			if (buttonClicked != 3) { // Left hand or middle mouse button click
 				//stackContext();
 				if (inGroupView) {
@@ -666,7 +628,6 @@ public class Visualiser extends ViewPart {
 					//   Switch to subselect mode, and to the member view showing
 					// all the members of that group
 					activateMemberView();
-				} else {
 				}
 				updateDisplay(false);
 			}
@@ -678,10 +639,10 @@ public class Visualiser extends ViewPart {
 	 * If the current log-level is greater than or equal to the level given, log
 	 * the message.
 	 *
-	 * @param level -
-	 *            the level
+	 * @param level  -
+	 *               the level
 	 * @param string -
-	 *            the message
+	 *               the message
 	 */
 	private static void log(int level, String string) {
 		if (level <= VisualiserPlugin.LOGLEVEL)

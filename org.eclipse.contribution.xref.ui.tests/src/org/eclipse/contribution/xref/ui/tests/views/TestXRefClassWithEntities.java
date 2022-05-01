@@ -16,14 +16,12 @@ import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author hawkinsh
- *
  */
 public class TestXRefClassWithEntities implements IAdaptable {
+  public TestXRefClassWithEntities() {
+  }
 
-	public TestXRefClassWithEntities() {
-	}
-
-    public Object getAdapter(Class adapter) {
-        return null;
-    }
+  public Object getAdapter(Class adapter) {
+    return null;
+  }
 }

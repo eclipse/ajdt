@@ -271,7 +271,7 @@ public class AJDTContentProviderTest extends UITestCase {
 	 * {@link org.eclipse.ajdt.internal.ui.visualiser.AJDTContentProvider#getMembersForPackage(org.eclipse.jdt.core.IPackageFragment)}.
 	 */
 	public void testGetMembersForPackage() {
-		List membersForPackageOne = ajdtContentProvider.getMembersForPackage(packageOne);
+		List<IMember> membersForPackageOne = ajdtContentProvider.getMembersForPackage(packageOne);
 		assertNotNull("MembersForPackage 1 list should not be null", membersForPackageOne); //$NON-NLS-1$
 
 		JDTMember packageOneMember = (JDTMember) membersForPackageOne.get(0);
@@ -279,7 +279,7 @@ public class AJDTContentProviderTest extends UITestCase {
 		assertEquals("Wrong number of members for " + packageOne.getElementName(), PACKAGE_ONE_MEMBER_COUNT, membersForPackageOne.size()); //$NON-NLS-1$
 
 		// Try with another package
-		List membersForPackageTwo = ajdtContentProvider.getMembersForPackage(packageTwo);
+		List<IMember> membersForPackageTwo = ajdtContentProvider.getMembersForPackage(packageTwo);
 		assertNotNull("MembersForPackage list should not be null", membersForPackageTwo); //$NON-NLS-1$
 
 		JDTMember packageTwoMember = (JDTMember) membersForPackageTwo.get(0);

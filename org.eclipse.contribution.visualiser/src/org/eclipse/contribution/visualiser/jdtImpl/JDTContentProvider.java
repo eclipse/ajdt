@@ -128,62 +128,59 @@ public class JDTContentProvider implements IContentProvider, ISelectionListener 
 	}
 
 	/**
-	 * Get all members for the given group
-	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers(org.eclipse.contribution.visualiser.interfaces.IGroup)
-	 */
-	public List getAllMembers(IGroup group) {
+   * Get all members for the given group
+   *
+   * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers(org.eclipse.contribution.visualiser.interfaces.IGroup)
+   */
+	public List<IMember> getAllMembers(IGroup group) {
 		return group.getMembers();
 	}
 
 
 	/**
-	 * Get all members
-	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers()
-	 */
-	public List getAllMembers() {
+   * Get all members
+   *
+   * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers()
+   */
+	public List<IMember> getAllMembers() {
 
-		List retval = null;
+		List<IMember> retval;
 
 		// Depending on what is selected, the members are different things...
 
 		// (1) Project is currently selected
 		if (currentlySelectedResource instanceof IProject
-			&& !(currentlySelectedJE instanceof IPackageFragment)) {
-			retval = new ArrayList();
-			if(getCurrentProject()!=null){
-				List pkgfrags = getAllJDTGroups(getCurrentProject());
-        for (Object pkgfrag : pkgfrags) {
-          IGroup grp = (IGroup) pkgfrag;
-          retval.addAll(grp.getMembers());
-        }
+				&& !(currentlySelectedJE instanceof IPackageFragment))
+		{
+			retval = new ArrayList<>();
+			if (getCurrentProject() != null) {
+				List<IGroup> pkgfrags = getAllJDTGroups(getCurrentProject());
+				for (IGroup pkgfrag : pkgfrags)
+					retval.addAll(pkgfrag.getMembers());
 			}
-		} else if (currentlySelectedJE instanceof IPackageFragment) {
-			retval = new ArrayList();
-			JDTGroup group =
-				getGroupForFragment((IPackageFragment) currentlySelectedJE);
-			if(group != null) {
+		}
+		else if (currentlySelectedJE instanceof IPackageFragment) {
+			retval = new ArrayList<>();
+			JDTGroup group = getGroupForFragment((IPackageFragment) currentlySelectedJE);
+			if (group != null)
 				retval.addAll(group.getMembers());
+		}
+		else {
+			retval = new ArrayList<>();
+			List<IGroup> pkgfrags = getAllJDTGroups(getCurrentProject());
+			for (IGroup pkgfrag : pkgfrags) {
+				List<IMember> mems = pkgfrag.getMembers();
+				for (IMember mem : mems) {
+					JDTMember element = (JDTMember) mem;
+					if (element.getResource().equals(currentlySelectedJE)) {
+						retval.add(element);
+						break;
+					}
+				}
 			}
-
-		} else {
-			retval = new ArrayList();
-			List pkgfrags = getAllJDTGroups(getCurrentProject());
-      for (Object pkgfrag : pkgfrags) {
-        IGroup grp = (IGroup) pkgfrag;
-        List mems = grp.getMembers();
-        for (Object mem : mems) {
-          JDTMember element = (JDTMember) mem;
-          if (element.getResource().equals(currentlySelectedJE)) {
-            retval.add(element);
-            break;
-          }
-
-        }
-      }
 		}
 		return retval;
 	}
-
 
 	/**
 	 * Initialise
@@ -268,38 +265,35 @@ public class JDTContentProvider implements IContentProvider, ISelectionListener 
 	/**
 	 * Get all groups
 	 */
-	public List getAllGroups() {
+	public List<IGroup> getAllGroups() {
 
-		List groupList = null;
+		List<IGroup> groupList = null;
 		// Depending on what is selected, the groups are different things...
 
 		// (1) Project is currently selected
-		if (currentlySelectedResource instanceof IProject
-		    && !(currentlySelectedJE instanceof IPackageFragment)) {
+		if (currentlySelectedResource instanceof IProject && !(currentlySelectedJE instanceof IPackageFragment))
 			groupList = getAllJDTGroups(getCurrentProject());
-		} else if (currentlySelectedJE instanceof IPackageFragment) {
-			groupList = new ArrayList();
-			JDTGroup oneGroup =
-				getGroupForFragment((IPackageFragment) currentlySelectedJE);
+		else if (currentlySelectedJE instanceof IPackageFragment) {
+			groupList = new ArrayList<>();
+			JDTGroup oneGroup = getGroupForFragment((IPackageFragment) currentlySelectedJE);
 			groupList.add(oneGroup);
-		} else {
-		    groupList = new ArrayList();
-		    List pkgfrags = getAllJDTGroups(getCurrentProject());
-      for (Object pkgfrag : pkgfrags) {
-        IGroup grp = (IGroup) pkgfrag;
-        List mems = grp.getMembers();
-        for (Object mem : mems) {
-          JDTMember element = (JDTMember) mem;
-          if (element.getResource().equals(currentlySelectedJE)) {
-            groupList.add(element.getContainingGroup());
-            break;
-          }
-        }
-      }
-	    }
+		}
+		else {
+			groupList = new ArrayList<>();
+			List<IGroup> pkgfrags = getAllJDTGroups(getCurrentProject());
+			for (IGroup pkgfrag : pkgfrags) {
+				List<IMember> mems = pkgfrag.getMembers();
+				for (IMember mem : mems) {
+					JDTMember element = (JDTMember) mem;
+					if (element.getResource().equals(currentlySelectedJE)) {
+						groupList.add(element.getContainingGroup());
+						break;
+					}
+				}
+			}
+		}
 		return groupList;
 	}
-
 
 	/**
 	 * Get a JDTGroup to represent the give IPackageFragment (Java package)
@@ -338,17 +332,16 @@ public class JDTContentProvider implements IContentProvider, ISelectionListener 
 	 * @param JP
 	 * @return List of JDTGroups
 	 */
-	public List getAllJDTGroups(IJavaProject JP) {
-		List returningPackages = new LinkedList();
+	public List<IGroup> getAllJDTGroups(IJavaProject JP) {
+		List<IGroup> returningPackages = new LinkedList<>();
 		if(JP != null) {
 			try {
 				IPackageFragment[] fragments = JP.getPackageFragments();
-        for (IPackageFragment fragment : fragments) {
-          JDTGroup group = getGroupForFragment(fragment);
-          if (group != null) {
-            returningPackages.add(group);
-          }
-        }
+				for (IPackageFragment fragment : fragments) {
+					JDTGroup group = getGroupForFragment(fragment);
+					if (group != null)
+						returningPackages.add(group);
+				}
 			} catch (JavaModelException e) {
 				e.printStackTrace();
 			}
@@ -362,29 +355,28 @@ public class JDTContentProvider implements IContentProvider, ISelectionListener 
 	 * @param PF
 	 * @return List of JDTMembers
 	 */
-	public List getMembersForPackage(IPackageFragment PF) {
-		List returningClasses = new LinkedList();
+	public List<IMember> getMembersForPackage(IPackageFragment PF) {
+		List<IMember> returningClasses = new LinkedList<>();
 		try {
 			if (containsUsefulStuff(PF)) {
 				IJavaElement[] ijes = PF.getChildren();
-        for (IJavaElement ije : ijes) {
-          if (ije.getElementType() == IJavaElement.COMPILATION_UNIT) {
-            String memberName = ije.getElementName();
-            if (memberName.endsWith(".java")) { //$NON-NLS-1$
-              memberName = memberName.substring(0, memberName.length() - 5);
-            }
-            JDTMember member = new JDTMember(memberName, ije);
-            member.setSize(getLength((ICompilationUnit) ije));
-            returningClasses.add(member);
-          }
-        }
+				for (IJavaElement ije : ijes) {
+					if (ije.getElementType() == IJavaElement.COMPILATION_UNIT) {
+						String memberName = ije.getElementName();
+						if (memberName.endsWith(".java")) //$NON-NLS-1$
+							memberName = memberName.substring(0, memberName.length() - 5);
+						JDTMember member = new JDTMember(memberName, ije);
+						member.setSize(getLength((ICompilationUnit) ije));
+						returningClasses.add(member);
+					}
+				}
 			}
-		} catch (JavaModelException jme) {
+		}
+		catch (JavaModelException jme) {
 			System.err.println(jme);
 		}
 		return returningClasses;
 	}
-
 
 	/**
 	 * Returns true if this package fragment has Java classes in it.

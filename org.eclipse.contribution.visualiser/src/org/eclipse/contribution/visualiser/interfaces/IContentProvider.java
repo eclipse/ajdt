@@ -33,20 +33,21 @@ public interface IContentProvider {
 	 * Return a list of all groups that the provider knows about.
 	 * @return List of IGroups
 	 */
-  List getAllGroups();
+  List<IGroup> getAllGroups();
 
 
 	/**
-	 * Return a list of all members in a group.
-	 * @return List of IMembers
-	 */
-  List getAllMembers(IGroup group);
+   * Return a list of all members in a group.
+   *
+   * @return List of IMembers
+   */
+  List<IMember> getAllMembers(IGroup group);
 
 
 	/**
-	 * Return a list of all members in all groups the provider knows about.
-	 */
-  List getAllMembers();
+   * Return a list of all members in all groups the provider knows about.
+   */
+  List<IMember> getAllMembers();
 
 
 	/**

@@ -173,9 +173,9 @@ public class AspectJBreakpointRulerActionTest extends UITestCase {
 		return 0;
 	}
 
-	protected List getMarkers(IResource resource, ITextEditor editor) {
+	protected List<IMarker> getMarkers(IResource resource, ITextEditor editor) {
 
-		List breakpoints = new ArrayList();
+		List<IMarker> breakpoints = new ArrayList<>();
 
 		IDocumentProvider provider = editor.getDocumentProvider();
 		IDocument document = provider.getDocument(editor.getEditorInput());

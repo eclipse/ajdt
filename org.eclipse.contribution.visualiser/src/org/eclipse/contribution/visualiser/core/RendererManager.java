@@ -31,115 +31,104 @@ import org.eclipse.core.runtime.Platform;
  */
 public class RendererManager {
 
-	// the name of the extension point
-	public static final String RENDERER_EXTENSION = "org.eclipse.contribution.visualiser.renderers"; //$NON-NLS-1$
+  // the name of the extension point
+  public static final String RENDERER_EXTENSION = "org.eclipse.contribution.visualiser.renderers"; //$NON-NLS-1$
 
-	// the class name of the renderer which is the default one
-	private static final String DEFAULT_RENDERER_CLASS = "org.eclipse.contribution.visualiser.renderers.DefaultVisualiserRenderer"; //$NON-NLS-1$
+  // the class name of the renderer which is the default one
+  private static final String DEFAULT_RENDERER_CLASS = "org.eclipse.contribution.visualiser.renderers.DefaultVisualiserRenderer"; //$NON-NLS-1$
 
-	private static List /* RendererDefinition */renderers;
+  private static List<RendererDefinition> renderers;
 
-	private static RendererDefinition current;
+  private static RendererDefinition current;
 
-	/**
-	 * Get a list of all the registered renderers
-	 *
-	 * @return a list of RendererDefinition objects
-	 */
-	public static List /* RendererDefinition */getAllRendererDefinitions() {
-		if (renderers == null) {
-			initialiseRendererDefinitions();
-		}
-		return renderers;
-	}
+  /**
+   * Get a list of all the registered renderers
+   *
+   * @return a list of RendererDefinition objects
+   */
+  public static List<RendererDefinition> getAllRendererDefinitions() {
+    if (renderers == null)
+      initialiseRendererDefinitions();
+    return renderers;
+  }
 
-	/**
-	 * Get the current renderer, either as set by the preferences, or if not set
-	 * the default renderer
-	 *
-	 * @return the current renderer
-	 */
-	public static RendererDefinition getCurrentRenderer() {
-		if (current == null) {
-			String name = VisualiserPreferences.getRendererName();
-			if ((name != null) && (name.length() > 0)) {
-				// find the renderer with the given name
-        for (Object o : getAllRendererDefinitions()) {
-          RendererDefinition r = (RendererDefinition) o;
-          if (r.getName().equals(name)) {
-            current = r;
+  /**
+   * Get the current renderer, either as set by the preferences, or if not set
+   * the default renderer
+   *
+   * @return the current renderer
+   */
+  public static RendererDefinition getCurrentRenderer() {
+    if (current == null) {
+      String name = VisualiserPreferences.getRendererName();
+      if ((name != null) && (name.length() > 0)) {
+        // find the renderer with the given name
+        for (RendererDefinition rendererDefinition : getAllRendererDefinitions()) {
+          if (rendererDefinition.getName().equals(name)) {
+            current = rendererDefinition;
           }
         }
-			}
-			if (current == null) {
-				// didn't find the given renderer, revert to default
-				current = getDefaultRenderer();
-			}
-		}
-		return current;
-	}
-
-	/**
-	 * Return the renderer definition with the given name, or null if not found
-	 *
-	 * @param name
-	 * @return the RendererDefinition with the given name
-	 */
-	public static RendererDefinition getRendererByName(String name) {
-    for (Object o : getAllRendererDefinitions()) {
-      RendererDefinition r = (RendererDefinition) o;
-      if (r.getName().equals(name)) {
-        return r;
+      }
+      if (current == null) {
+        // didn't find the given renderer, revert to default
+        current = getDefaultRenderer();
       }
     }
-		return null;
-	}
+    return current;
+  }
 
-	/**
-	 * Search for a registered renderer with the given name and if found, sets
-	 * that renderer to be the current one
-	 *
-	 * @param name
-	 *            the name of the renderer
-	 */
-	public static void setCurrentRendererByName(String name) {
-		RendererDefinition r = getRendererByName(name);
-		if (r!=null) {
-			current = r;
-		}
-	}
+  /**
+   * Return the renderer definition with the given name, or null if not found
+   *
+   * @param name
+   * @return the RendererDefinition with the given name
+   */
+  public static RendererDefinition getRendererByName(String name) {
+    for (RendererDefinition rendererDefinition : getAllRendererDefinitions()) {
+      if (rendererDefinition.getName().equals(name))
+        return rendererDefinition;
+    }
+    return null;
+  }
 
-	/**
-	 * Get the defined default renderer (should only be used when the user
-	 * hasn't specified a renderer)
-	 *
-	 * @return the default RendererDefinition
-	 */
-	public static RendererDefinition getDefaultRenderer() {
-		if (renderers == null) {
-			initialiseRendererDefinitions();
-		}
-    for (Object renderer : renderers) {
-      RendererDefinition r = (RendererDefinition) renderer;
-      if (r.getRenderer() instanceof DefaultVisualiserRenderer) {
-        if (r.getRenderer().getClass().getName().equals(
-          DEFAULT_RENDERER_CLASS))
-        {
-          return r;
-        }
+  /**
+   * Search for a registered renderer with the given name and if found, sets
+   * that renderer to be the current one
+   *
+   * @param name the name of the renderer
+   */
+  public static void setCurrentRendererByName(String name) {
+    RendererDefinition r = getRendererByName(name);
+    if (r != null) {
+      current = r;
+    }
+  }
+
+  /**
+   * Get the defined default renderer (should only be used when the user
+   * hasn't specified a renderer)
+   *
+   * @return the default RendererDefinition
+   */
+  public static RendererDefinition getDefaultRenderer() {
+    if (renderers == null)
+      initialiseRendererDefinitions();
+    for (RendererDefinition renderer : renderers) {
+      if (renderer.getRenderer() instanceof DefaultVisualiserRenderer) {
+        if (renderer.getRenderer().getClass().getName().equals(DEFAULT_RENDERER_CLASS))
+          return renderer;
       }
     }
-		return null;
-	}
+    return null;
+  }
 
-	/**
-	 * Find the registered renderers from the defined extension point
-	 */
-	private static void initialiseRendererDefinitions() {
-		renderers = new ArrayList();
-		IExtensionPoint exP = Platform.getExtensionRegistry()
-				.getExtensionPoint(RENDERER_EXTENSION);
-		IExtension[] exs = exP.getExtensions();
+  /**
+   * Find the registered renderers from the defined extension point
+   */
+  private static void initialiseRendererDefinitions() {
+    renderers = new ArrayList<>();
+    IExtensionPoint exP = Platform.getExtensionRegistry().getExtensionPoint(RENDERER_EXTENSION);
+    IExtension[] exs = exP.getExtensions();
 
     for (IExtension ex : exs) {
       IConfigurationElement[] ces = ex.getConfigurationElements();
@@ -148,8 +137,7 @@ public class RendererManager {
           Object ext = ce.createExecutableExtension("class"); //$NON-NLS-1$
           if (ext instanceof IVisualiserRenderer) {
             String name = ce.getAttribute("name"); //$NON-NLS-1$
-            RendererDefinition rd = new RendererDefinition(name,
-              (IVisualiserRenderer) ext);
+            RendererDefinition rd = new RendererDefinition(name, (IVisualiserRenderer) ext);
             renderers.add(rd);
           }
         }
@@ -158,5 +146,5 @@ public class RendererManager {
         }
       }
     }
-	}
+  }
 }

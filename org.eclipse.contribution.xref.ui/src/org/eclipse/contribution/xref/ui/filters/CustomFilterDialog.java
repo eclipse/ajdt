@@ -41,9 +41,9 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 public class CustomFilterDialog {
 
-	private static List /* String */ populatingList;
-	private static List /* String */ checkedList;
-	private static List /* String */ defaultCheckedList;
+	private static List<String> populatingList;
+	private static List<String> checkedList;
+	private static List<String> defaultCheckedList;
 	private static String dialogTitle;
 	private static String dialogMessage;
 
@@ -62,13 +62,22 @@ public class CustomFilterDialog {
 	 * @param dlogMessage
 	 * @return - List of strings corresponding to those items that the user has checked
 	 */
-	public static List showDialog(Shell shell, List items, List checkedItems,
-			List defaultItems, String dlogTitle, String dlogMessage) {
+	public static List<String> showDialog(
+		Shell shell,
+		List<String> items,
+		List<String> checkedItems,
+		List<String> defaultItems,
+		String dlogTitle,
+		String dlogMessage
+	) {
 
 		// Check that provided lists are valid
-		if (!isListOfStrings(items) || !isListOfStrings(checkedItems) ||!isListOfStrings(defaultItems)
-				|| checkedItems.size() > items.size() || defaultItems.size() > items.size()) {
-			return new ArrayList();
+		if (
+			!isListOfStrings(items) || !isListOfStrings(checkedItems) || !isListOfStrings(defaultItems) ||
+			checkedItems.size() > items.size() || defaultItems.size() > items.size()
+		)
+		{
+			return new ArrayList<>();
 		}
 		populatingList = items;
 		checkedList = checkedItems;
@@ -77,21 +86,20 @@ public class CustomFilterDialog {
 		dialogMessage = dlogMessage;
 		parentShell = shell;
 
-		FilterDialog dialog = new FilterDialog(parentShell,
-				populatingList, checkedList, defaultCheckedList, dialogTitle,
-				dialogMessage);
+		FilterDialog dialog = new FilterDialog(
+      parentShell, populatingList, checkedList, defaultCheckedList, dialogTitle, dialogMessage
+    );
 		if (dialog.open() == Window.OK) {
 			checkedItems = dialog.getCheckedList();
 		}
 		return checkedItems;
 	}
 
-	private static boolean isListOfStrings(List listToCheck) {
-    for (Object itemToCheck : listToCheck) {
-      if (!(itemToCheck instanceof String)) {
-        return false;
-      }
-    }
+	private static boolean isListOfStrings(List<?> listToCheck) {
+		for (Object itemToCheck : listToCheck) {
+			if (!(itemToCheck instanceof String))
+				return false;
+		}
 		return true;
 	}
 
@@ -99,15 +107,20 @@ public class CustomFilterDialog {
 
 		private CheckboxTableViewer fCheckBoxList;
 
-		private static List /* String */ populatingList;
-		private static List /* String */ checkedList;
-		private static List /* String */ defaultCheckedList;
+		private static List<String> populatingList;
+		private static List<String> checkedList;
+		private static List<String> defaultCheckedList;
 		private static String dialogTitle;
 		private static String dialogMessage;
 
-		public FilterDialog(Shell shell, List items,
-				List checkedItems, List defaultItems, String dlogTitle,
-				String dlogMessage) {
+		public FilterDialog(
+			Shell shell,
+			List<String> items,
+			List<String> checkedItems,
+			List<String> defaultItems,
+			String dlogTitle,
+			String dlogMessage
+		) {
 			super(shell);
 
 			populatingList = items;
@@ -123,8 +136,7 @@ public class CustomFilterDialog {
 		protected void configureShell(Shell shell) {
 			setTitle(dialogTitle);
 			super.configureShell(shell);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-					IJavaHelpContextIds.CUSTOM_FILTERS_DIALOG);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IJavaHelpContextIds.CUSTOM_FILTERS_DIALOG);
 		}
 
 		/**
@@ -145,10 +157,9 @@ public class CustomFilterDialog {
 			composite.setLayout(layout);
 			composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 			composite.setFont(parent.getFont());
-			Composite group = composite;
 
-			if (populatingList.size() > 0)
-				createCheckBoxList(group);
+      if (populatingList.size() > 0)
+				createCheckBoxList(composite);
 
 			applyDialogFont(parent);
 			return parent;
@@ -159,20 +170,19 @@ public class CustomFilterDialog {
 			Label info = new Label(parent, SWT.LEFT);
 			info.setText(dialogMessage);
 
-			fCheckBoxList = CheckboxTableViewer
-					.newCheckList(parent, SWT.BORDER);
+			fCheckBoxList = CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
 			GridData data = new GridData(GridData.FILL_BOTH);
-			int rowsToShow = Math.max(Math.min(populatingList.size(),12),6);
+			int rowsToShow = Math.max(Math.min(populatingList.size(), 12), 6);
 			data.heightHint = fCheckBoxList.getTable().getItemHeight() * rowsToShow;
 			fCheckBoxList.getTable().setLayoutData(data);
 
-			fCheckBoxList.setLabelProvider(createLabelPrivder());
+			fCheckBoxList.setLabelProvider(createLabelProvider());
 			fCheckBoxList.setContentProvider(new ArrayContentProvider());
 
 			fCheckBoxList.setInput(populatingList);
 			setInitialSelections(checkedList.toArray());
 
-			List initialSelection = getInitialElementSelections();
+			List<?> initialSelection = getInitialElementSelections();
 			if (initialSelection != null && !initialSelection.isEmpty())
 				checkInitialSelections();
 
@@ -184,15 +194,13 @@ public class CustomFilterDialog {
 			GridLayout layout = new GridLayout();
 			layout.numColumns = 2;
 			buttonComposite.setLayout(layout);
-			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-					| GridData.GRAB_HORIZONTAL);
+			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 			data.grabExcessHorizontalSpace = true;
 			composite.setData(data);
 
 			// Select All button
 			String label = XRefMessages.CustomFilterDialog_SelectAllButton_label;
-			Button selectButton = createButton(buttonComposite,
-					IDialogConstants.SELECT_ALL_ID, label, false);
+			Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, label, false);
 			SWTUtil.setButtonDimensionHint(selectButton);
 			SelectionListener listener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -203,8 +211,7 @@ public class CustomFilterDialog {
 
 			// De-select All button
 			label = XRefMessages.CustomFilterDialog_DeselectAllButton_label;
-			Button deselectButton = createButton(buttonComposite,
-					IDialogConstants.DESELECT_ALL_ID, label, false);
+			Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, label, false);
 			SWTUtil.setButtonDimensionHint(deselectButton);
 			listener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -215,56 +222,49 @@ public class CustomFilterDialog {
 
 			// Restore Defaults Button
 			label = XRefMessages.CustomFilterDialog_RestoreDefaultsButton_label;
-			Button restoreDefaultsButton = createButton(buttonComposite,
-					IDialogConstants.DESELECT_ALL_ID, label, false);
+			Button restoreDefaultsButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, label, false);
 			SWTUtil.setButtonDimensionHint(restoreDefaultsButton);
 			listener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					fCheckBoxList.setAllChecked(false);
-          for (Object o : defaultCheckedList) {
-            String nextItemToCheck = (String) o;
-            if (populatingList.contains(nextItemToCheck)) {
-              fCheckBoxList.setChecked(nextItemToCheck, true);
-            }
-          }
+					for (String nextItemToCheck : defaultCheckedList) {
+						if (populatingList.contains(nextItemToCheck))
+							fCheckBoxList.setChecked(nextItemToCheck, true);
+					}
 				}
 			};
 			restoreDefaultsButton.addSelectionListener(listener);
 		}
 
 		private void checkInitialSelections() {
-      for (Object o : checkedList) {
-        String nextItemToCheck = (String) o;
-        if (populatingList.contains(nextItemToCheck)) {
-          fCheckBoxList.setChecked(nextItemToCheck, true);
-        }
-      }
+			for (String nextItemToCheck : checkedList) {
+				if (populatingList.contains(nextItemToCheck))
+					fCheckBoxList.setChecked(nextItemToCheck, true);
+			}
 		}
 
 		protected void okPressed() {
 			checkedList.clear();
 			if (fCheckBoxList != null) {
-				Object[] newlyChecked = fCheckBoxList.getCheckedElements();
-        Collections.addAll(checkedList, newlyChecked);
+				// TODO: is this safe enough to cast?
+				String[] newlyChecked = (String[]) fCheckBoxList.getCheckedElements();
+				Collections.addAll(checkedList, newlyChecked);
 			}
 			super.okPressed();
 		}
 
-		public List getCheckedList() {
+		public List<String> getCheckedList() {
 			return checkedList;
 		}
 
-		private ILabelProvider createLabelPrivder() {
+		private ILabelProvider createLabelProvider() {
 			return new LabelProvider() {
 				public Image getImage(Object element) {
 					return null;
 				}
 
 				public String getText(Object element) {
-					if (element instanceof String)
-						return (String) element;
-					else
-						return null;
+					return element instanceof String ? (String) element : null;
 				}
 			};
 		}

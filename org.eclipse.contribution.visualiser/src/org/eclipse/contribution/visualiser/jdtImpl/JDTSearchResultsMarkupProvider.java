@@ -41,8 +41,7 @@ import org.eclipse.ui.IPropertyListener;
  */
 public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 
-	// Cache: IMember -> List(Stripe)
-	private static Hashtable markupCache = new Hashtable();
+	private static final Hashtable<IMember, List<Stripe>> markupCache = new Hashtable<>();
 
 	private static boolean isJavaSearch = false;
 	private static JavaSearchResult javaSearchResult = null;
@@ -57,39 +56,32 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 	/**
 	 * Get a List of Stripes for the given member, which are its markups.
 	 */
-	public List getMemberMarkups(IMember member) {
-
-		if (javaSearchResult == null) {
+	public List<Stripe> getMemberMarkups(IMember member) {
+		if (javaSearchResult == null)
 			return null;
-		}
 
-		List cachedValue = (List) markupCache.get(member);
-		if (cachedValue != null) {
+		List<Stripe> cachedValue = markupCache.get(member);
+		if (cachedValue != null)
 			return cachedValue;
-		}
-		List markupList = super.getMemberMarkups(member);
-		if (markupList != null) {
+		List<Stripe> markupList = super.getMemberMarkups(member);
+		if (markupList != null)
 			return markupList;
-		}
 
-		List stripeList = new ArrayList();
+		List<Stripe> stripeList = new ArrayList<>();
 		if (ProviderManager.getContentProvider() instanceof JDTSearchResultsContentProvider) {
-			IJavaProject jp = ((JDTSearchResultsContentProvider) ProviderManager
-					.getContentProvider()).getCurrentProject();
+			IJavaProject jp = ((JDTSearchResultsContentProvider) ProviderManager.getContentProvider()).getCurrentProject();
 			if (jp != null) {
-				List list = getMarkupInfo(member);
-				if (list == null) {
+				List<Integer> markupInfo = getMarkupInfo(member);
+				if (markupInfo == null)
 					return null;
-				}
 
-        for (Object o : list) {
-          Integer number = (Integer) o;
-          if (javaSearchResult != null) {
-            Stripe stripe = new Stripe(new SimpleMarkupKind(javaSearchResult.getLabel()), number);
-            stripeList.add(stripe);
-            addMarkup(member.getFullname(), stripe);
-          }
-        }
+				for (Integer number : markupInfo) {
+					if (javaSearchResult != null) {
+						Stripe stripe = new Stripe(new SimpleMarkupKind(javaSearchResult.getLabel()), number);
+						stripeList.add(stripe);
+						addMarkup(member.getFullname(), stripe);
+					}
+				}
 			}
 		}
 		MarkupUtils.processStripes(stripeList);
@@ -104,13 +96,11 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 	 * @param IMember
 	 * @return List of Integers
 	 */
-	private List getMarkupInfo(IMember member) {
-
-		if (javaSearchResult == null) {
+	private List<Integer> getMarkupInfo(IMember member) {
+		if (javaSearchResult == null)
 			return null;
-		}
 
-		List lineNumbers = new ArrayList();
+		List<Integer> lineNumbers = new ArrayList<>();
 		JDTMember jdtMember;
 		ICompilationUnit cu = null;
 		IResource r = null;
@@ -121,26 +111,26 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 				cu = (ICompilationUnit) je;
 				try {
 					r = cu.getUnderlyingResource();
-				} catch (JavaModelException e) {
+				}
+				catch (JavaModelException e) {
 					e.printStackTrace();
 				}
 			}
-		} else {
-			return null;
 		}
+		else
+			return null;
 
 		Object[] elementsWhichMatch = javaSearchResult.getElements();
-    for (Object whichMatch : elementsWhichMatch) {
-      IFile file = javaSearchResult.getFile(whichMatch);
-      if (file != null && (file.getFullPath().equals(r.getFullPath()))) {
-        Match[] matches = javaSearchResult.computeContainedMatches(javaSearchResult, file);
-        for (Match match : matches) {
-          int lineNumber = JDTUtils.getLineNumber(cu, match
-            .getOffset());
-          lineNumbers.add(lineNumber);
-        }
-      }
-    }
+		for (Object whichMatch : elementsWhichMatch) {
+			IFile file = javaSearchResult.getFile(whichMatch);
+			if (file != null && (file.getFullPath().equals(r.getFullPath()))) {
+				Match[] matches = javaSearchResult.computeContainedMatches(javaSearchResult, file);
+				for (Match match : matches) {
+					int lineNumber = JDTUtils.getLineNumber(cu, match.getOffset());
+					lineNumbers.add(lineNumber);
+				}
+			}
+		}
 		return lineNumbers;
 	}
 
@@ -150,16 +140,14 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 	 *
 	 * @return a Set of Strings
 	 */
-	public SortedSet getAllMarkupKinds() {
-		SortedSet kinds = new TreeSet();
+	public SortedSet<SimpleMarkupKind> getAllMarkupKinds() {
+		SortedSet<SimpleMarkupKind> kinds = new TreeSet<>();
 		if (ProviderManager.getContentProvider() instanceof JDTSearchResultsContentProvider) {
-			if (javaSearchResult != null) {
+			if (javaSearchResult != null)
 				kinds.add(new SimpleMarkupKind(javaSearchResult.getLabel()));
-			}
 		}
-		if (kinds.size() > 0) {
+		if (kinds.size() > 0)
 			return kinds;
-		}
 		return null;
 	}
 
@@ -168,22 +156,19 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 	 * line of the stripe clicked.
 	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IMarkupProvider#processMouseclick(org.eclipse.contribution.visualiser.interfaces.IMember,
-	 *      org.eclipse.contribution.visualiser.core.Stripe, int)
+	 * org.eclipse.contribution.visualiser.core.Stripe, int)
 	 */
 	public boolean processMouseclick(IMember member, Stripe stripe, int buttonClicked) {
 		if (buttonClicked == 1) {
 			if (member instanceof JDTMember) {
 				IJavaElement jEl = ((JDTMember) member).getResource();
-				if (jEl != null) {
-					JDTUtils
-							.openInEditor(jEl.getResource(), stripe.getOffset());
-				}
+				if (jEl != null)
+					JDTUtils.openInEditor(jEl.getResource(), stripe.getOffset());
 			}
 			return false;
 		}
 		return true;
 	}
-
 
 	/**
 	 * Static inner class VisualiserPropertyListener which responds to
@@ -198,18 +183,19 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 				if (searchResult instanceof JavaSearchResult) {
 					isJavaSearch = true;
 					if (searchResult.equals(javaSearchResult)) {
-					} else {
+					}
+					else {
 						resetCache();
 					}
-					javaSearchResult = (JavaSearchResult)searchResult;
-				} else {
+					javaSearchResult = (JavaSearchResult) searchResult;
+				}
+				else {
 					isJavaSearch = false;
 					javaSearchResult = null;
 					// need to refresh() visualiser here otherwise when use history
 					// to populate the search view with a search result which isn't
 					// a java one, then takes quite a few clicks to populate the
 					// visualiser
-
 				}
 				VisualiserPlugin.refresh();
 			}
@@ -233,6 +219,7 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 	public void setJavaSearch(boolean isJavaSearch) {
 		JDTSearchResultsMarkupProvider.isJavaSearch = isJavaSearch;
 	}
+
 	/**
 	 * Sets the last run JavaSearchResult
 	 *
@@ -241,4 +228,5 @@ public class JDTSearchResultsMarkupProvider extends SimpleMarkupProvider {
 	public void setJavaSearchResult(JavaSearchResult javaSearchResult) {
 		JDTSearchResultsMarkupProvider.javaSearchResult = javaSearchResult;
 	}
+
 }

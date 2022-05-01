@@ -13,6 +13,7 @@ package org.eclipse.contribution.visualiser.markerImpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,108 +48,104 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  */
 public class MarkerMarkupProvider extends SimpleMarkupProvider {
 
-	Map namesToKinds = new HashMap();
-	List images = new ArrayList();
-
+	Map<String, IMarkupKind> namesToKinds = new HashMap<>();
+	List<Image> images = new ArrayList<>();
 
 	/**
 	 * Update the set of markups stored by this provider.
+	 *
 	 * @param groups
 	 */
-	protected void updateMarkups(List groups) {
-		namesToKinds = new HashMap();
+	protected void updateMarkups(List<IGroup> groups) {
+		namesToKinds = new HashMap<>();
 		resetColours();
 		resetMarkupsAndKinds();
 		if (groups != null) {
-      for (Object item : groups) {
-        IGroup group = (IGroup) item;
-        for (Object value : group.getMembers()) {
-          IMember member = (IMember) value;
-          if (member instanceof ResourceMember) {
-            IResource res = ((ResourceMember) member).getResource();
-            try {
-              IMarker[] markers = res.findMarkers(null, true, IResource.DEPTH_INFINITE);
-              for (IMarker marker : markers) {
-                Integer lineNum = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
-                if (lineNum != null) {
-                  int lineNumber = lineNum;
-                  String name = getLabel(marker);
-                  if (name == null) {
-                    name = marker.getType();
-                  }
-                  IMarkupKind kind;
-                  if (namesToKinds.get(name) instanceof IMarkupKind) {
-                    kind = (IMarkupKind) namesToKinds.get(name);
-                  }
-                  else {
-                    Image image = getImage(marker);
-                    images.add(image);
-                    kind = new SimpleMarkupKind(name, image);
-                    namesToKinds.put(name, kind);
-                    addMarkupKind(kind);
-                    Color color = getColor(marker);
-                    if (color != null) {
-                      setColorFor(kind, color);
-                    }
-                  }
-                  boolean stripeOnLineAlready = false;
-                  List stripes = getMemberMarkups(member);
-                  if (stripes != null) {
-                    for (Object o : stripes) {
-                      Stripe stripe = (Stripe) o;
-                      if (stripe.getOffset() == lineNumber) {
-                        List kindList = Arrays.asList(kind);
-                        stripe.addKinds(kindList);
-                        stripeOnLineAlready = true;
-                      }
-                    }
-                  }
-                  if (!stripeOnLineAlready) {
-                    Stripe stripe = new StripeWithMarker(kind, lineNumber, marker);
-                    addMarkup(member.getFullname(), stripe);
-                  }
-                }
-              }
-            }
-            catch (CoreException e) {
-              e.printStackTrace();
-            }
-          }
-        }
-      }
+			for (IGroup group : groups) {
+				for (IMember member : group.getMembers()) {
+					if (member instanceof ResourceMember) {
+						IResource res = ((ResourceMember) member).getResource();
+						try {
+							IMarker[] markers = res.findMarkers(null, true, IResource.DEPTH_INFINITE);
+							for (IMarker marker : markers) {
+								Integer lineNum = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
+								if (lineNum != null) {
+									int lineNumber = lineNum;
+									String name = getLabel(marker);
+									if (name == null) {
+										name = marker.getType();
+									}
+									IMarkupKind kind;
+									if (namesToKinds.get(name) != null)
+										kind = namesToKinds.get(name);
+									else {
+										Image image = getImage(marker);
+										images.add(image);
+										kind = new SimpleMarkupKind(name, image);
+										namesToKinds.put(name, kind);
+										addMarkupKind(kind);
+										Color color = getColor(marker);
+										if (color != null) {
+											setColorFor(kind, color);
+										}
+									}
+									boolean stripeOnLineAlready = false;
+									List<Stripe> stripes = getMemberMarkups(member);
+									if (stripes != null) {
+										for (Stripe stripe : stripes) {
+											if (stripe.getOffset() == lineNumber) {
+												List<IMarkupKind> kindList = Collections.singletonList(kind);
+												stripe.addKinds(kindList);
+												stripeOnLineAlready = true;
+											}
+										}
+									}
+									if (!stripeOnLineAlready) {
+										Stripe stripe = new StripeWithMarker(kind, lineNumber, marker);
+										addMarkup(member.getFullname(), stripe);
+									}
+								}
+							}
+						}
+						catch (CoreException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 		}
 	}
 
-
 	/**
 	 * Get the Image for a marker, or null if none is defined
+	 *
 	 * @param marker
 	 * @return the Image found
 	 */
 	private Image getImage(IMarker marker) {
-		IWorkbenchAdapter adapter= marker.getAdapter(IWorkbenchAdapter.class);
+		IWorkbenchAdapter adapter = marker.getAdapter(IWorkbenchAdapter.class);
 		if (adapter != null) {
-		     ImageDescriptor descriptor = adapter.getImageDescriptor(marker);
-		     if (descriptor != null) {
-		          return descriptor.createImage();
-		     }
+			ImageDescriptor descriptor = adapter.getImageDescriptor(marker);
+			if (descriptor != null) {
+				return descriptor.createImage();
+			}
 		}
 		Annotation annotation = new MarkerAnnotation(marker);
 		if (annotation != null) {
 			AnnotationPreferenceLookup lookup = EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 			AnnotationPreference preference = lookup.getAnnotationPreference(annotation);
-			if(preference != null) {
+			if (preference != null) {
 				ImageDescriptor id = preference.getImageDescriptor();
 				if (id != null) {
 					return id.createImage();
-				} else if (preference.getSymbolicImageName().equals("bookmark")) { //$NON-NLS-1$
+				}
+				else if (preference.getSymbolicImageName().equals("bookmark")) { //$NON-NLS-1$
 					return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(IDE.SharedImages.IMG_OBJS_BKMRK_TSK).createImage();
 				}
 			}
 		}
 		return null;
 	}
-
 
 	/**
 	 * Get the label for a marker, or null if a label can not be found
@@ -161,7 +158,7 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		if (annotation != null) {
 			AnnotationPreferenceLookup lookup = EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 			AnnotationPreference preference = lookup.getAnnotationPreference(annotation);
-			if(preference != null) {
+			if (preference != null) {
 				String id = preference.getPreferenceLabel();
 				if (id != null && !(id.trim().equals(""))) { //$NON-NLS-1$
 					return id;
@@ -171,9 +168,9 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		return null;
 	}
 
-
 	/**
 	 * Get the Color for a marker, or null if none is defined
+	 *
 	 * @param marker
 	 * @return the Color found, or null
 	 */
@@ -182,7 +179,7 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		if (annotation != null) {
 			AnnotationPreferenceLookup lookup = EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 			AnnotationPreference preference = lookup.getAnnotationPreference(annotation);
-			if(preference != null) {
+			if (preference != null) {
 				RGB rgb = preference.getColorPreferenceValue();
 				if (rgb != null) {
 					return new Color(null, rgb);
@@ -192,16 +189,16 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		return null;
 	}
 
-
 	/**
 	 * Process a mouse click on a stripe.  This implementation opens the editor at the
 	 * location of the marker
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IMarkupProvider#processMouseclick(IMember, Stripe, int)
 	 */
 	public boolean processMouseclick(IMember member, Stripe stripe, int buttonClicked) {
-		if(stripe instanceof StripeWithMarker) {
-			IMarker marker = ((StripeWithMarker)stripe).getMarker();
-			if(marker != null) {
+		if (stripe instanceof StripeWithMarker) {
+			IMarker marker = ((StripeWithMarker) stripe).getMarker();
+			if (marker != null) {
 				JDTUtils.openInEditor(marker);
 			}
 		}
@@ -209,24 +206,20 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		return false;
 	}
 
-
 	/**
 	 * Deactivate this provider - dispose of system resources
 	 */
 	public void deactivate() {
 		super.deactivate();
-		for (Iterator iter = images.iterator(); iter.hasNext();) {
-			Image element = (Image) iter.next();
-			if(element != null && ! element.isDisposed()) {
+		for (Iterator<Image> iter = images.iterator(); iter.hasNext(); ) {
+			Image element = iter.next();
+			if (element != null && !element.isDisposed())
 				element.dispose();
-			}
 			iter.remove();
 		}
-		namesToKinds = new HashMap();
+		namesToKinds = new HashMap<>();
 		resetMarkupsAndKinds();
 	}
-
-
 
 	public static class StripeWithMarker extends Stripe {
 
@@ -239,7 +232,7 @@ public class MarkerMarkupProvider extends SimpleMarkupProvider {
 		 * @param i The offset down the bar where the stripe starts
 		 */
 		public StripeWithMarker(IMarkupKind k, int i, IMarker marker) {
-			super(k,i);
+			super(k, i);
 			this.marker = marker;
 		}
 

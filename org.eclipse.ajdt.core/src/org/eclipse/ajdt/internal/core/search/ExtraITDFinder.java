@@ -72,17 +72,15 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
             List<IntertypeElement> allRelevantItds = findRelevantITDs(pattern,
                     resolver, unit);
             if (allRelevantItds.size() > 0) {
-                if (findReferences) {
-                   extraMatches.addAll(findExtraReferenceMatches(unit, allRelevantItds, pattern, match));
-                }
+                if (findReferences)
+                  extraMatches.addAll(findExtraReferenceMatches(unit, allRelevantItds, pattern, match));
 
                 // for method and constructor patterns, also look for declarations
                 // can't do this for field patterns because there would be a class cast exception
                 // when trying to cast a IntertypeDeclaration to an IField.
                 // Note that IntertypeDeclaration happens to implement IMethod.
-                if (findDeclarations) {
-                    extraMatches.addAll(findExtraDeclarationMatches(unit, allRelevantItds, pattern, match));
-                }
+                if (findDeclarations)
+                  extraMatches.addAll(findExtraDeclarationMatches(unit, allRelevantItds, pattern, match));
             }
         }
         return extraMatches;
@@ -92,60 +90,54 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
             HierarchyResolver resolver, AJCompilationUnit unit)
             throws JavaModelException {
         List<IntertypeElement> allItds = getAllItds(unit);
-        if (allItds.size() == 0) {
-            return Collections.emptyList();
-        }
+        if (allItds.size() == 0)
+          return Collections.emptyList();
 
         // find target type
         char[] targetTypeName = null;
-        if (pattern instanceof FieldPattern) {
-            targetTypeName = TargetTypeUtils.getName(TargetTypeUtils.getQualName((FieldPattern) pattern), TargetTypeUtils.getSimpleName((FieldPattern) pattern));
-        } else if (pattern instanceof MethodPattern) {
-            targetTypeName = TargetTypeUtils.getName(((MethodPattern) pattern).declaringQualification, ((MethodPattern) pattern).declaringSimpleName);
-        }
+        if (pattern instanceof FieldPattern)
+          targetTypeName = TargetTypeUtils.getName(TargetTypeUtils.getQualName((FieldPattern) pattern), TargetTypeUtils.getSimpleName((FieldPattern) pattern));
+        else if (pattern instanceof MethodPattern)
+          targetTypeName = TargetTypeUtils.getName(((MethodPattern) pattern).declaringQualification, ((MethodPattern) pattern).declaringSimpleName);
 
         // if target type is not known, then this means that a target
         // type is not specified and therefore do not remove any
         // potential matches.
         if (targetTypeName != null && targetTypeName.length > 0) {
-            if (resolver != null) {
-                resolver.setFocusType(CharOperation.splitOn('.', targetTypeName));
-            }
+            if (resolver != null)
+              resolver.setFocusType(CharOperation.splitOn('.', targetTypeName));
 
             for (Iterator<IntertypeElement> itdIter = allItds.iterator(); itdIter.hasNext();) {
                 IntertypeElement itd = itdIter.next();
-                if (!isSubtypeOfSearchPattern(targetTypeName, itd, resolver)) {
-                    itdIter.remove();
-                }
+                if (!isSubtypeOfSearchPattern(targetTypeName, itd, resolver))
+                  itdIter.remove();
             }
         }
         return allItds;
     }
 
     private boolean findReferences(SearchPattern pattern) {
-        if (pattern instanceof MethodPattern) {
-            return (Boolean) ReflectionUtils.getPrivateField(MethodPattern.class, "findReferences", (MethodPattern) pattern);
-        } else if (pattern instanceof FieldPattern) {
-            // note that findReferences is actually declared in VariablePattern
-            return (Boolean) ReflectionUtils.getPrivateField(VariablePattern.class, "findReferences", (VariablePattern)pattern);
-        } else if (pattern instanceof ConstructorPattern) {
+        if (pattern instanceof MethodPattern)
+          return (Boolean) ReflectionUtils.getPrivateField(MethodPattern.class, "findReferences", (MethodPattern) pattern);
+        else // note that findReferences is actually declared in VariablePattern
+          if (pattern instanceof FieldPattern)
+            return (Boolean) ReflectionUtils.getPrivateField(VariablePattern.class, "findReferences", (VariablePattern) pattern);
+          else if (pattern instanceof ConstructorPattern)
             return (Boolean) ReflectionUtils.getPrivateField(ConstructorPattern.class, "findReferences", (ConstructorPattern) pattern);
-        } else {
+          else
             return false;
-        }
     }
 
     private boolean findDeclarations(SearchPattern pattern) {
-            if (pattern instanceof MethodPattern) {
-                return (Boolean) ReflectionUtils.getPrivateField(MethodPattern.class, "findDeclarations", (MethodPattern) pattern);
-            } else if (pattern instanceof FieldPattern) {
-                // note that findDeclarations is actually declared in VariablePattern
-                return (Boolean) ReflectionUtils.getPrivateField(VariablePattern.class, "findDeclarations", (VariablePattern)pattern);
-            } else if (pattern instanceof ConstructorPattern) {
+            if (pattern instanceof MethodPattern)
+              return (Boolean) ReflectionUtils.getPrivateField(MethodPattern.class, "findDeclarations", (MethodPattern) pattern);
+            else // note that findDeclarations is actually declared in VariablePattern
+              if (pattern instanceof FieldPattern)
+                return (Boolean) ReflectionUtils.getPrivateField(VariablePattern.class, "findDeclarations", (VariablePattern) pattern);
+              else if (pattern instanceof ConstructorPattern)
                 return (Boolean) ReflectionUtils.getPrivateField(ConstructorPattern.class, "findDeclarations", (ConstructorPattern) pattern);
-            } else {
+              else
                 return false;
-            }
         }
 
     /**
@@ -182,78 +174,75 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
             char[] selector = methPatt.selector;
             char[][] simpleParamTypes = methPatt.parameterSimpleNames;
 
-            for (IntertypeElement itd : allRelevantItds) {
-                if (itd.getAJKind() == Kind.INTER_TYPE_METHOD &&
-                        CharOperation.equals(selector, itd.getTargetName().toCharArray())) {
-                    char[][] itdSimpleParamNames = extractSimpleParamNames(itd);
-                    if (CharOperation.equals(simpleParamTypes, itdSimpleParamNames)) {
-                        ISourceRange sourceRange = itd.getNameRange();
-                        extraDeclarationMatches.add(new MethodDeclarationMatch(itd, SearchMatch.A_ACCURATE, sourceRange.getOffset(), sourceRange.getLength(),
-                                match.document.getParticipant(), itd.getCompilationUnit().getResource()));
-                    }
+            for (IntertypeElement itd : allRelevantItds)
+              if (itd.getAJKind() == Kind.INTER_TYPE_METHOD &&
+                  CharOperation.equals(selector, itd.getTargetName().toCharArray()))
+              {
+                char[][] itdSimpleParamNames = extractSimpleParamNames(itd);
+                if (CharOperation.equals(simpleParamTypes, itdSimpleParamNames)) {
+                  ISourceRange sourceRange = itd.getNameRange();
+                  extraDeclarationMatches.add(new MethodDeclarationMatch(itd, SearchMatch.A_ACCURATE, sourceRange.getOffset(), sourceRange.getLength(),
+                    match.document.getParticipant(), itd.getCompilationUnit().getResource()));
                 }
-            }
+              }
         } else if (pattern instanceof ConstructorPattern) {
             ConstructorPattern consPatt = (ConstructorPattern) pattern;
             // must match the exact type
             char[] targetTypeName = TargetTypeUtils.getName(consPatt.declaringQualification, consPatt.declaringSimpleName);
             char[][] simpleParamTypes = consPatt.parameterSimpleNames;
-            for (IntertypeElement itd : allRelevantItds) {
-                if (itd.getAJKind() == Kind.INTER_TYPE_CONSTRUCTOR &&
-                        targetTypeName != null && CharOperation.equals(targetTypeName, fullyQualifiedTargetTypeName(itd))) {
-                    char[][] itdSimpleParamNames = extractSimpleParamNames(itd);
-                    if (CharOperation.equals(simpleParamTypes, itdSimpleParamNames)) {
-                        ISourceRange sourceRange = itd.getNameRange();
-                        extraDeclarationMatches.add(new MethodDeclarationMatch(itd, SearchMatch.A_ACCURATE, sourceRange.getOffset(), sourceRange.getLength(),
-                                match.document.getParticipant(), itd.getCompilationUnit().getResource()));
-                    }
+            for (IntertypeElement itd : allRelevantItds)
+              if (itd.getAJKind() == Kind.INTER_TYPE_CONSTRUCTOR &&
+                  targetTypeName != null && CharOperation.equals(targetTypeName, fullyQualifiedTargetTypeName(itd)))
+              {
+                char[][] itdSimpleParamNames = extractSimpleParamNames(itd);
+                if (CharOperation.equals(simpleParamTypes, itdSimpleParamNames)) {
+                  ISourceRange sourceRange = itd.getNameRange();
+                  extraDeclarationMatches.add(new MethodDeclarationMatch(itd, SearchMatch.A_ACCURATE, sourceRange.getOffset(), sourceRange.getLength(),
+                    match.document.getParticipant(), itd.getCompilationUnit().getResource()));
                 }
-            }
+              }
         } else if (pattern instanceof FieldPattern) {
             FieldPattern fieldPatt = (FieldPattern) pattern;
             char[] targetTypeName = TargetTypeUtils.getName(TargetTypeUtils.getQualName(fieldPatt), TargetTypeUtils.getSimpleName(fieldPatt));
             char[] fieldName = fieldPatt.getIndexKey();
-            for (IntertypeElement itd : allRelevantItds) {
-                if (itd.getAJKind() == Kind.INTER_TYPE_FIELD && CharOperation.equals(fieldName, itd.getTargetName().toCharArray()) &&
-                        // must match the exact type, but only if a type exists
-                        (targetTypeName == null || CharOperation.equals(targetTypeName, fullyQualifiedTargetTypeName(itd)))) {
-                    ISourceRange sourceRange = itd.getNameRange();
-                    extraDeclarationMatches.add(new FieldDeclarationMatch(itd, SearchMatch.A_ACCURATE, sourceRange.getOffset(), sourceRange.getLength(),
-                            match.document.getParticipant(), itd.getCompilationUnit().getResource()));
-                }
-            }
+            for (IntertypeElement itd : allRelevantItds)
+              if (itd.getAJKind() == Kind.INTER_TYPE_FIELD && CharOperation.equals(fieldName, itd.getTargetName().toCharArray()) &&
+                  // must match the exact type, but only if a type exists
+                  (targetTypeName == null || CharOperation.equals(targetTypeName, fullyQualifiedTargetTypeName(itd))))
+              {
+                ISourceRange sourceRange = itd.getNameRange();
+                extraDeclarationMatches.add(new FieldDeclarationMatch(itd, SearchMatch.A_ACCURATE, sourceRange.getOffset(), sourceRange.getLength(),
+                  match.document.getParticipant(), itd.getCompilationUnit().getResource()));
+              }
         }
         return extraDeclarationMatches;
     }
 
     private char[][] extractSimpleParamNames(IntertypeElement itd) {
         String[] parameterTypes = itd.getParameterTypes();
-        if (parameterTypes == null) {
-            return new char[0][];
-        }
+        if (parameterTypes == null)
+          return new char[0][];
         char[][] simpleNames = new char[parameterTypes.length][];
-        for (int i = 0; i < parameterTypes.length; i++) {
-            try {
-                simpleNames[i] = Signature.getSignatureSimpleName(Signature.getTypeErasure(parameterTypes[i].toCharArray()));
-            } catch (Exception ignored) {
-            }
-        }
+        for (int i = 0; i < parameterTypes.length; i++)
+          try {
+            simpleNames[i] = Signature.getSignatureSimpleName(Signature.getTypeErasure(parameterTypes[i].toCharArray()));
+          }
+          catch (Exception ignored) {
+          }
         return simpleNames;
     }
 
     private boolean isSubtypeOfSearchPattern(char[] targetTypeName,
             IntertypeElement itd, HierarchyResolver resolver) throws JavaModelException {
         char[] itdTargetTypeName = fullyQualifiedTargetTypeName(itd);
-        if (CharOperation.equals(targetTypeName, itdTargetTypeName)) {
-            return true;
-        }
+        if (CharOperation.equals(targetTypeName, itdTargetTypeName))
+          return true;
         if (resolver != null) {
         	LookupEnvironment env =  ((LookupEnvironment) ReflectionUtils.getPrivateField(HierarchyResolver.class, "lookupEnvironment", resolver));
             ReferenceBinding targetBinding =
                    env.askForType(CharOperation.splitOn('.', itdTargetTypeName),env.getModule(ModuleBinding.ANY));
-            if (targetBinding != null) {
-                return resolver.subOrSuperOfFocus(targetBinding);
-            }
+            if (targetBinding != null)
+              return resolver.subOrSuperOfFocus(targetBinding);
         }
         return false;
     }
@@ -271,9 +260,8 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
         for (IntertypeElement itd : allItds) {
             BodyDeclaration decl = findITDInDom(ajDomUnit, itd);
             // we only care about ITD methods
-            if (decl instanceof InterTypeMethodDeclaration) {
-                allExtraMatches.addAll(findPatternInITD((InterTypeMethodDeclaration) decl, itd, pattern, possibleMatch));
-            }
+            if (decl instanceof InterTypeMethodDeclaration)
+              allExtraMatches.addAll(findPatternInITD((InterTypeMethodDeclaration) decl, itd, pattern, possibleMatch));
 
         }
         return allExtraMatches;
@@ -299,14 +287,13 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
         return null;
     }
 
-    private BodyDeclaration findITDInDom(AbstractTypeDeclaration type,
-            IntertypeElement itd) throws JavaModelException {
+    private BodyDeclaration findITDInDom(AbstractTypeDeclaration type, IntertypeElement itd) throws JavaModelException {
         List<BodyDeclaration> decls = type.bodyDeclarations();
         for (BodyDeclaration decl : decls) {
             BodyDeclaration maybeDecl = null;
-            if (decl instanceof AbstractTypeDeclaration) {
-                maybeDecl = findITDInDom((AbstractTypeDeclaration) decl, itd);
-            } else if (decl instanceof InterTypeMethodDeclaration || decl instanceof InterTypeFieldDeclaration) {
+            if (decl instanceof AbstractTypeDeclaration)
+              maybeDecl = findITDInDom((AbstractTypeDeclaration) decl, itd);
+            else if (decl instanceof InterTypeMethodDeclaration || decl instanceof InterTypeFieldDeclaration) {
                 int domStart = decl.getStartPosition();
                 int domEnd = domStart + decl.getLength();
                 ISourceRange sourceRange = itd.getSourceRange();
@@ -314,14 +301,11 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
                 int eltEnd = eltStart + sourceRange.getLength();
 
                 // return this decl if one contains the other
-                if ((domStart <= eltStart && domEnd >= eltEnd) ||
-                        (eltStart <= domStart && eltEnd >= domEnd)) {
-                    maybeDecl = decl;
-                }
+                if ((domStart <= eltStart && domEnd >= eltEnd) || (eltStart <= domStart && eltEnd >= domEnd))
+                  maybeDecl = decl;
             }
-            if (maybeDecl != null) {
-                return maybeDecl;
-            }
+            if (maybeDecl != null)
+              return maybeDecl;
         }
         return null;
     }
@@ -339,13 +323,11 @@ public class ExtraITDFinder implements IExtraMatchFinder<SearchPattern> {
         IJavaElement[] children = parent.getChildren();
         List<IntertypeElement> allItds = new LinkedList<>();
 
-        for (IJavaElement elt : children) {
-            if (elt instanceof IntertypeElement) {
-                allItds.add((IntertypeElement) elt);
-            } else if (elt.getElementType() == IJavaElement.TYPE) {
-                allItds.addAll(getAllItds((IParent) elt));
-            }
-        }
+        for (IJavaElement elt : children)
+          if (elt instanceof IntertypeElement)
+            allItds.add((IntertypeElement) elt);
+          else if (elt.getElementType() == IJavaElement.TYPE)
+            allItds.addAll(getAllItds((IParent) elt));
         return allItds;
     }
 }

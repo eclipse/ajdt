@@ -275,11 +275,10 @@ public class BuildOptionsAdapterTest extends UITestCase {
 		// quoted, it
 		// won't accidentally get treated as a pair of options (can be needed
 		// for xlint props file option)
-		List tokens = new ArrayList();
+		List<String> tokens = new ArrayList<>();
 		int ind = nonStdOptions.indexOf('\"');
 		int ind2 = nonStdOptions.indexOf('\"', ind + 1);
-		if ((ind > -1) && (ind2 > -1)) { // dont tokenize within double
-											// quotes
+		if ((ind > -1) && (ind2 > -1)) { // dont tokenize within double quotes
 			String pre = nonStdOptions.substring(0, ind);
 			String quoted = nonStdOptions.substring(ind + 1, ind2);
 			String post = nonStdOptions.substring(ind2 + 1);
@@ -289,12 +288,12 @@ public class BuildOptionsAdapterTest extends UITestCase {
 		} else {
 			tokens.addAll(tokenizeString(nonStdOptions));
 		}
-    return (String[]) tokens.toArray(new String[] {});
+    return tokens.toArray(new String[0]);
 	}
 
 	/** Local helper method for splitting option strings */
-	private static List tokenizeString(String str) {
-		List tokens = new ArrayList();
+	private static List<String> tokenizeString(String str) {
+		List<String> tokens = new ArrayList<>();
 		StringTokenizer tok = new StringTokenizer(str);
 		while (tok.hasMoreTokens()) {
 			tokens.add(tok.nextToken());

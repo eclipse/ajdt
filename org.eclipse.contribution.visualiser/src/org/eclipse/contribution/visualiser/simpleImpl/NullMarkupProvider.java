@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2004 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     Andy Clement - initial version
  *******************************************************************************/
@@ -24,11 +24,11 @@ import org.eclipse.swt.graphics.Color;
  * The null marker provider, just returns nulls for all questions it gets asked.
  */
 public class NullMarkupProvider implements IMarkupProvider {
-	
+
 		/**
 	 * Get the markups for the given member - returns null
 	 */
-	public List getMemberMarkups(IMember member) {
+	public List<Stripe> getMemberMarkups(IMember member) {
 		return null;
 	}
 
@@ -36,7 +36,7 @@ public class NullMarkupProvider implements IMarkupProvider {
 	/**
 	 * Get the markups for the given group - returns null
 	 */
-	public List getGroupMarkups(IGroup group) {
+	public List<Stripe> getGroupMarkups(IGroup group) {
 		return null;
 	}
 
@@ -52,7 +52,7 @@ public class NullMarkupProvider implements IMarkupProvider {
 	/**
 	 * Get the set of all markup kinds - returns null
 	 */
-	public SortedSet getAllMarkupKinds() {
+	public SortedSet<? extends IMarkupKind> getAllMarkupKinds() {
 		return null;
 	}
 
@@ -70,7 +70,7 @@ public class NullMarkupProvider implements IMarkupProvider {
 	public void setColorFor(IMarkupKind kind, Color color) {
 	}
 
-	
+
 	/**
 	 * Processs a mouse click on a stripe.  Does nothing.  Returns true - default behavior
 	 * should be performed.

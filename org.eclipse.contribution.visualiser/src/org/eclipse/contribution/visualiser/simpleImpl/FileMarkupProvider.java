@@ -23,49 +23,48 @@ import org.eclipse.contribution.visualiser.core.Stripe;
 import org.eclipse.contribution.visualiser.interfaces.IMarkupKind;
 import org.eclipse.core.runtime.FileLocator;
 
-
 /**
  * Example implementation of a markup provider.  It allows the superclass 'SimpleMarkupProvider'
  * to handle much of the grunt work, this subclass is purely responsible for retrieving markup
  * data from a file in a specified format.  The three key elements of this class are:
- *
+ * <p>
  * 1) initialise() is called by the org.eclipse.contribution.visualiser to get a markup provider ready
  * 2) the provider adds stripes to the SimpleMarkupProvider using the method
- *    addMarkup(full_membername, stripe)
+ * addMarkup(full_membername, stripe)
  * 3) after adding all the markups, it calls processMarkups on the superclass, processMarkups
- *    analyses all the places where stripes overlap
+ * analyses all the places where stripes overlap
  */
 public class FileMarkupProvider extends SimpleMarkupProvider {
 
 	private final static boolean debugLoading = false;
-	private Map kinds;
-
+	private Map<String, IMarkupKind> kinds;
 
 	/**
 	 * Initialise the provider - loads markup information from a file
 	 */
 	public void initialise() {
-		kinds = new HashMap();
+		kinds = new HashMap<>();
 		try {
 			URL url = VisualiserPlugin.getDefault().getBundle().getEntry(
-					"/"); //$NON-NLS-1$
+				"/"); //$NON-NLS-1$
 			URL resolved = FileLocator.resolve(url);
 			URL fileURL = new URL(resolved, "Markup.mvis"); //$NON-NLS-1$
 			InputStream in = fileURL.openStream();
 			loadMarkups(in);
 			in.close();
-		} catch (IOException ioe) {
+		}
+		catch (IOException ioe) {
 			VisualiserPlugin.logException(ioe);
 		}
 	}
 
-
 	/**
 	 * Load the markup information from given input stream
+	 *
 	 * @param in
 	 */
 	public void loadMarkups(InputStream in) {
-		int scount = 0 ; // How many stripes added altogether
+		int scount = 0; // How many stripes added altogether
 
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -84,41 +83,41 @@ public class FileMarkupProvider extends SimpleMarkupProvider {
 					int depth = 1;
 
 					// Retrieve the fully qualified membername, e.g. ABC.A
-					membername = retrieveKeyValue("Stripe:",line); //$NON-NLS-1$
+					membername = retrieveKeyValue("Stripe:", line); //$NON-NLS-1$
 
 					// Retrieve the Kind:, e.g. S1
-					kindStr    = retrieveKeyValue("Kind:",line); //$NON-NLS-1$
+					kindStr = retrieveKeyValue("Kind:", line); //$NON-NLS-1$
 					IMarkupKind kind;
-					if(kinds.get(kindStr) instanceof IMarkupKind) {
-						kind = (IMarkupKind)kinds.get(kindStr);
-					} else {
+					if (kinds.get(kindStr) != null)
+						kind = kinds.get(kindStr);
+					else {
 						kind = new SimpleMarkupKind(kindStr);
 						kinds.put(kindStr, kind);
 					}
 
 					// Retrieve the Offset:, e.g. 42
-					offset     = Integer.parseInt(retrieveKeyValue("Offset:",line)); //$NON-NLS-1$
+					offset = Integer.parseInt(retrieveKeyValue("Offset:", line)); //$NON-NLS-1$
 
 					// Retrieve the Depth:, e.g. 30
-					depth      = Integer.parseInt(retrieveKeyValue("Depth:",line)); //$NON-NLS-1$
+					depth = Integer.parseInt(retrieveKeyValue("Depth:", line)); //$NON-NLS-1$
 
 					// Create a new stripe and add it as a markup
-					Stripe newstripe = new Stripe(kind,offset,depth);
+					Stripe newstripe = new Stripe(kind, offset, depth);
 					addMarkup(membername, newstripe);
 					scount++;
 
-					if (debugLoading) System.err.println("Loading new stripe: Adding " + newstripe + " for " + membername); //$NON-NLS-1$ //$NON-NLS-2$
+					if (debugLoading)
+						System.err.println("Loading new stripe: Adding " + newstripe + " for " + membername); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				line = br.readLine();
 			}
 		}
-    catch (IOException e) {
-      System.err.println("Problem loading markup data"); //$NON-NLS-1$
-      e.printStackTrace();
-    }
-    processMarkups();
+		catch (IOException e) {
+			System.err.println("Problem loading markup data"); //$NON-NLS-1$
+			e.printStackTrace();
+		}
+		processMarkups();
 	}
-
 
 	/**
 	 * Given a 'key' it looks for the key in a supplied string and returns the value
@@ -126,18 +125,22 @@ public class FileMarkupProvider extends SimpleMarkupProvider {
 	 * would return "45".  If values need to have spaces in then _ characters can be used, this
 	 * method will translate those to spaces before it returns.
 	 *
-	 * @param what The key to look for
+	 * @param what  The key to look for
 	 * @param where The string to locate the key in
 	 * @return the value after the key (whitespace is the value delimiter)
 	 */
 	private String retrieveKeyValue(String what, String where) {
-		if (debugLoading) System.err.println("looking for '"+what+"' in '"+where+"'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (!where.contains(what)) return null;
-		String postWhat = where.substring(where.indexOf(what)+what.length());
+		if (debugLoading)
+			System.err.println("looking for '" + what + "' in '" + where + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (!where.contains(what))
+			return null;
+		String postWhat = where.substring(where.indexOf(what) + what.length());
 		String result = postWhat;
-		if (result.contains(" ")) result = postWhat.substring(0,postWhat.indexOf(" ")); //$NON-NLS-1$ //$NON-NLS-2$
+		if (result.contains(" "))
+			result = postWhat.substring(0, postWhat.indexOf(" ")); //$NON-NLS-1$ //$NON-NLS-2$
 		result = result.replace('_', ' ');
-		if (debugLoading) System.err.println("Returning '"+result+"'"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (debugLoading)
+			System.err.println("Returning '" + result + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 

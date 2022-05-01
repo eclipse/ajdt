@@ -287,6 +287,7 @@ public class AjcTask extends MatchingTask {
 			String editorClassName = System.getProperty(COMMAND_EDITOR_NAME);
 			if (null != editorClassName) {
 				ClassLoader cl = AjcTask.class.getClassLoader();
+				//noinspection unchecked
 				Class<ICommandEditor> editorClass = (Class<ICommandEditor>) cl.loadClass(editorClassName);
 				editor = editorClass.getConstructor().newInstance();
 			}
@@ -786,6 +787,7 @@ public class AjcTask extends MatchingTask {
 	 */
 	public void setMessageHolderClass(String className) {
 		try {
+			//noinspection unchecked
 			Class<IMessageHolder> mclass = (Class<IMessageHolder>) Class.forName(className);
 			IMessageHolder holder = mclass.getConstructor().newInstance();
 			setMessageHolder(holder);
@@ -810,6 +812,7 @@ public class AjcTask extends MatchingTask {
 	 */
 	public void setCommandEditorClass(String className) { // skip Ant interface?
 		try {
+			//noinspection unchecked
 			Class<ICommandEditor> mclass = (Class<ICommandEditor>) Class.forName(className);
 			setCommandEditor(mclass.getConstructor().newInstance());
 		} catch (Throwable t) {

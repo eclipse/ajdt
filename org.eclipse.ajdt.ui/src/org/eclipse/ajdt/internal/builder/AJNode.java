@@ -20,39 +20,37 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * A wrapper class for IAspectJElements that enables them to have
  * a more detailed label and be understood by the Cross reference
  * view (so that we can navigate to them).
- *
  */
 public class AJNode implements IAdaptable, IXReferenceNode {
 
-    private final String label;
-    private final IJavaElement javaElement;
+  private final String label;
+  private final IJavaElement javaElement;
 
-    public AJNode(IJavaElement javaElement, String label) {
-        this.label = label;
-        this.javaElement = javaElement;
-    }
+  public AJNode(IJavaElement javaElement, String label) {
+    this.label = label;
+    this.javaElement = javaElement;
+  }
 
-	/**
-	 * @see IAdaptable#getAdapter(Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class) {
-			return AJNodeAdapter.getDefault( );
-		} else if (adapter == IJavaElement.class) {
-		    return javaElement;
-		}
-		return null;
-	}
+  /**
+   * @see IAdaptable#getAdapter(Class)
+   */
+  public Object getAdapter(Class adapter) {
+    if (adapter == IWorkbenchAdapter.class)
+      return AJNodeAdapter.getDefault();
+    else if (adapter == IJavaElement.class)
+      return javaElement;
+    return null;
+  }
 
-	public String getLabel() {
-	    return label;
-	}
+  public String getLabel() {
+    return label;
+  }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.contribution.xref.core.IXReferenceNode#getJavaElement()
-     */
-    public IJavaElement getJavaElement() {
-        return javaElement;
-    }
+  /* (non-Javadoc)
+   * @see org.eclipse.contribution.xref.core.IXReferenceNode#getJavaElement()
+   */
+  public IJavaElement getJavaElement() {
+    return javaElement;
+  }
 
 }

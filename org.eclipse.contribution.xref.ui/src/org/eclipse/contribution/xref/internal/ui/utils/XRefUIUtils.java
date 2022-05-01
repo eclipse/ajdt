@@ -66,7 +66,7 @@ import org.eclipse.ui.ide.IDE;
  */
 public class XRefUIUtils {
 
-	private static Map workingCopyManagersForEditors = new HashMap();
+	private static final Map<IEditorPart, IWorkingCopyManager> workingCopyManagersForEditors = new HashMap<>();
 
 	private static boolean selectedOutsideJavaElement = false;
 
@@ -126,32 +126,29 @@ public class XRefUIUtils {
 	 */
 	private static IJavaElement getElementAt(JavaEditor editor, int offset, boolean reconcile) {
 		IWorkingCopyManager manager;
-		if(workingCopyManagersForEditors.get(editor) instanceof IWorkingCopyManager) {
-			manager = (IWorkingCopyManager) workingCopyManagersForEditors.get(editor);
-		} else {
-			manager= JavaPlugin.getDefault().getWorkingCopyManager();
-		}
+		if(workingCopyManagersForEditors.get(editor) != null)
+			manager = workingCopyManagersForEditors.get(editor);
+		else
+			manager = JavaPlugin.getDefault().getWorkingCopyManager();
 		ICompilationUnit unit= manager.getWorkingCopy(editor.getEditorInput());
 
-		if (unit != null) {
+		if (unit != null)
 			try {
 				if (reconcile) {
 					synchronized (unit) {
 						unit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 					}
 					IJavaElement elementAt = unit.getElementAt(offset);
-					if (elementAt != null) {
+					if (elementAt != null)
 						return elementAt;
-					}
 					// this is if the selection in the editor
 					// is outside the {} of the class or aspect
 					IJavaElement[] children = unit.getChildren();
-          for (IJavaElement child : children) {
-            if (child instanceof SourceType) {
-              return child;
-            }
-          }
-				} else if (unit.isConsistent()) {
+					for (IJavaElement child : children)
+						if (child instanceof SourceType)
+							return child;
+				}
+				else if (unit.isConsistent()) {
 					// Bug 96313 - if there is no IJavaElement for the
 					// given offset, then check whether there are any
 					// children for this CU. There are if you've selected
@@ -160,25 +157,22 @@ public class XRefUIUtils {
 					// children and calculate the xrefs as though the user
 					// wants to display the xrefs for the entire file
 					IJavaElement elementAt = unit.getElementAt(offset);
-					if (elementAt != null) {
-						// a javaElement has been selected, therefore
-						// no need to go any further
+					// a javaElement has been selected, therefore
+					// no need to go any further
+					if (elementAt != null)
 						return elementAt;
-					}
 					IResource res = unit.getCorrespondingResource();
 					if (res instanceof IFile) {
-						IFile file = (IFile)res;
+						IFile file = (IFile) res;
 						IProject containingProject = file.getProject();
 						IMarker[] javaModelMarkers = containingProject.findMarkers(
-								IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, false,
-								IResource.DEPTH_INFINITE);
-            for (IMarker marker : javaModelMarkers) {
-              if (marker.getResource().equals(file)) {
-                // there is an error in the file, therefore
-                // we don't want to return any xrefs
-                return null;
-              }
-            }
+							IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, false,
+							IResource.DEPTH_INFINITE);
+						// there is an error in the file, therefore
+						// we don't want to return any xrefs
+						for (IMarker marker : javaModelMarkers)
+							if (marker.getResource().equals(file))
+								return null;
 					}
 					// the selection was outside an IJavaElement, however, there
 					// are children for this compilation unit so we think you've
@@ -189,13 +183,14 @@ public class XRefUIUtils {
 					}
 				}
 
-			} catch (JavaModelException x) {
-				if (!x.isDoesNotExist())
-				JavaPlugin.log(x.getStatus());
-				// nothing found, be tolerant and go on
-			} catch (CoreException ignored) {
 			}
-		}
+			catch (JavaModelException x) {
+				if (!x.isDoesNotExist())
+					JavaPlugin.log(x.getStatus());
+				// nothing found, be tolerant and go on
+			}
+			catch (CoreException ignored) {
+			}
 
 		return null;
 	}
@@ -223,9 +218,8 @@ public class XRefUIUtils {
 	public static void evaluateXReferences(IDeferredXReference xr, TreeViewer viewer, Shell shell) {
 		try {
 			new ProgressMonitorDialog(shell).run(true, true, xr);
-			if (!(viewer.getContentProvider() instanceof XReferenceContentProvider)) {
+			if (!(viewer.getContentProvider() instanceof XReferenceContentProvider))
 				return;
-			}
 			((XReferenceContentProvider)viewer.getContentProvider()).refresh();
 			viewer.refresh();
 			viewer.expandToLevel(3);
@@ -253,19 +247,17 @@ public class XRefUIUtils {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object first = structuredSelection.getFirstElement();
-			if (first instanceof IJavaElement) {
-				return getXRefAdapterListForJavaElement((IJavaElement)first,showParentCrosscutting);
+			if (first instanceof IJavaElement)
+				return getXRefAdapterListForJavaElement((IJavaElement) first, showParentCrosscutting);
+		} else if (part instanceof IEditorPart && selection instanceof ITextSelection)
+			if (part instanceof JavaEditor) {
+				JavaEditor je = (JavaEditor) part;
+				ISourceReference sourceRef = XRefUIUtils.computeHighlightRangeSourceReference(je);
+				IJavaElement javaElement = (IJavaElement) sourceRef;
+				// if we want to show the parent crosscutting then need to show the xrefs for
+				// all top level SourceTypes declared in the containing compilation unit
+				return getXRefAdapterListForJavaElement(javaElement, showParentCrosscutting);
 			}
-		} else if (part instanceof IEditorPart && selection instanceof ITextSelection) {
- 		    if (part instanceof JavaEditor) {
-			    JavaEditor je = (JavaEditor)part;
-			    ISourceReference sourceRef = XRefUIUtils.computeHighlightRangeSourceReference(je);
-			    IJavaElement javaElement = (IJavaElement)sourceRef;
-			    // if we want to show the parent crosscutting then need to show the xrefs for
-			    // all top level SourceTypes declared in the containing compilation unit
-			    return getXRefAdapterListForJavaElement(javaElement,showParentCrosscutting);
-            }
-		}
 		return xrefAdapterList;
 	}
 
@@ -273,57 +265,50 @@ public class XRefUIUtils {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object first = structuredSelection.getFirstElement();
-			if (first instanceof IJavaElement) {
-				if (!(first instanceof IJavaProject)) {
-					return (IJavaElement)first;
-				}
+			if (first instanceof IJavaElement)
+				if (!(first instanceof IJavaProject))
+					return (IJavaElement) first;
+		} else if (part instanceof IEditorPart && selection instanceof ITextSelection)
+			if (part instanceof JavaEditor) {
+				JavaEditor je = (JavaEditor) part;
+				ISourceReference sourceRef = XRefUIUtils.computeHighlightRangeSourceReference(je);
+				IJavaElement javaElement = (IJavaElement) sourceRef;
+				return javaElement;
 			}
-		} else if (part instanceof IEditorPart && selection instanceof ITextSelection) {
- 		    if (part instanceof JavaEditor) {
-			    JavaEditor je = (JavaEditor)part;
-			    ISourceReference sourceRef = XRefUIUtils.computeHighlightRangeSourceReference(je);
-			    IJavaElement javaElement = (IJavaElement)sourceRef;
-			    return javaElement;
-            }
-		}
 		return null;
 	}
 
 	public static List getXRefAdapterListForJavaElement(IJavaElement javaElement, boolean showParentCrosscutting) {
 		List xrefAdapterList = new ArrayList();
-		if (javaElement != null && !javaElement.exists()) {
+		if (javaElement != null && !javaElement.exists())
 			return xrefAdapterList;
-		}
 		// if we've selected outside a javaElement, for example before
 		// the aspect declaration, or we've opted to show crosscutting for
 		// the entire file then want to return a list of everything.
-	    if (javaElement != null && (showParentCrosscutting || selectedOutsideJavaElement)) {
+			if (javaElement != null && (showParentCrosscutting || selectedOutsideJavaElement)) {
 
-	    	ICompilationUnit parent = (ICompilationUnit)javaElement.getAncestor(IJavaElement.COMPILATION_UNIT);
-	    	if (parent != null) {
-		    	try {
-					IType[] types = parent.getAllTypes();
-            for (IType type : types) {
-              if ((type instanceof SourceType)
-                  && (type.getParent() instanceof ICompilationUnit))
-              {
-                IAdaptable a = type;
-                if (a != null) {
-                  xrefAdapterList.add(a.getAdapter(IXReferenceAdapter.class));
-                }
-              }
-            }
-				} catch (JavaModelException ignored) {
-				}
-			}
+				ICompilationUnit parent = (ICompilationUnit)javaElement.getAncestor(IJavaElement.COMPILATION_UNIT);
+				if (parent != null)
+					try {
+						IType[] types = parent.getAllTypes();
+						for (IType type : types)
+							if ((type instanceof SourceType)
+									&& (type.getParent() instanceof ICompilationUnit))
+							{
+								IAdaptable a = type;
+								if (a != null)
+									xrefAdapterList.add(a.getAdapter(IXReferenceAdapter.class));
+							}
+					}
+					catch (JavaModelException ignored) {
+					}
 		} else {
 			IAdaptable a = javaElement;
-			if (a != null) {
+			if (a != null)
 				xrefAdapterList.add(a.getAdapter(IXReferenceAdapter.class));
-			}
 		}
-	    selectedOutsideJavaElement = false;
-	    return xrefAdapterList;
+			selectedOutsideJavaElement = false;
+			return xrefAdapterList;
 	}
 
 	/**
@@ -331,9 +316,8 @@ public class XRefUIUtils {
 	 */
 	public static ISelection getCurrentSelection() {
 		IWorkbenchWindow window= JavaPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
+		if (window != null)
 			return window.getSelectionService().getSelection();
-		}
 		return null;
 	}
 
@@ -341,53 +325,45 @@ public class XRefUIUtils {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object first = structuredSelection.getFirstElement();
-			if (first instanceof IJavaElement) {
-				return getTreeObjectForJavaElement(viewer.getTree().getItems(),(IJavaElement)first);
-			} else if (first instanceof TreeObject) {
+			if (first instanceof IJavaElement)
+				return getTreeObjectForJavaElement(viewer.getTree().getItems(), (IJavaElement) first);
+			else if (first instanceof TreeObject) {
 				Object data = ((TreeObject)first).getData();
-				if (data instanceof IJavaElement) {
-					return getTreeObjectForJavaElement(viewer.getTree().getItems(),(IJavaElement)data);
-				}
+				if (data instanceof IJavaElement)
+					return getTreeObjectForJavaElement(viewer.getTree().getItems(), (IJavaElement) data);
 			}
-		} else if (part instanceof IEditorPart && selection instanceof ITextSelection) {
- 		    if (part instanceof JavaEditor) {
-			    JavaEditor je = (JavaEditor)part;
-			    ISourceReference sourceRef = XRefUIUtils.computeHighlightRangeSourceReference(je);
-			    IJavaElement javaElement = (IJavaElement)sourceRef;
-			    return getTreeObjectForJavaElement(viewer.getTree().getItems(),javaElement);
-            }
-		}
+		} else if (part instanceof IEditorPart && selection instanceof ITextSelection)
+			if (part instanceof JavaEditor) {
+				JavaEditor je = (JavaEditor) part;
+				ISourceReference sourceRef = XRefUIUtils.computeHighlightRangeSourceReference(je);
+				IJavaElement javaElement = (IJavaElement) sourceRef;
+				return getTreeObjectForJavaElement(viewer.getTree().getItems(), javaElement);
+			}
 		return null;
 	}
 
 	public static TreeObject getTreeObjectForJavaElement(TreeItem[] items, IJavaElement javaElement) {
-    for (TreeItem item : items) {
-      Object o = item.getData();
-      TreeParent treeParent = null;
-      TreeObject treeObject = null;
-      if (o instanceof TreeParent) {
-        treeParent = (TreeParent) o;
-      }
-      else if (o instanceof TreeObject) {
-        treeObject = (TreeObject) o;
-      }
-      TreeObject element = null;
-      if (treeParent == null) {
-        element = treeObject;
-      }
-      else {
-        element = treeParent;
-      }
+		for (TreeItem item : items) {
+			Object o = item.getData();
+			TreeParent treeParent = null;
+			TreeObject treeObject = null;
+			if (o instanceof TreeParent)
+				treeParent = (TreeParent) o;
+			else if (o instanceof TreeObject)
+				treeObject = (TreeObject) o;
+			TreeObject element = null;
+			if (treeParent == null)
+				element = treeObject;
+			else
+				element = treeParent;
 
-      if (element != null && element.getData() != null) {
-        if (element.getData().equals(javaElement)) {
-          return element;
-        }
-      }
-      element = getTreeObjectForJavaElement(item.getItems(), javaElement);
-      if (element != null)
-        return element;
-    }
+			if (element != null && element.getData() != null)
+				if (element.getData().equals(javaElement))
+					return element;
+			element = getTreeObjectForJavaElement(item.getItems(), javaElement);
+			if (element != null)
+				return element;
+		}
 		return null;
 	}
 

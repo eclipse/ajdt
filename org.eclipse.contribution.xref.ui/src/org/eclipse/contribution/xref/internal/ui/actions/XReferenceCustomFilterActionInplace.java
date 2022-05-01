@@ -34,11 +34,11 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class XReferenceCustomFilterActionInplace extends Action {
 
-	private List /* XReferenceProviderDefinition */ providerDefns;
+	private List<XReferenceProviderDefinition> providerDefns;
 
-	private List /* String */ populatingList;
-	private List /* String */ checkedList;
-	private List /* String */ defaultCheckedList;
+	private List<String> populatingList;
+	private List<String> checkedList;
+	private List<String> defaultCheckedList;
 	private String dialogTitle;
 	private String dialogMessage;
 	private Shell parentShell;
@@ -49,59 +49,44 @@ public class XReferenceCustomFilterActionInplace extends Action {
 		setImageDescriptor(JavaPluginImages.DESC_ELCL_FILTER);
 		setDisabledImageDescriptor(JavaPluginImages.DESC_DLCL_FILTER);
 
-		populatingList = new ArrayList();
-		checkedList = new ArrayList();
-		defaultCheckedList = new ArrayList();
+		populatingList = new ArrayList<>();
+		checkedList = new ArrayList<>();
+		defaultCheckedList = new ArrayList<>();
 		parentShell = shell;
 
 		providerDefns = XReferenceProviderManager.getManager().getRegisteredProviders();
 
-    for (Object providerDefn : providerDefns) {
-      XReferenceProviderDefinition provider = (XReferenceProviderDefinition) providerDefn;
+		for (XReferenceProviderDefinition providerDefn : providerDefns) {
 
-      List providerFilters = provider.getAllFilters();
-      if (providerFilters != null) {
-        for (Object providerFilter : providerFilters) {
-          String filter = (String) providerFilter;
-          if (!populatingList.contains(filter)) {
-            populatingList.add(filter);
-          }
-        }
-      }
+			List<String> providerFilters = providerDefn.getAllFilters();
+			if (providerFilters != null) {
+				for (String providerFilter : providerFilters) {
+					if (!populatingList.contains(providerFilter))
+						populatingList.add(providerFilter);
+				}
+			}
 
-      List providerCheckedInplace = provider.getCheckedInplaceFilters();
-      if (providerCheckedInplace != null) {
-        for (Object o : providerCheckedInplace) {
-          String filter = (String) o;
-          checkedList.add(filter);
-        }
-      }
+			List<String> providerCheckedInplace = providerDefn.getCheckedInplaceFilters();
+			if (providerCheckedInplace != null)
+				checkedList.addAll(providerCheckedInplace);
 
-      List providerDefault = provider.getDefaultFilters();
-      if (providerDefault != null) {
-        for (Object o : providerDefault) {
-          String filter = (String) o;
-          defaultCheckedList.add(filter);
-        }
-      }
-      dialogTitle = XRefMessages.CustomFilterDialog_title;
-      dialogMessage = XRefMessages.CustomFilterDialog_message;
-    }
+			List<String> providerDefault = providerDefn.getDefaultFilters();
+			if (providerDefault != null)
+				defaultCheckedList.addAll(providerDefault);
+			dialogTitle = XRefMessages.CustomFilterDialog_title;
+			dialogMessage = XRefMessages.CustomFilterDialog_message;
+		}
 	}
 
 	public void run() {
-		checkedList = CustomFilterDialog.showDialog(parentShell,
-				populatingList, checkedList, defaultCheckedList,
-				dialogTitle, dialogMessage);
-
-    for (Object providerDefn : providerDefns) {
-      XReferenceProviderDefinition provider = (XReferenceProviderDefinition) providerDefn;
-      provider.setCheckedInplaceFilters(checkedList);
-    }
+		checkedList = CustomFilterDialog.showDialog(
+			parentShell, populatingList, checkedList, defaultCheckedList, dialogTitle, dialogMessage
+		);
+		for (XReferenceProviderDefinition providerDefn : providerDefns)
+			providerDefn.setCheckedInplaceFilters(checkedList);
 		XReferenceProviderManager.getManager().setIsInplace(true);
 		// Refresh Inplace View
 		XReferenceInplaceDialog.getInplaceDialog().refresh();
-
 	}
 
 	// ----------------- This is for testing ----------------------
@@ -111,7 +96,7 @@ public class XReferenceCustomFilterActionInplace extends Action {
      * method is for testing purposes and not part of the
      * published API.
      */
-	public List /* XReferenceProviderDefinition */ getProviderDefns() {
+	public List<XReferenceProviderDefinition> getProviderDefns() {
 		return providerDefns;
 	}
 
@@ -120,7 +105,7 @@ public class XReferenceCustomFilterActionInplace extends Action {
      * method is for testing purposes and not part of the
      * published API.
      */
-	public List /* String */ getPopulatingList() {
+	public List<String> getPopulatingList() {
 		return populatingList;
 	}
 }

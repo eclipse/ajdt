@@ -24,8 +24,7 @@ public class SimpleGroup implements IGroup {
 
 	protected String name;
 	protected String tooltip;
-	protected List kids = new ArrayList();
-
+	protected List<IMember> kids = new ArrayList<>();
 
 	/**
 	 * The constructor - takes the group's name as an argument
@@ -35,7 +34,6 @@ public class SimpleGroup implements IGroup {
 		name = n;
 	}
 
-
 	/**
 	 * Get the full name for the group.  In this implementation this is
 	 * the same as the name.
@@ -43,7 +41,6 @@ public class SimpleGroup implements IGroup {
 	public String getFullname() {
 		return name;
 	}
-
 
 	/**
 	 * Add a member to this group
@@ -53,14 +50,12 @@ public class SimpleGroup implements IGroup {
 		m.setContainingGroup(this);
 	}
 
-
 	/**
 	 * Get all the members contained in this group
 	 */
-	public List getMembers() {
+	public List<IMember> getMembers() {
 		return kids;
 	}
-
 
 	/**
 	 * Set the name of this group
@@ -69,14 +64,12 @@ public class SimpleGroup implements IGroup {
 		name = string;
 	}
 
-
 	/**
 	 * Get the name of this group
 	 */
 	public String getName() {
 		return name;
 	}
-
 
 	/**
 	 * Set the tooltip for this group
@@ -85,38 +78,30 @@ public class SimpleGroup implements IGroup {
 		tooltip = string;
 	}
 
-
 	/**
 	 * Get this group's tooltip
 	 */
 	public String getToolTip() {
-		if(tooltip != null){
+		if(tooltip != null)
 			return tooltip;
-		}
 		return name;
 	}
-
 
 	/**
 	 * Set the size for this group.  This implementaion does nothing in this method
 	 * and automatically sets the size to the sum of all the sizes of its members
 	 */
-	public void setSize(int size) {
-	}
-
+	public void setSize(int size) { }
 
 	/**
 	 * Get the size for this group.  This is the sum of all sizes of its members.
 	 */
 	public Integer getSize() {
 		int s = 0;
-    for (Object kid : kids) {
-      IMember im = (IMember) kid;
-      s += im.getSize();
-    }
+		for (IMember kid : kids)
+			s += kid.getSize();
 		return s;
 	}
-
 
 	/**
 	 * Get the containing group. This currently has no meaning for groups and returns null
@@ -126,13 +111,11 @@ public class SimpleGroup implements IGroup {
 		return null;
 	}
 
-
 	/**
 	 * Set the containing group.  Does nothing as a group cannot be nested within another
 	 * group.
 	 */
 	public void setContainingGroup(IGroup grp) {}
-
 
 	/**
 	 * Get the String representation of this group.  This contains the name,
@@ -140,10 +123,10 @@ public class SimpleGroup implements IGroup {
 	 */
 	public String toString() {
 		return VisualiserMessages.SimpleGroup + ":[" + name //$NON-NLS-1$
-                + "] " + VisualiserMessages.Size + ":["//$NON-NLS-1$ //$NON-NLS-2$
-                + getSize() + "]  "//$NON-NLS-1$
-                + VisualiserMessages.Children + ":["//$NON-NLS-1$
-                + kids.size() + "]";//$NON-NLS-1$
+       + "] " + VisualiserMessages.Size + ":["//$NON-NLS-1$ //$NON-NLS-2$
+       + getSize() + "]  "//$NON-NLS-1$
+       + VisualiserMessages.Children + ":["//$NON-NLS-1$
+       + kids.size() + "]";//$NON-NLS-1$
 	}
 
 }

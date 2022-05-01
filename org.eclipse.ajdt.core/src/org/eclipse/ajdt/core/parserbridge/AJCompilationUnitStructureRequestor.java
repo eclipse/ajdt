@@ -12,6 +12,7 @@
 package org.eclipse.ajdt.core.parserbridge;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -877,6 +878,7 @@ public class AJCompilationUnitStructureRequestor extends
 
         addToChildren(parentInfo, handle);
         // Semantically a Map<PackageDeclaration, AJAnnotatableInfo>, but declared as raw type in JDT
+        //noinspection unchecked
         this.newElements.put(handle, info);
     }
 
@@ -995,6 +997,7 @@ public class AJCompilationUnitStructureRequestor extends
 
     // copied from super so that children Map is accessible
     private IJavaElement[] getChildren(Object info) {
+        //noinspection unchecked
         ArrayList<IJavaElement> childrenList = (ArrayList<IJavaElement>) this.children.get(info);
         if (childrenList != null) {
             return childrenList.toArray(new IJavaElement[0]);

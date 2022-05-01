@@ -29,22 +29,22 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	private static int nextAvailablePattern = 0;
 
-	private Map patternMemory = new HashMap();
+	private final Map<RGB, byte[][]> patternMemory = new HashMap<>();
 
-	private  PatternVisualiserRenderer() {
+	private PatternVisualiserRenderer() {
 
 	}
 
 	public static PatternVisualiserRenderer getPatternRenderer() {
-		if (pvr == null) {
+		if (pvr == null)
 			pvr = new PatternVisualiserRenderer();
-		}
 		return pvr;
 	}
 
 	/**
 	 * Get the next assignable pattern data and return it. If all the predefined patterns
 	 * have been assigned, a new one is generated
+	 *
 	 * @return byte[][] - pattern data
 	 */
 	protected byte[][] getNextPattern() {
@@ -52,14 +52,16 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 		if (nextAvailablePattern < pats.length) {
 			byte[][] patternData = pats[nextAvailablePattern++];
 			return patternData;
-		} else {
+		}
+		else {
 			byte[][] patternData = palette.getRandomPattern();
-				return patternData;
+			return patternData;
 		}
 	}
 
 	/**
 	 * Converts the patternData into a Pattern
+	 *
 	 * @param patternData - byte[][] used to create the image
 	 * @return The Pattern to be used
 	 */
@@ -67,15 +69,15 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 		Image patternImg = new Image(Display.getCurrent(), 8, 8);
 		GC gc = new GC(patternImg);
 
-    for (byte[] b : patternData) {
-      gc.setForeground(ColorConstants.black);
-      if (b[1] == b[3] && b[2] == b[4]) {
-        gc.drawPoint(b[1], b[2]);
-      }
-      else {
-        gc.drawLine(b[1], b[2], b[3], b[4]);
-      }
-    }
+		for (byte[] b : patternData) {
+			gc.setForeground(ColorConstants.black);
+			if (b[1] == b[3] && b[2] == b[4]) {
+				gc.drawPoint(b[1], b[2]);
+			}
+			else {
+				gc.drawLine(b[1], b[2], b[3], b[4]);
+			}
+		}
 		Pattern pattern = new Pattern(Display.getCurrent(), patternImg);
 		gc.dispose();
 		patternImg.dispose();
@@ -85,15 +87,16 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 	/**
 	 * Returns pattern data from the patternMemory if the colour is recognised
 	 * or a new pattern if the colour is new to the renderer
+	 *
 	 * @param rgb
 	 * @return byte[][] - pattern data
 	 */
 	private byte[][] getPatternForColour(RGB rgb, boolean isPrefDialog) {
 
-		byte[][] stripePatternData = null;
-		if (patternMemory.containsKey(rgb)) {
-			stripePatternData = (byte[][]) patternMemory.get(rgb);
-		} else {
+		byte[][] stripePatternData;
+		if (patternMemory.containsKey(rgb))
+			stripePatternData = patternMemory.get(rgb);
+		else {
 			stripePatternData = getNextPattern();
 			patternMemory.put(rgb, stripePatternData);
 		}
@@ -102,6 +105,7 @@ public class PatternVisualiserRenderer extends ClassicVisualiserRenderer {
 
 	/**
 	 * Uses a colour, associates a pattern with it and tiles it over the gc
+	 *
 	 * @param gc
 	 * @param rgb - The RGB assigned to the gc
 	 */

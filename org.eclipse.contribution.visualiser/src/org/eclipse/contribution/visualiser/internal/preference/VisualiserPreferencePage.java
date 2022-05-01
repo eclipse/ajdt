@@ -153,41 +153,32 @@ public class VisualiserPreferencePage extends PreferencePage implements
 	}
 
 	private void createDrawingStyleArea(Composite mainComposite) {
-		java.util.List renderers = RendererManager.getAllRendererDefinitions();
-		java.util.List rnames = new ArrayList();
-    for (Object renderer : renderers) {
-      RendererDefinition rd = (RendererDefinition) renderer;
-      rnames.add(rd.getName());
-    }
-		java.util.List palettes = PaletteManager.getAllPaletteDefinitions();
-		java.util.List pnames = new ArrayList();
-    for (Object palette : palettes) {
-      PaletteDefinition rd = (PaletteDefinition) palette;
-      pnames.add(rd.getName());
-    }
+		java.util.List<RendererDefinition> renderers = RendererManager.getAllRendererDefinitions();
+		java.util.List<String> rnames = new ArrayList<>();
+		for (RendererDefinition renderer : renderers)
+			rnames.add(renderer.getName());
+		java.util.List<PaletteDefinition> palettes = PaletteManager.getAllPaletteDefinitions();
+		java.util.List<String> pnames = new ArrayList<>();
+		for (PaletteDefinition palette : palettes)
+			pnames.add(palette.getName());
 
 		Composite drawingComposite = new Composite(mainComposite, SWT.NONE);
 		drawingComposite.setLayout((new GridLayout(2, true)));
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		GridData gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		drawingComposite.setLayoutData(gd);
 
 		Group styleGroup = new Group(drawingComposite, SWT.NONE);
 		styleGroup.setLayout(new GridLayout());
-		styleGroup
-				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-						| GridData.HORIZONTAL_ALIGN_FILL
-						| GridData.VERTICAL_ALIGN_FILL));
-		styleGroup
-				.setText(VisualiserMessages.VisualiserPreferencePage_drawingStyle);
+		styleGroup.setLayoutData(
+			new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL)
+		);
+		styleGroup.setText(VisualiserMessages.VisualiserPreferencePage_drawingStyle);
 
-		styleList = new List(styleGroup, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL
-				| SWT.H_SCROLL);
-		gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		styleList = new List(styleGroup, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		gd.heightHint = 65;
 		styleList.setLayoutData(gd);
-		styleList.setItems((String[]) rnames.toArray(new String[] {}));
+		styleList.setItems(rnames.toArray(new String[0]));
 		String rname = VisualiserPreferences.getRendererName();
 		if ((rname == null) || (rname.length() == 0)) {
 			// hasn't been set, use the default
@@ -196,28 +187,22 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 		Group colourGroup = new Group(drawingComposite, SWT.NONE);
 		colourGroup.setLayout(new GridLayout());
-		gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		colourGroup.setLayoutData(gd);
-		colourGroup
-				.setText(VisualiserMessages.VisualiserPreferencePage_colorSet);
+		colourGroup.setText(VisualiserMessages.VisualiserPreferencePage_colorSet);
 
-		colourList = new List(colourGroup, SWT.SINGLE | SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
-		gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		colourList = new List(colourGroup, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		gd.heightHint = 65;
 		colourList.setLayoutData(gd);
-		colourList.setItems((String[]) pnames.toArray(new String[] {}));
+		colourList.setItems(pnames.toArray(new String[0]));
 		String pname = PaletteManager.getCurrentPalette().getName();
 
 		Group stripeHGroup = new Group(drawingComposite, SWT.NONE);
 		stripeHGroup.setLayout(new GridLayout());
-		gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		stripeHGroup.setLayoutData(gd);
-		stripeHGroup
-				.setText(VisualiserMessages.VisualiserPreferencePage_stripeHeight);
+		stripeHGroup.setText(VisualiserMessages.VisualiserPreferencePage_stripeHeight);
 
 		stripeHeight = new Scale(stripeHGroup, SWT.HORIZONTAL);
 		stripeHeight.setMinimum(1);
@@ -229,11 +214,9 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 		Group prefWidthGroup = new Group(drawingComposite, SWT.NONE);
 		prefWidthGroup.setLayout(new GridLayout());
-		gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		prefWidthGroup.setLayoutData(gd);
-		prefWidthGroup
-				.setText(VisualiserMessages.VisualiserPreferencePage_colWidth);
+		prefWidthGroup.setText(VisualiserMessages.VisualiserPreferencePage_colWidth);
 
 		prefWidth = new Scale(prefWidthGroup, SWT.HORIZONTAL);
 		prefWidth.setMinimum(VisualiserPreferences.getMinBarSize());
@@ -245,13 +228,11 @@ public class VisualiserPreferencePage extends PreferencePage implements
 
 		Group canvasGroup = new Group(drawingComposite, SWT.NONE);
 		canvasGroup.setLayout(new GridLayout());
-		gd = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+		gd = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
 		gd.grabExcessVerticalSpace = true;
 		gd.horizontalSpan = 2;
 		canvasGroup.setLayoutData(gd);
-		canvasGroup
-				.setText(VisualiserMessages.VisualiserPreferencePage_preview);
+		canvasGroup.setText(VisualiserMessages.VisualiserPreferencePage_preview);
 
 		preview = new VisualiserPreview(canvasGroup);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -270,11 +251,8 @@ public class VisualiserPreferencePage extends PreferencePage implements
 		colourList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String pname = colourList.getSelection()[0];
-				if (PaletteManager.getPaletteByName(pname).getPalette() instanceof PatternVisualiserPalette) {
-					preview.localUsePatterns = true;
-				} else {
-					preview.localUsePatterns = false;
-				}
+				preview.localUsePatterns =
+					PaletteManager.getPaletteByName(pname).getPalette() instanceof PatternVisualiserPalette;
 				preview.redraw();
 			}
 		});

@@ -64,11 +64,10 @@ public class ErrorLogTest extends UITestCase {
 			LogView logView = (LogView) view;
 			AbstractEntry[] logs = logView.getElements();
 			// Ignore information entries in the log
-			List errorsAndWarnings = new ArrayList();
+			List<AbstractEntry> errorsAndWarnings = new ArrayList<>();
       for (AbstractEntry log : logs) {
         LogEntry entry = (LogEntry) log;
-        if (entry.getSeverity() == IStatus.ERROR
-            || entry.getSeverity() == IStatus.WARNING)
+        if (entry.getSeverity() == IStatus.ERROR || entry.getSeverity() == IStatus.WARNING)
         {
           String msg = entry.getMessage();
           if (!matchesMsg1(msg) &&

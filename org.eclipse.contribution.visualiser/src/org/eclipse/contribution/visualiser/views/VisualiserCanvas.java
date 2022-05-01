@@ -12,9 +12,10 @@
 package org.eclipse.contribution.visualiser.views;
 
 import java.lang.ref.SoftReference;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
@@ -72,100 +73,72 @@ import org.eclipse.swt.widgets.Shell;
  * @author mchapman
  */
 public class VisualiserCanvas extends Canvas {
-
 	public static Color VIS_BG_COLOUR = ColorConstants.menuBackground;
 
 	private float vScale;
-
 	private static final int zoomMax = 20;
-
 	private static final int zoomSc = 10;
-
 	private int zoomFactor = zoomSc; // zoomFactor is x10 to avoid float
-
 	private boolean zoomChanged = false;
-
-	private List data;
-
+	private List<? extends IMember> data;
 	private int maxSize;
-
 	private int colWidth;
-
 	private int reqWidth;
-
 	private int reqHeight;
-
 	private boolean dataChanged = true;
-
 	private boolean scrollToSelection = false;
-
 	private Image screenImg;
-
 	private Image cImg;
-
 	// soft references to ImageData objects
-	private SoftReference[] colImgDataSR;
-
+	private SoftReference<ImageData>[] colImgDataSR;
 	private ColumnGeom[] columns;
-
-	private Visualiser visualiser;
-
+	private final Visualiser visualiser;
 	// Currently selected item. MUST be set through setSelectedItem method.
 	private ISelectable selectedItem;
-
 	private ISelectable lastSelected;
-
-	private Timer timer = new Timer();
-
+	private final Timer timer = new Timer();
 	private TimerTask dismissToolTipTask;
-
 	private TimerTask postToolTipTask;
-
 	private Shell toolTip;
-
 	private Menu contextMenu;
-
 
 	/**
 	 * @param parent
 	 * @param vis
 	 */
 	public VisualiserCanvas(Composite parent, Visualiser vis) {
-		super(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND
-				| SWT.BORDER);
+		super(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND | SWT.BORDER);
 		this.visualiser = vis;
 		addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent event) {
-				if (visualiser.isFitToView()) {
+				if (visualiser.isFitToView())
 					redraw(data);
-				} else {
+				else
 					configScrollBars();
-				}
 			}
 		});
 		addPaintListener(event -> paint(event.gc));
 		addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				Object o = locationToObject(e.x, e.y);
-				if ((o != null) && (o instanceof ISelectable)) {
+				if (o instanceof ISelectable) {
 					ISelectable is = (ISelectable) o;
 					Stripe s = null;
-					if (is instanceof StripeGeom) {
+					if (is instanceof StripeGeom)
 						s = ((StripeGeom) is).stripe;
-					}
-					visualiser.handleClick(is.getMember(), s,
-							e.button);
+					visualiser.handleClick(is.getMember(), s, e.button);
 				}
 			}
 
 			public void mouseDown(MouseEvent e) {
 				cancelToolTip();
 				Object o = locationToObject(e.x, e.y);
-				if ((o != null) && (o instanceof ISelectable)) {
+				if (o instanceof ISelectable) {
 					setSelectedItem((ISelectable) o);
 					scrollToSelection = true;
 					redraw();
-				} else if (selectedItem != null) {
+				}
+				else if (selectedItem != null) {
 					// only need to clear selection if something was
 					// previously selected
 					setSelectedItem(null);
@@ -174,12 +147,11 @@ public class VisualiserCanvas extends Canvas {
 			}
 		});
 		addMouseMoveListener(e -> {
-      if (postToolTipTask != null) {
-        postToolTipTask.cancel();
-      }
-      postToolTipTask = new ToolTipTimerTask(e);
-      timer.schedule(postToolTipTask, 750);
-    });
+			if (postToolTipTask != null)
+				postToolTipTask.cancel();
+			postToolTipTask = new ToolTipTimerTask(e);
+			timer.schedule(postToolTipTask, 750);
+		});
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				handleKeyPress(e);
@@ -214,29 +186,22 @@ public class VisualiserCanvas extends Canvas {
 		setupContextMenu();
 	}
 
-
 	private void setSelectedItem(ISelectable newItem) {
 		// Update the context menu
-		if (selectedItem == null && newItem != null) {
+		if (selectedItem == null && newItem != null)
 			setMenu(contextMenu);
-		} else if (selectedItem != null && newItem == null) {
+		else if (selectedItem != null && newItem == null)
 			setMenu(null);
-		}
 		selectedItem = newItem;
 	}
-
-
 
 	private void setupContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 
 		final Action onlyShowAction = new Action() {
 			public void run() {
-				if (selectedItem != null) {
-					VisualiserPlugin.visualiser
-							.onlyShowColorsAffecting(selectedItem.getMember()
-									.getFullname());
-				}
+				if (selectedItem != null)
+					VisualiserPlugin.visualiser.onlyShowColorsAffecting(selectedItem.getMember().getFullname());
 			}
 		};
 		onlyShowAction.setText(VisualiserMessages.OnlyShow);
@@ -261,18 +226,17 @@ public class VisualiserCanvas extends Canvas {
 			postToolTipTask = null;
 
 			getDisplay().asyncExec(() -> {
-        Object o = locationToObject(event.x, event.y);
-        if ((o != null) && (o instanceof ISelectable)) {
-          String label;
-          if (o instanceof StripeGeom) {
-            label = ((StripeGeom) o).stripe.getToolTip();
-          } else {
-            label = ((ISelectable) o).getMember().getToolTip();
-          }
-          Point dp = toDisplay(event.x, event.y);
-          showToolTip(label,dp);
-        }
-      });
+				Object o = locationToObject(event.x, event.y);
+				if (o instanceof ISelectable) {
+					String label;
+					if (o instanceof StripeGeom)
+						label = ((StripeGeom) o).stripe.getToolTip();
+					else
+						label = ((ISelectable) o).getMember().getToolTip();
+					Point dp = toDisplay(event.x, event.y);
+					showToolTip(label, dp);
+				}
+			});
 		}
 	}
 
@@ -286,7 +250,7 @@ public class VisualiserCanvas extends Canvas {
 		tipLabel.setText(text);
 		Point size = toolTip.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		toolTip.setBounds(point.x, point.y + 20, size.x, size.y);
-		toolTip.setVisible (true);
+		toolTip.setVisible(true);
 
 		dismissToolTipTask = new TimerTask() {
 			public void run() {
@@ -310,7 +274,7 @@ public class VisualiserCanvas extends Canvas {
 			dismissToolTipTask = null;
 		}
 		// remove any active tooltips
-		if (toolTip!=null && !toolTip.isDisposed()) {
+		if (toolTip != null && !toolTip.isDisposed()) {
 			toolTip.dispose();
 			toolTip = null;
 		}
@@ -322,78 +286,76 @@ public class VisualiserCanvas extends Canvas {
 	 * @param ke
 	 */
 	private void handleKeyPress(KeyEvent ke) {
-		if ((data == null) || (data.size() == 0)) {
+		if (data == null || data.size() == 0)
 			return;
-		}
 
 		lastSelected = selectedItem;
 		if (ke.character == ' ') {
 			if (selectedItem != null) {
 				Stripe s = null;
-				if (selectedItem instanceof StripeGeom) {
+				if (selectedItem instanceof StripeGeom)
 					s = ((StripeGeom) selectedItem).stripe;
-				}
 				visualiser.handleClick(selectedItem.getMember(),
-						s, 1);
+					s, 1);
 			}
-		} else if (ke.character == '\t') {
+		}
+		else if (ke.character == '\t') {
 			scrollToSelection = true;
 			cancelToolTip();
-			if (selectedItem == null) {
+			if (selectedItem == null)
 				setSelectedItem(columns[0]);
-			} else {
-				if ((ke.stateMask & SWT.SHIFT) == 0) {
-					moveSelectionForward();
-				} else {
-					moveSelectionBack();
-				}
-			}
-		} else if (ke.keyCode == SWT.ARROW_UP) {
+			else if ((ke.stateMask & SWT.SHIFT) == 0)
+				moveSelectionForward();
+			else
+				moveSelectionBack();
+		}
+		else if (ke.keyCode == SWT.ARROW_UP) {
 			scrollToSelection = true;
 			cancelToolTip();
 			moveSelectionUp();
-		} else if (ke.keyCode == SWT.ARROW_DOWN) {
+		}
+		else if (ke.keyCode == SWT.ARROW_DOWN) {
 			scrollToSelection = true;
 			cancelToolTip();
 			moveSelectionDown();
-		} else if (ke.keyCode == SWT.ARROW_LEFT) {
+		}
+		else if (ke.keyCode == SWT.ARROW_LEFT) {
 			scrollToSelection = true;
 			cancelToolTip();
 			moveSelectionLeft();
-		} else if (ke.keyCode == SWT.ARROW_RIGHT) {
+		}
+		else if (ke.keyCode == SWT.ARROW_RIGHT) {
 			scrollToSelection = true;
 			cancelToolTip();
 			moveSelectionRight();
-		} else if (ke.keyCode == SWT.F2) {
+		}
+		else if (ke.keyCode == SWT.F2) {
 			if (selectedItem != null) {
 				cancelToolTip();
 				String label;
-				if (selectedItem instanceof StripeGeom) {
+				if (selectedItem instanceof StripeGeom)
 					label = ((StripeGeom) selectedItem).stripe.getToolTip();
-				} else {
+				else
 					label = selectedItem.getMember().getToolTip();
-				}
 				int x = selectedItem.getBounds().x; // relative to column
 				x += selectedItem.getIndex() * colWidth;
 				Point dp = toDisplay(x, selectedItem.getBounds().y);
-				showToolTip(label,dp);
+				showToolTip(label, dp);
 			}
-		} else if (ke.keyCode == SWT.ESC) {
+		}
+		else if (ke.keyCode == SWT.ESC)
 			cancelToolTip();
-		} else if (ke.character == '+') {
-			if (!visualiser.isFitToView()) {
+		else if (ke.character == '+') {
+			if (!visualiser.isFitToView())
 				zoomIn();
-			}
-		} else if (ke.character == '-') {
-			if (!visualiser.isFitToView()) {
+		}
+		else if (ke.character == '-')
+			if (!visualiser.isFitToView())
 				zoomOut();
-			}
-		}
 
-		if (selectedItem != lastSelected) {
-			// the selection changed, so we need to repaint
+		// the selection changed, so we need to repaint
+		if (selectedItem != lastSelected)
 			redraw();
-		}
 	}
 
 	private void moveSelectionForward() {
@@ -401,9 +363,8 @@ public class VisualiserCanvas extends Canvas {
 		if (selectedItem == lastSelected) {
 			// couldn't move down, so move to next column
 			int ni = selectedItem.getIndex() + 1;
-			if (ni < columns.length) {
+			if (ni < columns.length)
 				setSelectedItem(columns[ni]);
-			}
 		}
 	}
 
@@ -412,177 +373,152 @@ public class VisualiserCanvas extends Canvas {
 			// select last object in previous column
 			int ni = selectedItem.getIndex() - 1;
 			if (ni >= 0) {
-				BarGeom bg = (BarGeom) columns[ni].barList
-						.get(columns[ni].barList.size() - 1);
-				if (bg.stripeList.size() > 0) {
-					setSelectedItem((StripeGeom) bg.stripeList
-							.get(bg.stripeList.size() - 1));
-				} else {
+				BarGeom bg = columns[ni].barList.get(columns[ni].barList.size() - 1);
+				if (bg.stripeList.size() > 0)
+					setSelectedItem(bg.stripeList.get(bg.stripeList.size() - 1));
+				else
 					setSelectedItem(bg);
-				}
 			}
-		} else if (selectedItem instanceof BarGeom) {
+		}
+		else if (selectedItem instanceof BarGeom) {
 			int ind = ((BarGeom) selectedItem).index;
 			int ni = columns[ind].barList.indexOf(selectedItem) - 1;
 			if (ni >= 0) {
-				BarGeom bg = (BarGeom) columns[ind].barList.get(ni);
-				if (bg.stripeList.size() > 0) {
-					setSelectedItem((StripeGeom) bg.stripeList
-							.get(bg.stripeList.size() - 1));
-				} else {
+				BarGeom bg = columns[ind].barList.get(ni);
+				if (bg.stripeList.size() > 0)
+					setSelectedItem(bg.stripeList.get(bg.stripeList.size() - 1));
+				else
 					setSelectedItem(bg);
-				}
-			} else {
-				setSelectedItem(columns[ind]);
 			}
-		} else {
-			moveSelectionUp();
+			else
+				setSelectedItem(columns[ind]);
 		}
+		else
+			moveSelectionUp();
 	}
 
 	private void moveSelectionUp() {
-		if (selectedItem == null) {
+		if (selectedItem == null)
 			setSelectedItem(columns[0]);
-		} else if (selectedItem instanceof BarGeom) {
+		else if (selectedItem instanceof BarGeom) {
 			int ind = ((BarGeom) selectedItem).index;
 			int ni = columns[ind].barList.indexOf(selectedItem) - 1;
-			if (ni >= 0) {
-				setSelectedItem((BarGeom) columns[ind].barList.get(ni));
-			} else {
+			if (ni >= 0)
+				setSelectedItem(columns[ind].barList.get(ni));
+			else
 				setSelectedItem(columns[ind]);
-			}
-		} else if (selectedItem instanceof StripeGeom) {
+		}
+		else if (selectedItem instanceof StripeGeom) {
 			StripeGeom sg = (StripeGeom) selectedItem;
 			int ni = sg.parent.stripeList.indexOf(sg) - 1;
-			if (ni >= 0) {
-				setSelectedItem((StripeGeom) sg.parent.stripeList.get(ni));
-			} else {
-				// select parent bar
+			// select parent bar
+			if (ni >= 0)
+				setSelectedItem(sg.parent.stripeList.get(ni));
+			else
 				setSelectedItem(sg.parent);
-			}
 		}
 	}
 
 	private void moveSelectionDown() {
-		if (selectedItem == null) {
+		if (selectedItem == null)
 			setSelectedItem(columns[0]);
-		} else if (selectedItem instanceof ColumnGeom) {
-			setSelectedItem((BarGeom) ((ColumnGeom) selectedItem).barList
-					.get(0));
-		} else if (selectedItem instanceof BarGeom) {
+		else if (selectedItem instanceof ColumnGeom)
+			setSelectedItem(((ColumnGeom) selectedItem).barList.get(0));
+		else if (selectedItem instanceof BarGeom) {
 			BarGeom bg = (BarGeom) selectedItem;
-			if (bg.stripeList.size() > 0) {
-				// select first stripe
-				setSelectedItem((StripeGeom) bg.stripeList.get(0));
-			} else {
+			// select first stripe
+			if (bg.stripeList.size() > 0)
+				setSelectedItem(bg.stripeList.get(0));
+			else {
 				// select next bar if there is one
 				int ind = ((BarGeom) selectedItem).index;
 				int ni = columns[ind].barList.indexOf(selectedItem) + 1;
-				if (ni < columns[ind].barList.size()) {
-					setSelectedItem((BarGeom) columns[ind].barList.get(ni));
-				}
+				if (ni < columns[ind].barList.size())
+					setSelectedItem(columns[ind].barList.get(ni));
 			}
-		} else if (selectedItem instanceof StripeGeom) {
+		}
+		else if (selectedItem instanceof StripeGeom) {
 			StripeGeom sg = (StripeGeom) selectedItem;
 			int ni = sg.parent.stripeList.indexOf(sg) + 1;
-			if (ni < sg.parent.stripeList.size()) {
-				setSelectedItem((StripeGeom) sg.parent.stripeList.get(ni));
-			} else {
+			if (ni < sg.parent.stripeList.size())
+				setSelectedItem(sg.parent.stripeList.get(ni));
+			else {
 				// select next bar if there is one
 				ni = columns[sg.index].barList.indexOf(sg.parent) + 1;
-				if (ni < columns[sg.index].barList.size()) {
-					setSelectedItem((BarGeom) columns[sg.index].barList.get(ni));
-				}
+				if (ni < columns[sg.index].barList.size())
+					setSelectedItem(columns[sg.index].barList.get(ni));
 			}
 		}
 	}
 
 	private void moveSelectionLeft() {
-		if (selectedItem == null) {
+		if (selectedItem == null)
 			setSelectedItem(columns[0]);
-		}
 		if (selectedItem instanceof ColumnGeom) {
 			int ni = ((ColumnGeom) selectedItem).index - 1;
-			if (ni >= 0) {
+			if (ni >= 0)
 				setSelectedItem(columns[ni]);
-			}
-		} else if (selectedItem instanceof BarGeom) {
+		}
+		else if (selectedItem instanceof BarGeom) {
 			int ni = ((BarGeom) selectedItem).index - 1;
-			if (ni >= 0) {
-				if (columns[ni].barList.size() > 1) {
-					// choose closest bar vertically
-					setSelectedItem(closestVertically(selectedItem,
-							columns[ni].barList));
-				} else {
-					setSelectedItem((BarGeom) columns[ni].barList.get(0));
-				}
-			}
-		} else if (selectedItem instanceof StripeGeom) {
+			// choose closest bar vertically
+			if (ni >= 0)
+				if (columns[ni].barList.size() > 1)
+					setSelectedItem(closestVertically(selectedItem, columns[ni].barList));
+				else
+					setSelectedItem(columns[ni].barList.get(0));
+		}
+		else if (selectedItem instanceof StripeGeom) {
 			int ni = ((StripeGeom) selectedItem).index - 1;
 			if (ni >= 0) {
 				// move to closest stripe regardless of bar
-				List allStripes = new ArrayList();
-        for (Object o : columns[ni].barList) {
-          BarGeom bg = (BarGeom) o;
-          allStripes.addAll(bg.stripeList);
-        }
-				if (allStripes.size() > 0) {
+				List<StripeGeom> allStripes = new ArrayList<>();
+				for (BarGeom bg : columns[ni].barList)
+					allStripes.addAll(bg.stripeList);
+				// no stripes, select nearest (or only) bar
+				// choose closest bar vertically
+				if (allStripes.size() > 0)
 					setSelectedItem(closestVertically(selectedItem, allStripes));
-				} else {
-					// no stripes, select nearest (or only) bar
-					if (columns[ni].barList.size() > 1) {
-						// choose closest bar vertically
-						setSelectedItem(closestVertically(selectedItem,
-								columns[ni].barList));
-					} else {
-						setSelectedItem((BarGeom) columns[ni].barList.get(0));
-					}
-				}
+				else if (columns[ni].barList.size() > 1)
+					setSelectedItem(closestVertically(selectedItem, columns[ni].barList));
+				else
+					setSelectedItem(columns[ni].barList.get(0));
 			}
 		}
 	}
 
 	private void moveSelectionRight() {
-		if (selectedItem == null) {
+		if (selectedItem == null)
 			setSelectedItem(columns[0]);
-		}
 		if (selectedItem instanceof ColumnGeom) {
 			int ni = ((ColumnGeom) selectedItem).index + 1;
-			if (ni < columns.length) {
+			if (ni < columns.length)
 				setSelectedItem(columns[ni]);
-			}
-		} else if (selectedItem instanceof BarGeom) {
+		}
+		else if (selectedItem instanceof BarGeom) {
 			int ni = ((BarGeom) selectedItem).index + 1;
-			if (ni < columns.length) {
-				if (columns[ni].barList.size() > 1) {
-					// choose closest bar vertically
-					setSelectedItem(closestVertically(selectedItem,
-							columns[ni].barList));
-				} else {
-					setSelectedItem((BarGeom) columns[ni].barList.get(0));
-				}
-			}
-		} else if (selectedItem instanceof StripeGeom) {
+			// choose closest bar vertically
+			if (ni < columns.length)
+				if (columns[ni].barList.size() > 1)
+					setSelectedItem(closestVertically(selectedItem, columns[ni].barList));
+				else
+					setSelectedItem(columns[ni].barList.get(0));
+		}
+		else if (selectedItem instanceof StripeGeom) {
 			int ni = ((StripeGeom) selectedItem).index + 1;
 			if (ni < columns.length) {
 				// move to closest stripe regardless of bar
-				List allStripes = new ArrayList();
-        for (Object o : columns[ni].barList) {
-          BarGeom bg = (BarGeom) o;
-          allStripes.addAll(bg.stripeList);
-        }
-				if (allStripes.size() > 0) {
+				List<StripeGeom> allStripes = new ArrayList<>();
+				for (BarGeom bg : columns[ni].barList)
+					allStripes.addAll(bg.stripeList);
+				// no stripes, select nearest (or only) bar
+				// choose closest bar vertically
+				if (allStripes.size() > 0)
 					setSelectedItem(closestVertically(selectedItem, allStripes));
-				} else {
-					// no stripes, select nearest (or only) bar
-					if (columns[ni].barList.size() > 1) {
-						// choose closest bar vertically
-						setSelectedItem(closestVertically(selectedItem,
-								columns[ni].barList));
-					} else {
-						setSelectedItem((BarGeom) columns[ni].barList.get(0));
-					}
-				}
+				else if (columns[ni].barList.size() > 1)
+					setSelectedItem(closestVertically(selectedItem, columns[ni].barList));
+				else
+					setSelectedItem(columns[ni].barList.get(0));
 			}
 		}
 	}
@@ -599,14 +535,14 @@ public class VisualiserCanvas extends Canvas {
 		int y = from.getBounds().y;
 		int offset = Integer.MAX_VALUE;
 		ISelectable closest = null;
-    for (Object o : candList) {
-      ISelectable is = (ISelectable) o;
-      int d = Math.abs(y - is.getBounds().y);
-      if (d < offset) {
-        closest = is;
-        offset = d;
-      }
-    }
+		for (Object o : candList) {
+			ISelectable is = (ISelectable) o;
+			int d = Math.abs(y - is.getBounds().y);
+			if (d < offset) {
+				closest = is;
+				offset = d;
+			}
+		}
 		return closest;
 	}
 
@@ -618,13 +554,11 @@ public class VisualiserCanvas extends Canvas {
 	 * @param ey
 	 */
 	private Object locationToObject(int ex, int ey) {
-		if ((data == null) || (data.size() == 0)) {
+		if (data == null || data.size() == 0)
 			return null;
-		}
 
-		if (isDisposed()) {
+		if (isDisposed())
 			return null;
-		}
 
 		// account for scrollbars
 		int x = ex + getHorizontalBar().getSelection();
@@ -641,45 +575,40 @@ public class VisualiserCanvas extends Canvas {
 		int spacing = getScaledSpacing();
 		if (x >= 0 && y >= 0) {
 			int col = x / (width + spacing); // which column
-			if (x <= col * (width + spacing) + width) {
-				// mind the gap
-				if (col < columns.length) { // we have this many columns
-					if (y <= mh) {
-						// off the top
+			// mind the gap
+			// we have this many columns
+			// off the top
+			if (x <= col * (width + spacing) + width)
+				if (col < columns.length)
+					if (y <= mh)
 						return null;
-					} else if (y <= mh + hh) {
+					else // check we're not off the bottom of the column
 						// in header, return the whole column
-						return columns[col];
-					} else {
-						// check we're not off the bottom of the column
-						if (y <= columns[col].bounds.y
-								+ scale(columns[col].bounds.height
-										- getRenderer().getColumnHeaderHeight())
-								+ getRenderer().getColumnHeaderHeight()) {
-							List bars = columns[col].barList;
-              for (Object bar : bars) {
-                BarGeom bg = (BarGeom) bar;
-                if (y <= scaleExH(bg.bounds.y)
-                         + scale(bg.bounds.height))
-                {
-                  List stripes = bg.stripeList;
-                  for (Object stripe : stripes) {
-                    StripeGeom sg = (StripeGeom) stripe;
-                    if ((y >= scaleExH(sg.bounds.y))
-                        && (y <= scaleExH(sg.bounds.y)
-                                 + scaleStripeHeight(sg.bounds.height)))
-                    {
-                      return sg;
-                    }
-                  }
-                  return bg;
-                }
-              }
+						if (y <= mh + hh)
+							return columns[col];
+						else if (
+							y <= (
+								columns[col].bounds.y +
+								scale(columns[col].bounds.height - getRenderer().getColumnHeaderHeight()) +
+								getRenderer().getColumnHeaderHeight()
+							)
+						) {
+							List<BarGeom> bars = columns[col].barList;
+							for (BarGeom bg : bars) {
+								if (y <= scaleExH(bg.bounds.y) + scale(bg.bounds.height)) {
+									List<StripeGeom> stripes = bg.stripeList;
+									for (StripeGeom sg : stripes) {
+										if (
+											y >= scaleExH(sg.bounds.y) &&
+											y <= scaleExH(sg.bounds.y) + scaleStripeHeight(sg.bounds.height)
+										)
+											return sg;
+									}
+									return bg;
+								}
+							}
 							return columns[col];
 						}
-					}
-				}
-			}
 		}
 		// didn't find any visualiser objects at this location
 		return null;
@@ -691,10 +620,10 @@ public class VisualiserCanvas extends Canvas {
 	 *
 	 * @param data
 	 */
-	public void redraw(List data) {
+	public void redraw(List<? extends IMember> data) {
 		this.data = data;
 
-		if ((data == null) || (data.size() == 0)) {
+		if (data == null || data.size() == 0) {
 			redraw(); // still paint, so we get the "no data" message
 			return;
 		}
@@ -703,16 +632,14 @@ public class VisualiserCanvas extends Canvas {
 		lastSelected = null;
 
 		// remove any active tooltips
-		if (toolTip!=null && !toolTip.isDisposed()) {
+		if (toolTip != null && !toolTip.isDisposed())
 			toolTip.dispose();
-		}
 
 		calculateGeom();
 
 		dataChanged = true;
 		redraw();
 	}
-
 
 	/**
 	 * Return the given zoom factor after fitting it within the required zoom
@@ -721,17 +648,15 @@ public class VisualiserCanvas extends Canvas {
 	 * @param f
 	 */
 	private int zoomValidRange(int f) {
-		if (f > zoomMax) {
+		if (f > zoomMax)
 			f = zoomMax;
-		} else if ((f * colWidth) / zoomSc < visualiser.getMinBarSize()) {
-			f = (visualiser.getMinBarSize() * zoomSc) / colWidth;
-		}
+		else if (f * colWidth / zoomSc < visualiser.getMinBarSize())
+			f = visualiser.getMinBarSize() * zoomSc / colWidth;
 		return f;
 	}
 
 	/**
 	 * Zoom in and repaint, if not at maximum zoom already
-	 *
 	 */
 	public void zoomIn() {
 		int newZoom = zoomValidRange(zoomFactor + 1);
@@ -739,19 +664,14 @@ public class VisualiserCanvas extends Canvas {
 			visualiser.zoomoutSetEnabled(true);
 			zoomFactor = newZoom;
 			zoomChanged = true;
-			visualiser.setZoomString((zoomFactor * 10) + "%"); //$NON-NLS-1$
+			visualiser.setZoomString(zoomFactor * 10 + "%"); //$NON-NLS-1$
 			redraw();
 		}
-		if (zoomFactor < zoomMax) {
-			visualiser.zoominSetEnabled(true);
-		} else {
-			visualiser.zoominSetEnabled(false);
-		}
+		visualiser.zoominSetEnabled(zoomFactor < zoomMax);
 	}
 
 	/**
 	 * Zoom out and repaint, if not at minumum zoom already
-	 *
 	 */
 	public void zoomOut() {
 		int newZoom = zoomValidRange(zoomFactor - 1);
@@ -760,15 +680,11 @@ public class VisualiserCanvas extends Canvas {
 			visualiser.zoominSetEnabled(true);
 			zoomFactor = newZoom;
 			zoomChanged = true;
-			visualiser.setZoomString((zoomFactor * 10) + "%"); //$NON-NLS-1$
+			visualiser.setZoomString(zoomFactor * 10 + "%"); //$NON-NLS-1$
 			redraw();
 		}
-		if (((zoomFactor - 1) * colWidth) / zoomSc < visualiser.getMinBarSize()) {
-			// zooming out further would make the columns too thin
-			visualiser.zoomoutSetEnabled(false);
-		} else {
-			visualiser.zoomoutSetEnabled(true);
-		}
+		// zooming out further would make the columns too thin
+		visualiser.zoomoutSetEnabled((zoomFactor - 1) * colWidth / zoomSc >= visualiser.getMinBarSize());
 	}
 
 	public void dispose() {
@@ -780,44 +696,40 @@ public class VisualiserCanvas extends Canvas {
 		columns = new ColumnGeom[data.size()];
 		calculateWidth();
 
-		if (visualiser.isGroupView()) {
+		if (visualiser.isGroupView())
 			for (int i = 0; i < data.size(); i++) {
-				int y = getRenderer().getMarginSize()
-						+ getRenderer().getColumnHeaderHeight();
+				int y = getRenderer().getMarginSize() + getRenderer().getColumnHeaderHeight();
 				IGroup ig = (IGroup) data.get(i);
-				List mems = ig.getMembers();
+				List<IMember> mems = ig.getMembers();
 				int size = 0;
 				columns[i] = new ColumnGeom(i);
 				columns[i].member = ig;
-        for (Object mem : mems) {
-          IMember m = (IMember) mem;
-          int h = heightOfMember(m);
-          size += h;
-          BarGeom b = new BarGeom(i);
-          b.member = m;
-          b.bounds = new Rectangle(0, y, colWidth, h);
-          columns[i].barList.add(b);
-          calculateStripeGeom(m, b);
-          y += h;
-        }
-				columns[i].bounds = new Rectangle(0, getRenderer().getMarginSize(),
-						colWidth, size + getRenderer().getColumnHeaderHeight());
-				if (size > maxSize) {
-					maxSize = size;
+				for (IMember mem : mems) {
+					int h = heightOfMember(mem);
+					size += h;
+					BarGeom b = new BarGeom(i);
+					b.member = mem;
+					b.bounds = new Rectangle(0, y, colWidth, h);
+					columns[i].barList.add(b);
+					calculateStripeGeom(mem, b);
+					y += h;
 				}
+				columns[i].bounds = new Rectangle(0, getRenderer().getMarginSize(),
+					colWidth, size + getRenderer().getColumnHeaderHeight());
+				if (size > maxSize)
+					maxSize = size;
 			}
-		} else {
+		else {
 			int y = getRenderer().getMarginSize() + getRenderer().getColumnHeaderHeight();
 			for (int i = 0; i < data.size(); i++) {
-				IMember m = (IMember) data.get(i);
+				IMember m = data.get(i);
 				columns[i] = new ColumnGeom(i);
 				columns[i].member = m;
 				int h = heightOfMember(m);
 				columns[i].bounds = new Rectangle(0, getRenderer().getMarginSize(),
-						colWidth, h + getRenderer().getColumnHeaderHeight());
-				if (h > maxSize) {
+					colWidth, h + getRenderer().getColumnHeaderHeight());
+				if (h > maxSize)
 					maxSize = h;
-				}
 				BarGeom b = new BarGeom(i);
 				b.member = m;
 				b.bounds = new Rectangle(0, y, colWidth, h);
@@ -834,37 +746,27 @@ public class VisualiserCanvas extends Canvas {
 			int viewH = clientRect.height - hh - 2 * mh;
 			vScale = (float) maxSize / viewH;
 			maxSize = viewH;
-      for (ColumnGeom column : columns) {
-        column.bounds.height = (int) ((column.bounds.height - hh)
-                                      / vScale + hh);
-        List bars = column.barList;
-        for (Object bar : bars) {
-          BarGeom bg = (BarGeom) bar;
-          bg.bounds.height /= vScale;
-          int oldy = bg.bounds.y;
-          bg.bounds.y = (int) ((bg.bounds.y - hh - mh) / vScale) + hh
-                        + mh;
-          List stripes = bg.stripeList;
-          for (Object stripe : stripes) {
-            StripeGeom sg = (StripeGeom) stripe;
-            sg.bounds.y = (int) ((sg.bounds.y - oldy) / vScale)
-                          + bg.bounds.y;
-            // make sure stripe is contained within bar
-            if (sg.bounds.y + sg.bounds.height > bg.bounds.y
-                                                 + bg.bounds.height)
-            {
-              sg.bounds.height = bg.bounds.y + bg.bounds.height
-                                 - sg.bounds.y;
-            }
-            List kinds = sg.kindList;
-            for (Object kind : kinds) {
-              KindGeom kg = (KindGeom) kind;
-              kg.bounds.y = sg.bounds.y;
-              kg.bounds.height = sg.bounds.height;
-            }
-          }
-        }
-      }
+			for (ColumnGeom column : columns) {
+				column.bounds.height = (int) ((column.bounds.height - hh) / vScale + hh);
+				List<BarGeom> bars = column.barList;
+				for (BarGeom bg : bars) {
+					bg.bounds.height /= vScale;
+					int oldy = bg.bounds.y;
+					bg.bounds.y = (int) ((bg.bounds.y - hh - mh) / vScale) + hh + mh;
+					List<StripeGeom> stripes = bg.stripeList;
+					for (StripeGeom sg : stripes) {
+						sg.bounds.y = (int) ((sg.bounds.y - oldy) / vScale) + bg.bounds.y;
+						// make sure stripe is contained within bar
+						if (sg.bounds.y + sg.bounds.height > bg.bounds.y + bg.bounds.height)
+							sg.bounds.height = bg.bounds.y + bg.bounds.height - sg.bounds.y;
+						List<KindGeom> kinds = sg.kindList;
+						for (KindGeom kind : kinds) {
+							kind.bounds.y = sg.bounds.y;
+							kind.bounds.height = sg.bounds.height;
+						}
+					}
+				}
+			}
 		}
 
 	}
@@ -872,76 +774,64 @@ public class VisualiserCanvas extends Canvas {
 	private void calculateStripeGeom(IMember m, BarGeom b) {
 		int soffset = 0;
 		IMarkupProvider vmp = visualiser.getVisMarkupProvider();
-		List markups = vmp.getMemberMarkups(m);
-		if ((markups != null) && (markups.size() > 0)) {
+		List<Stripe> markups = vmp.getMemberMarkups(m);
+		if (markups != null && markups.size() > 0) {
 			// Sort Stripes by offset so we get a logical traversal order
-			Set sortedSet = new TreeSet();
-      for (Object markup : markups) {
-        Stripe s = (Stripe) markup;
-        if (s != null) {
-          sortedSet.add(s);
-        }
-      }
-      for (Object o : sortedSet) {
-        Stripe s = (Stripe) o;
-        int activeKinds = 0;
-        for (int i = 0; i < s.getKinds().size(); i++) {
-          IMarkupKind kind = (IMarkupKind) s.getKinds().get(i);
-          if (VisualiserPlugin.menu == null
-              || VisualiserPlugin.menu.getActive(kind))
-          {
-            activeKinds++;
-          }
-        }
-        if (activeKinds > 0) {
-          int across = 0;
-          // we want to leave a single pixel gap between kinds, but
-          // not after
-          // the last kind
-          int ypos;
-          // Minus one because the offset for line 1 should be
-          // 0 etc..
-          int offsetY = s.getOffset() - 1;
-          // Should not get line numbers of <1 but just in
-          // case..
-          if (offsetY < 0) {
-            offsetY = 0;
-          }
-          int stripeH = VisualiserPreferences.getStripeHeight();
-          if (stripeH < s.getDepth()) {
-            stripeH = s.getDepth();
-          }
-          ypos = offsetY + soffset;
-          StripeGeom sg = new StripeGeom(b.index);
-          sg.parent = b;
-          sg.member = m;
-          sg.stripe = s;
-          b.stripeList.add(sg);
-          sg.bounds = new Rectangle(b.bounds.x + 1,
-            b.bounds.y + ypos, colWidth - 2, stripeH);
-          for (int i = 0; i < s.getKinds().size(); i++) {
-            IMarkupKind kind = (IMarkupKind) s.getKinds().get(i);
-            if (VisualiserPlugin.menu == null
-                || VisualiserPlugin.menu.getActive(kind))
-            {
-              KindGeom kg = new KindGeom();
-              sg.kindList.add(kg);
-              kg.color = visualiser.getVisMarkupProvider()
-                .getColorFor(kind);
-              if (kg.color == null) {
-                throw new NullPointerException(VisualiserMessages.getColorForError);
-              }
-              int nw = (((across + 1) * colWidth) / activeKinds)
-                       - ((across * colWidth) / activeKinds);
-              Rectangle kindRect = new Rectangle(b.bounds.x + 1
-                                                 + (across * colWidth) / activeKinds,
-                b.bounds.y + ypos, nw - 1, sg.bounds.height);
-              kg.bounds = kindRect;
-              across++;
-            }
-          }
-        }
-      }
+			SortedSet<Stripe> sortedSet = new TreeSet<>();
+			for (Stripe markup : markups) {
+				if (markup != null)
+					sortedSet.add(markup);
+			}
+			for (Stripe stripe : sortedSet) {
+				int activeKinds = 0;
+				for (int i = 0; i < stripe.getKinds().size(); i++) {
+					IMarkupKind kind = stripe.getKinds().get(i);
+					if (VisualiserPlugin.menu == null || VisualiserPlugin.menu.getActive(kind))
+						activeKinds++;
+				}
+				if (activeKinds > 0) {
+					int across = 0;
+					// we want to leave a single pixel gap between kinds, but
+					// not after
+					// the last kind
+					int ypos;
+					// Minus one because the offset for line 1 should be
+					// 0 etc..
+					int offsetY = stripe.getOffset() - 1;
+					// Should not get line numbers of <1 but just in
+					// case..
+					if (offsetY < 0)
+						offsetY = 0;
+					int stripeH = VisualiserPreferences.getStripeHeight();
+					if (stripeH < stripe.getDepth())
+						stripeH = stripe.getDepth();
+					ypos = offsetY + soffset;
+					StripeGeom sg = new StripeGeom(b.index);
+					sg.parent = b;
+					sg.member = m;
+					sg.stripe = stripe;
+					b.stripeList.add(sg);
+					sg.bounds = new Rectangle(b.bounds.x + 1, b.bounds.y + ypos, colWidth - 2, stripeH);
+					for (int i = 0; i < stripe.getKinds().size(); i++) {
+						IMarkupKind kind = stripe.getKinds().get(i);
+						if (VisualiserPlugin.menu == null || VisualiserPlugin.menu.getActive(kind)) {
+							KindGeom kg = new KindGeom();
+							sg.kindList.add(kg);
+							kg.color = visualiser.getVisMarkupProvider().getColorFor(kind);
+							if (kg.color == null)
+								throw new NullPointerException(VisualiserMessages.getColorForError);
+							int nw = (across + 1) * colWidth / activeKinds - across * colWidth / activeKinds;
+							kg.bounds = new Rectangle(
+								b.bounds.x + 1 + across * colWidth / activeKinds,
+								b.bounds.y + ypos,
+								nw - 1,
+								sg.bounds.height
+							);
+							across++;
+						}
+					}
+				}
+			}
 			spaceOutStripes(b.stripeList);
 			spaceOutStripes(b.stripeList);
 			avoidOverspill(b.stripeList);
@@ -956,27 +846,25 @@ public class VisualiserCanvas extends Canvas {
 	 *
 	 * @param stripeList
 	 */
-	private void avoidOverspill(List /* StripeGeom */stripeList) {
-    for (Object o : stripeList) {
-      StripeGeom sg = (StripeGeom) o;
-      // make sure stripe is contained within bar
-      int endStripeY = sg.bounds.y + sg.bounds.height;
-      int endBarY = sg.parent.bounds.y + sg.parent.bounds.height;
-      if (endStripeY > endBarY) {
-        int move = endStripeY - endBarY;
-        int maxMove = sg.bounds.y - sg.parent.bounds.y;
-        if (move <= maxMove) {
-          // we can safely move up without going off the top
-          sg.moveVertically(-move);
-        }
-        else {
-          // we can only move so far, have to shrink height as well
-          sg.moveVertically(-maxMove);
-          // shrink height as required
-          sg.reduceHeight(move - maxMove);
-        }
-      }
-    }
+	private void avoidOverspill(List<StripeGeom> stripeList) {
+		for (StripeGeom sg : stripeList) {
+			// make sure stripe is contained within bar
+			int endStripeY = sg.bounds.y + sg.bounds.height;
+			int endBarY = sg.parent.bounds.y + sg.parent.bounds.height;
+			if (endStripeY > endBarY) {
+				int move = endStripeY - endBarY;
+				int maxMove = sg.bounds.y - sg.parent.bounds.y;
+				// we can safely move up without going off the top
+				if (move <= maxMove)
+					sg.moveVertically(-move);
+				else {
+					// we can only move so far, have to shrink height as well
+					sg.moveVertically(-maxMove);
+					// shrink height as required
+					sg.reduceHeight(move - maxMove);
+				}
+			}
+		}
 	}
 
 	/**
@@ -986,57 +874,49 @@ public class VisualiserCanvas extends Canvas {
 	 *
 	 * @param stripeList
 	 */
-	private void spaceOutStripes(List /* StripeGeom */stripeList) {
+	private void spaceOutStripes(List<StripeGeom> stripeList) {
 		StripeGeom sg2;
 		for (int i = 0; i < stripeList.size(); i++) {
-			StripeGeom sg1 = (StripeGeom) stripeList.get(i);
+			StripeGeom sg1 = stripeList.get(i);
 			if (i > 0) {
-				sg2 = (StripeGeom) stripeList.get(i - 1);
-				if (sg1.overlaps(sg2)) {
-					if (sg1.bounds.y + sg1.bounds.height <
-							sg1.parent.bounds.y + sg1.parent.bounds.y) {
+				sg2 = stripeList.get(i - 1);
+				if (sg1.overlaps(sg2))
+					if (sg1.bounds.y + sg1.bounds.height < sg1.parent.bounds.y + sg1.parent.bounds.y)
 						sg1.moveVertically(1);
-					}
-				}
 			}
 			if (i + 1 < stripeList.size()) {
-				sg2 = (StripeGeom) stripeList.get(i + 1);
-				if (sg1.overlaps(sg2)) {
-					if (sg1.bounds.y > sg1.parent.bounds.y) {
+				sg2 = stripeList.get(i + 1);
+				if (sg1.overlaps(sg2))
+					if (sg1.bounds.y > sg1.parent.bounds.y)
 						sg1.moveVertically(-1);
-					}
-				}
 			}
 		}
 	}
 
 	private int heightOfMember(IMember m) {
-		int size = m.getSize();
-		return size;
+		return m.getSize();
 	}
 
 	/**
 	 * Calculate the appropriate width for the visualiser columns, based on the
 	 * defined minimum and maximum values, size of the view, and the number of
 	 * columns.
-	 *
 	 */
 	private void calculateWidth() {
-		if ((data == null) || (data.size() <= 0)) {
+		if (data == null || data.size() <= 0)
 			return;
-		}
 
 		if (visualiser.isFitToView()) {
 			Rectangle clientRect = getClientArea();
 			int space = clientRect.width - 2 * getRenderer().getMarginSize();
 			int equalWidth = space / data.size() - getRenderer().getSpacing();
-			if (equalWidth < visualiser.getMinBarSize()) {
+			if (equalWidth < visualiser.getMinBarSize())
 				colWidth = visualiser.getMinBarSize();
-			} else
-        colWidth = Math.min(equalWidth, visualiser.getMaxBarSize());
-		} else {
-			colWidth = VisualiserPreferences.getBarWidth();
+			else
+				colWidth = Math.min(equalWidth, visualiser.getMaxBarSize());
 		}
+		else
+			colWidth = VisualiserPreferences.getBarWidth();
 	}
 
 	private void setupScrollbarListeners() {
@@ -1065,7 +945,8 @@ public class VisualiserCanvas extends Canvas {
 			horiz.setEnabled(true);
 			horiz.setMaximum(reqWidth);
 			horiz.setThumb(clientRect.width);
-		} else {
+		}
+		else {
 			horiz.setSelection(0);
 			horiz.setMaximum(clientRect.width);
 			horiz.setThumb(clientRect.width);
@@ -1076,7 +957,8 @@ public class VisualiserCanvas extends Canvas {
 			vert.setEnabled(true);
 			vert.setMaximum(reqHeight);
 			vert.setThumb(clientRect.height);
-		} else {
+		}
+		else {
 			vert.setSelection(0);
 			vert.setMaximum(clientRect.width);
 			vert.setThumb(clientRect.width);
@@ -1096,14 +978,15 @@ public class VisualiserCanvas extends Canvas {
 	private void paint(GC gc) {
 		Rectangle clientRect = getClientArea();
 
-		if ((screenImg == null)
-				|| (clientRect.width > screenImg.getBounds().width)
-				|| clientRect.height > screenImg.getBounds().height) {
-			if (screenImg != null) {
+		if (
+			screenImg == null ||
+			clientRect.width > screenImg.getBounds().width ||
+			clientRect.height > screenImg.getBounds().height
+		) {
+			if (screenImg != null)
 				screenImg.dispose();
-			}
 			screenImg = new Image(getDisplay(), clientRect.width,
-					clientRect.height);
+				clientRect.height);
 		}
 		GC sgc = new GC(screenImg);
 
@@ -1111,34 +994,30 @@ public class VisualiserCanvas extends Canvas {
 		sgc.setBackground(VIS_BG_COLOUR);
 		sgc.fillRectangle(screenImg.getBounds());
 
-		if ((data == null) || (data.size() == 0)) {
+		if (data == null || data.size() == 0) {
 			String empty = ""; //$NON-NLS-1$
-			if (ProviderManager.getCurrent() != null) {
+			if (ProviderManager.getCurrent() != null)
 				empty = ProviderManager.getCurrent().getEmptyMessage() != null ? ProviderManager.getCurrent().getEmptyMessage() : ""; //$NON-NLS-1$
-			}
-			sgc.drawText(empty, getRenderer().getMarginSize(), getRenderer()
-					.getMarginSize());
+			sgc.drawText(empty, getRenderer().getMarginSize(), getRenderer().getMarginSize());
 			// If the data is null, ask the provider to get to find something
 			// to display. But don't if the data is non-null but zero length,
 			// otherwise the provider is likely to return a zero length list
 			// again, causing a loop
 			final Visualiser visualiser = VisualiserPlugin.visualiser;
-			if ((data == null) && visualiser != null && (visualiser.contentP != null)
-					&& (visualiser.contentP instanceof JDTContentProvider)) {
-				getDisplay().asyncExec(() -> ((JDTContentProvider) visualiser.contentP)
-            .lookForData());
-			}
+			if (data == null && visualiser != null && visualiser.contentP instanceof JDTContentProvider)
+				getDisplay().asyncExec(() -> ((JDTContentProvider) visualiser.contentP).lookForData());
 			reqWidth = 0;
 			reqHeight = 0;
 			configScrollBars();
-		} else {
+		}
+		else {
 			// make sure zoom setting is still valid (e.g. column width may have
 			// changed)
 			int newZoom = zoomValidRange(zoomFactor);
 			if (zoomFactor != newZoom) {
 				zoomFactor = newZoom;
 				zoomChanged = true;
-				visualiser.setZoomString((zoomFactor * 10) + "%"); //$NON-NLS-1$
+				visualiser.setZoomString(zoomFactor * 10 + "%"); //$NON-NLS-1$
 			}
 			int width = scale(colWidth);
 			int spacing = getScaledSpacing();
@@ -1147,19 +1026,17 @@ public class VisualiserCanvas extends Canvas {
 				dataChanged = false;
 				zoomChanged = false;
 				setSelectedItem(null);
-				reqWidth = data.size() * eachWidth + 2
-						* getRenderer().getMarginSize();
-				reqHeight = scale(maxSize) + 2 * getRenderer().getMarginSize()
-						+ getRenderer().getColumnHeaderHeight();
+				reqWidth = data.size() * eachWidth + 2 * getRenderer().getMarginSize();
+				reqHeight = scale(maxSize) + 2 * getRenderer().getMarginSize() + getRenderer().getColumnHeaderHeight();
 
 				// we MUST dispose any previous Image
-				if (cImg != null) {
+				if (cImg != null)
 					cImg.dispose();
-				}
 
 				// create an Image just big enough for one column
 				cImg = new Image(getDisplay(), eachWidth, reqHeight);
 
+				//noinspection unchecked
 				colImgDataSR = new SoftReference[data.size()];
 
 				configScrollBars();
@@ -1169,9 +1046,8 @@ public class VisualiserCanvas extends Canvas {
 
 			// determine which column we need to start the rendering from
 			int startcol = (scrollh - getRenderer().getMarginSize()) / eachWidth;
-			if (startcol < 0) {
+			if (startcol < 0)
 				startcol = 0;
-			}
 
 			int x = getRenderer().getMarginSize() - scrollh;
 			x += startcol * eachWidth;
@@ -1180,36 +1056,31 @@ public class VisualiserCanvas extends Canvas {
 
 			// render just those columns that should be partially or fully
 			// visible
-			for (int i = startcol; i < data.size() && (x < clientRect.width); i++) {
+			for (int i = startcol; i < data.size() && x < clientRect.width; i++) {
 				//System.out.println("i="+i);
 				ImageData idata = null;
-				if (colImgDataSR[i] != null) {
-					idata = (ImageData) colImgDataSR[i].get();
-				}
+				if (colImgDataSR[i] != null)
+					idata = colImgDataSR[i].get();
 				if (idata == null) {
 					idata = paintColumn(i);
 					// now store the image data via a soft reference so it can
 					// be GC'ed later if low on memory
-					colImgDataSR[i] = new SoftReference(idata);
+					colImgDataSR[i] = new SoftReference<>(idata);
 				}
 				Image tmpImg = new Image(getDisplay(), idata);
-				int ch = Math.min(clientRect.height - 1,
-						cImg.getBounds().height - 1);
-				sgc.drawImage(tmpImg, 0, scrollv, eachWidth, ch, x, 0,
-						eachWidth, ch);
+				int ch = Math.min(clientRect.height - 1, cImg.getBounds().height - 1);
+				sgc.drawImage(tmpImg, 0, scrollv, eachWidth, ch, x, 0, eachWidth, ch);
 				tmpImg.dispose();
 				x += eachWidth;
 			}
 		}
 
 		// indicate selection if something has been selected
-		if (selectedItem != null) {
+		if (selectedItem != null)
 			paintSelection(sgc);
-		}
 
 		// finally paint offscreen image onto the view
-		gc.drawImage(screenImg, 0, 0, clientRect.width, clientRect.height, 0,
-				0, clientRect.width, clientRect.height);
+		gc.drawImage(screenImg, 0, 0, clientRect.width, clientRect.height, 0, 0, clientRect.width, clientRect.height);
 		sgc.dispose();
 	}
 
@@ -1222,7 +1093,7 @@ public class VisualiserCanvas extends Canvas {
 	 */
 	private ImageData paintColumn(int index) {
 		//System.out.println("rendering column index="+index);
-		IMember m = (IMember) data.get(index);
+		IMember m = data.get(index);
 		GC gc = new GC(cImg);
 
 		// clear to bg colour
@@ -1232,37 +1103,35 @@ public class VisualiserCanvas extends Canvas {
 		// now render the column
 		getRenderer().paintColumnHeader(gc, m, 0, scale(colWidth));
 
-		List bars = columns[index].barList;
-    for (Object bar : bars) {
-      BarGeom bg = (BarGeom) bar;
-      List stripes = bg.stripeList;
-      if (stripes.size() > 0) {
-        // affected by stripes
-        getRenderer().paintColumn(gc, m, bg.bounds.x, scaleExH(bg.bounds.y),
-          scale(bg.bounds.width), scale(bg.bounds.height), true);
-        for (Object stripe : stripes) {
-          List kinds = ((StripeGeom) stripe).kindList;
-          for (int k = 0; k < kinds.size(); k++) {
-            KindGeom kg = (KindGeom) kinds.get(k);
-            if (VisualiserPreferences.getUsePatterns()) {
-              PatternVisualiserRenderer.getPatternRenderer().setDitherPattern(gc, kg.color.getRGB());
-            }
-            else {
-              gc.setBackground(kg.color);
-            }
-            gc.fillRectangle((k == 0) ? kg.bounds.x
-                : scale(kg.bounds.x), scaleExH(kg.bounds.y),
-              scale(kg.bounds.width),
-              scaleStripeHeight(kg.bounds.height));
-          }
-        }
-      }
-      else {
-        // not affected by stripes
-        getRenderer().paintColumn(gc, m, bg.bounds.x, scaleExH(bg.bounds.y),
-          scale(bg.bounds.width), scale(bg.bounds.height), false);
-      }
-    }
+		List<BarGeom> bars = columns[index].barList;
+		for (BarGeom bar : bars) {
+			List<StripeGeom> stripes = bar.stripeList;
+			// not affected by stripes
+			if (stripes.size() > 0) {
+				// affected by stripes
+				getRenderer().paintColumn(gc, m, bar.bounds.x, scaleExH(bar.bounds.y),
+					scale(bar.bounds.width), scale(bar.bounds.height), true);
+				for (StripeGeom stripe : stripes) {
+					List<KindGeom> kinds = stripe.kindList;
+					for (int k = 0; k < kinds.size(); k++) {
+						KindGeom kg = kinds.get(k);
+						if (VisualiserPreferences.getUsePatterns())
+							PatternVisualiserRenderer.getPatternRenderer().setDitherPattern(gc, kg.color.getRGB());
+						else
+							gc.setBackground(kg.color);
+						gc.fillRectangle(
+							k == 0 ? kg.bounds.x : scale(kg.bounds.x), scaleExH(kg.bounds.y),
+							scale(kg.bounds.width),
+							scaleStripeHeight(kg.bounds.height)
+						);
+					}
+				}
+			}
+			else
+				getRenderer().paintColumn(
+					gc, m, bar.bounds.x, scaleExH(bar.bounds.y), scale(bar.bounds.width), scale(bar.bounds.height), false
+				);
+		}
 
 		gc.dispose();
 		return cImg.getImageData();
@@ -1275,9 +1144,11 @@ public class VisualiserCanvas extends Canvas {
 	 */
 	private void paintSelection(GC gc) {
 		Rectangle r = selectedItem.getBounds();
-		int x = getRenderer().getMarginSize() + selectedItem.getIndex()
-				* (scale(colWidth) + getScaledSpacing()) + r.x
-				- getHorizontalBar().getSelection();
+		int x =
+			getRenderer().getMarginSize() +
+			selectedItem.getIndex() * (scale(colWidth) + getScaledSpacing()) +
+			r.x -
+			getHorizontalBar().getSelection();
 		int y = scaleExH(r.y) - getVerticalBar().getSelection();
 
 		Rectangle clip = gc.getClipping();
@@ -1286,22 +1157,20 @@ public class VisualiserCanvas extends Canvas {
 		int n = 0;
 		if (selectedItem instanceof ColumnGeom) {
 			n = 1;
-			height = scale(r.height - getRenderer().getColumnHeaderHeight())
-					+ getRenderer().getColumnHeaderHeight() + 1;
+			height = scale(r.height - getRenderer().getColumnHeaderHeight()) + getRenderer().getColumnHeaderHeight() + 1;
 			y = r.y - getVerticalBar().getSelection();
 			height += 2;
-		} else if (selectedItem instanceof BarGeom) {
-			height++;
-		} else if (selectedItem instanceof StripeGeom) {
-			height = scaleStripeHeight(r.height) + 1;
 		}
+		else if (selectedItem instanceof BarGeom)
+			height++;
+		else if (selectedItem instanceof StripeGeom)
+			height = scaleStripeHeight(r.height) + 1;
 
-		Rectangle outer = new Rectangle(x - 3 - n, y - 3, width + 6 + n,
-				height + 4);
-		if (scrollToSelection) {
-			// Check that the selection is visible, if not adjust the scrollbars
-			// accordingly. We only want to do this when the user is navigating
-			// via the keyboard.
+		Rectangle outer = new Rectangle(x - 3 - n, y - 3, width + 6 + n, height + 4);
+		// Check that the selection is visible, if not adjust the scrollbars
+		// accordingly. We only want to do this when the user is navigating
+		// via the keyboard.
+		if (scrollToSelection)
 			if (outer.y < clip.y) {
 				// off the top
 				int offset = clip.y - outer.y;
@@ -1309,26 +1178,27 @@ public class VisualiserCanvas extends Canvas {
 				getVerticalBar().setSelection(scrollv - offset);
 				redraw();
 				return;
-			} else if ((outer.y + outer.height > clip.y + clip.height)
-					&& (clip.height >= outer.height)) {
+			}
+			else if (outer.y + outer.height > clip.y + clip.height && clip.height >= outer.height) {
 				// off the bottom - extra condition above is to avoid moving
 				// up if doing so would cause the top of the selection to go off
 				// the top, to prevent the view getting
 				// repeatedly scrolled up and down
-				int offset = (outer.y + outer.height) - (clip.y + clip.height);
+				int offset = outer.y + outer.height - (clip.y + clip.height);
 				int scrollv = getVerticalBar().getSelection();
 				getVerticalBar().setSelection(scrollv + offset);
 				redraw();
 				return;
-			} else if (outer.x + outer.width + 1 > clip.x + clip.width) {
+			}
+			else if (outer.x + outer.width + 1 > clip.x + clip.width) {
 				// off the right
-				int offset = (outer.x + outer.width + 1)
-						- (clip.x + clip.width);
+				int offset = outer.x + outer.width + 1 - (clip.x + clip.width);
 				int scrollh = getHorizontalBar().getSelection();
 				getHorizontalBar().setSelection(scrollh + offset);
 				redraw();
 				return;
-			} else if (outer.x + 1 < clip.x) {
+			}
+			else if (outer.x + 1 < clip.x) {
 				// off the left
 				int offset = clip.x - (outer.x + 1);
 				int scrollh = getHorizontalBar().getSelection();
@@ -1336,22 +1206,20 @@ public class VisualiserCanvas extends Canvas {
 				redraw();
 				return;
 			}
-		}
 
-		if ((selectedItem != null) && (selectedItem instanceof StripeGeom)) {
+		if (selectedItem != null && selectedItem instanceof StripeGeom) {
 			// paint stripe to make sure it is visible, not overlapped by
 			// another stripe
 			StripeGeom sg = (StripeGeom) selectedItem;
 			for (int i = 0; i < sg.kindList.size(); i++) {
-				KindGeom kg = (KindGeom) sg.kindList.get(i);
-				if (VisualiserPreferences.getUsePatterns()) {
+				KindGeom kg = sg.kindList.get(i);
+				if (VisualiserPreferences.getUsePatterns())
 					PatternVisualiserRenderer.getPatternRenderer().setDitherPattern(gc, kg.color.getRGB());
-				} else {
+				else
 					gc.setBackground(kg.color);
-				}
-				gc.fillRectangle(scale(kg.bounds.x) + x - 1, y,
-						scale(kg.bounds.width),
-						scaleStripeHeight(kg.bounds.height));
+				gc.fillRectangle(
+					scale(kg.bounds.x) + x - 1, y, scale(kg.bounds.width), scaleStripeHeight(kg.bounds.height)
+				);
 			}
 		}
 
@@ -1363,19 +1231,16 @@ public class VisualiserCanvas extends Canvas {
 	}
 
 	private int scale(int v) {
-		if (visualiser.isFitToView()) {
+		if (visualiser.isFitToView())
 			return v;
-		}
-		return (zoomFactor * v) / zoomSc;
+		return zoomFactor * v / zoomSc;
 	}
 
 	private int scaleExH(int v) {
-		if (visualiser.isFitToView()) {
+		if (visualiser.isFitToView())
 			return v;
-		}
-		return (zoomFactor * (v - getRenderer().getMarginSize() - getRenderer()
-				.getColumnHeaderHeight()))
-				/ zoomSc
+		return
+			zoomFactor * (v - getRenderer().getMarginSize() - getRenderer().getColumnHeaderHeight()) / zoomSc
 				+ getRenderer().getMarginSize()
 				+ getRenderer().getColumnHeaderHeight();
 	}
@@ -1388,12 +1253,11 @@ public class VisualiserCanvas extends Canvas {
 	 * @return scaled height
 	 */
 	private int scaleStripeHeight(int v) {
-		if (visualiser.isFitToView()) {
+		if (visualiser.isFitToView())
 			return v;
-		}
 		int scaledV = scale(v);
-    return Math.max(scaledV, 1);
-  }
+		return Math.max(scaledV, 1);
+	}
 
 	/**
 	 * Return the gap between columns scaled to zoom factor, but only if that
@@ -1402,9 +1266,8 @@ public class VisualiserCanvas extends Canvas {
 	 * @return scaled spacing
 	 */
 	private int getScaledSpacing() {
-		if (visualiser.isFitToView()) {
+		if (visualiser.isFitToView())
 			return getRenderer().getSpacing();
-		}
 		return Math.max(scale(getRenderer().getSpacing()), getRenderer().getSpacing());
 	}
 
@@ -1418,12 +1281,9 @@ public class VisualiserCanvas extends Canvas {
 
 	static class ColumnGeom implements ISelectable {
 		public Rectangle bounds;
-
 		public int index;
-
 		public IMember member;
-
-		public List barList = new ArrayList();
+		public List<BarGeom> barList = new ArrayList<>();
 
 		public ColumnGeom(int index) {
 			this.index = index;
@@ -1444,12 +1304,9 @@ public class VisualiserCanvas extends Canvas {
 
 	static class BarGeom implements ISelectable {
 		public Rectangle bounds;
-
 		public int index;
-
 		public IMember member;
-
-		public List stripeList = new ArrayList();
+		public List<StripeGeom> stripeList = new ArrayList<>();
 
 		public BarGeom(int index) {
 			this.index = index;
@@ -1468,18 +1325,13 @@ public class VisualiserCanvas extends Canvas {
 		}
 	}
 
-	class StripeGeom implements ISelectable {
+	static class StripeGeom implements ISelectable {
 		public Rectangle bounds;
-
 		public int index;
-
 		public BarGeom parent;
-
 		public IMember member;
-
 		public Stripe stripe;
-
-		public List kindList = new ArrayList();
+		public List<KindGeom> kindList = new ArrayList<>();
 
 		public StripeGeom(int index) {
 			this.index = index;
@@ -1514,10 +1366,8 @@ public class VisualiserCanvas extends Canvas {
 		 */
 		public void moveVertically(int ypos) {
 			bounds.y += ypos;
-      for (Object o : kindList) {
-        KindGeom kg = (KindGeom) o;
-        kg.bounds.y += ypos;
-      }
+			for (KindGeom kg : kindList)
+				kg.bounds.y += ypos;
 		}
 
 		/**
@@ -1528,17 +1378,14 @@ public class VisualiserCanvas extends Canvas {
 		 */
 		public void reduceHeight(int h) {
 			bounds.height -= h;
-      for (Object o : kindList) {
-        KindGeom kg = (KindGeom) o;
-        kg.bounds.height -= h;
-      }
+			for (KindGeom kg : kindList)
+				kg.bounds.height -= h;
 		}
 
 	}
 
 	static class KindGeom {
 		public Rectangle bounds;
-
 		public Color color;
 	}
 

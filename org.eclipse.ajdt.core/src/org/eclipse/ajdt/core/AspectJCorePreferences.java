@@ -325,9 +325,11 @@ public class AspectJCorePreferences {
 	private static IClasspathEntry[] extractRequiredEntries(Object resolvedClasspath) {
 
 		try {
-			Class resolvedClasspathClass = Class.forName("org.eclipse.jdt.internal.core.JavaProject$ResolvedClasspath");
-			return (IClasspathEntry[]) ReflectionUtils.getPrivateField(resolvedClasspathClass, "resolvedClasspath",
-					resolvedClasspath);
+      //noinspection rawtypes
+      Class resolvedClasspathClass = Class.forName("org.eclipse.jdt.internal.core.JavaProject$ResolvedClasspath");
+			return (IClasspathEntry[]) ReflectionUtils.getPrivateField(
+				resolvedClasspathClass, "resolvedClasspath", resolvedClasspath
+			);
 		} catch (Exception e) {
 			return new IClasspathEntry[0];
 		}

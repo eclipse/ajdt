@@ -100,13 +100,13 @@ public final class AjASTRewriteAnalyzer extends AjASTVisitor {
 		ASTVisitor getASTRewriteAnalyzer(char[] content2,
 				LineInformation lineInfo2, String lineDelim, TextEdit result,
 				RewriteEventStore eventStore2, NodeInfoStore nodeStore,
-				List comments, Map options, TargetSourceRangeComputer xsrComputer);
+				List<?> comments, Map<String, String> options, TargetSourceRangeComputer xsrComputer);
 	}
 
 	public static ASTVisitor getAnalyzerVisitor(char[] content2,
 			LineInformation lineInfo2, String lineDelim, TextEdit result,
 			RewriteEventStore eventStore2, NodeInfoStore nodeStore,
-			List comments, Map options, TargetSourceRangeComputer xsrComputer) {
+			List<?> comments, Map<String, String> options, TargetSourceRangeComputer xsrComputer) {
 		if (astRewriteAnalyzerFactory == null) {
 		  return new ASTRewriteAnalyzer(content2,lineInfo2,lineDelim,result,eventStore2,nodeStore,comments,options,xsrComputer, null);
 		}
@@ -153,7 +153,17 @@ public final class AjASTRewriteAnalyzer extends AjASTVisitor {
 	 * 	@param options the current jdt.core options (formatting/compliance) or <code>null</code>.
 	 * 	@param extendedSourceRangeComputer the source range computer to use
 	 */
-	public AjASTRewriteAnalyzer(char[] content, LineInformation lineInfo, String lineDelim, TextEdit rootEdit, RewriteEventStore eventStore, NodeInfoStore nodeInfos, List comments, Map options, TargetSourceRangeComputer extendedSourceRangeComputer) {
+	public AjASTRewriteAnalyzer(
+		char[] content,
+		LineInformation lineInfo,
+		String lineDelim,
+		TextEdit rootEdit,
+		RewriteEventStore eventStore,
+		NodeInfoStore nodeInfos,
+		List<?> comments,
+		Map<String, String> options,
+		TargetSourceRangeComputer extendedSourceRangeComputer
+	) {
 		this.eventStore= eventStore;
 		this.content= content;
 		this.lineInfo= lineInfo;

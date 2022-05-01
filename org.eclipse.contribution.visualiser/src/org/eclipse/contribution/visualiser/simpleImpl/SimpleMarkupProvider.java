@@ -38,16 +38,15 @@ import org.eclipse.swt.widgets.Display;
  */
 public class SimpleMarkupProvider implements IMarkupProvider {
 
-	private Map colourMemory = new HashMap();
-	private Map availableColours = new HashMap();
+	private Map<String, Color> colourMemory = new HashMap<>();
+	private Map<String, List<RGB>> availableColours = new HashMap<>();
 
-	private Map allocatedColours = new HashMap(); // indexed by RGB
+	private Map<RGB, Color> allocatedColours = new HashMap<>();
 
 	// Indexed by FULL membername, each entry is a List of Stripe objects.
-	private Hashtable markups = null;
+	private Hashtable<String, List<Stripe>> markups = null;
 
-	private SortedSet markupKinds;
-
+	private SortedSet<IMarkupKind> markupKinds;
 
 	/**
 	 * Initialise the markup provider.  This simple implementation does nothing here.
@@ -55,217 +54,211 @@ public class SimpleMarkupProvider implements IMarkupProvider {
 	public void initialise() {
 	}
 
-
 	/**
 	 * Get a List of Stripes for the given member, which are its markups.
 	 */
-	public List getMemberMarkups(IMember member) {
-		if(member != null && markups != null){
-			Object o = markups.get(member.getFullname());
-			if(o instanceof List) {
-				return (List) markups.get(member.getFullname());
-			}
+	public List<Stripe> getMemberMarkups(IMember member) {
+		if (member != null && markups != null) {
+			List<Stripe> stripes = markups.get(member.getFullname());
+			if (stripes != null)
+				return markups.get(member.getFullname());
 		}
 		return null;
 	}
 
-
 	/**
 	 * Add a Stripe to the member with the given name.
+	 *
 	 * @param membername
 	 * @param s
 	 */
-	public void addMarkup(String membername,Stripe s) {
-		if (markups==null) markups = new Hashtable();
-		List stripes = (List) markups.get(membername);
+	public void addMarkup(String membername, Stripe s) {
+		if (markups == null)
+			markups = new Hashtable<>();
+		List<Stripe> stripes = markups.get(membername);
 		if (stripes == null) {
-			stripes = new ArrayList();
+			stripes = new ArrayList<>();
 			stripes.add(s);
 			markups.put(membername, stripes);
-		} else {
-			stripes.add(s);
 		}
+		else
+			stripes.add(s);
 	}
-
 
 	/**
 	 * Add a markup kind
+	 *
 	 * @param kind
 	 */
 	public void addMarkupKind(IMarkupKind kind) {
 		markupKinds.add(kind);
 	}
 
-
 	/**
 	 * Process all the Stripes that have been added to deal with the overlapping cases
 	 */
 	public void processMarkups() {
-	  Enumeration memkeys = markups.keys();
-	  while (memkeys.hasMoreElements()) {
-		 String memberID = (String)memkeys.nextElement();
-		 List unprocessedListOfStripes = (List)markups.get(memberID);
-		 MarkupUtils.processStripes(unprocessedListOfStripes);
-	  }
+		Enumeration<String> memkeys = markups.keys();
+		while (memkeys.hasMoreElements()) {
+			String memberID = memkeys.nextElement();
+			List<Stripe> unprocessedListOfStripes = markups.get(memberID);
+			MarkupUtils.processStripes(unprocessedListOfStripes);
+		}
 	}
-
 
 	/**
 	 * Get the markups for a group. Group markups are a stacked set of member markups.
 	 */
-	public List getGroupMarkups(IGroup group) {
-		List stripes = new ArrayList();
-		List kids = group.getMembers();
+	public List<Stripe> getGroupMarkups(IGroup group) {
+		List<Stripe> stripes = new ArrayList<>();
+		List<IMember> kids = group.getMembers();
 		int accumulatedOffset = 0;
 
 		// Go through all the children of the group
-    for (Object kid : kids) {
-      IMember element = (IMember) kid;
-      List l = getMemberMarkups(element);
-      if (l != null) {
-        for (Object o : l) {
-          Stripe elem = (Stripe) o;
-          stripes.add(new Stripe(elem.getKinds(), elem.getOffset() + accumulatedOffset, elem.getDepth()));
-        }
-      }
-      accumulatedOffset += element.getSize();
-    }
+		for (IMember kid : kids) {
+			List<Stripe> kidStripes = getMemberMarkups(kid);
+			if (kidStripes != null) {
+				for (Stripe kidStripe : kidStripes) {
+					stripes.add(
+						new Stripe(
+							kidStripe.getKinds(),
+							kidStripe.getOffset() + accumulatedOffset,
+							kidStripe.getDepth()
+						)
+					);
+				}
+			}
+			accumulatedOffset += kid.getSize();
+		}
 		return stripes;
 	}
 
-
 	/**
 	 * Get all the markup kinds.
+	 *
 	 * @return a Set of IMarkupKinds
 	 */
-	public SortedSet getAllMarkupKinds() {
+	public SortedSet<? extends IMarkupKind> getAllMarkupKinds() {
 		// Created sorted list of markups
-		if (markups==null) return null;
-		if (markupKinds!=null) return markupKinds;
-		markupKinds = new TreeSet();
+		if (markups == null)
+			return null;
+		if (markupKinds != null)
+			return markupKinds;
+		// FIXME: IMarkupKind is not Comparable, only SimpleMarkupKind is
+		markupKinds = new TreeSet<>();
 
-		Enumeration stripeLists = markups.elements();
+		Enumeration<List<Stripe>> stripeLists = markups.elements();
 		while (stripeLists.hasMoreElements()) {
-			List stripelist = (List)stripeLists.nextElement();
-      for (Object o : stripelist) {
-        Stripe element = (Stripe) o;
-        markupKinds.addAll(element.getKinds());
-      }
+			List<Stripe> stripes = stripeLists.nextElement();
+			for (Stripe stripe : stripes)
+        markupKinds.addAll(stripe.getKinds());
 		}
 		return markupKinds;
 	}
-
 
 // Color management
 
 	/**
 	 * Get the colour for a given kind
+	 *
 	 * @param kind - the kind
 	 * @return the Color for that kind
 	 */
-	public Color getColorFor(IMarkupKind kind){
-		Color stripeColour = null;
+	public Color getColorFor(IMarkupKind kind) {
+		Color stripeColour;
 		String p = "not unique"; //Note: String not displayed externally //$NON-NLS-1$
 		String key = p + ":" + kind.getFullName(); //$NON-NLS-1$
-		if (colourMemory.containsKey(key)) {
-			stripeColour = (Color) colourMemory.get(key);
-		} else {
+		if (colourMemory.containsKey(key))
+			stripeColour = colourMemory.get(key);
+		else {
 			stripeColour = getNextColourFor(p);
 			colourMemory.put(key, stripeColour);
 		}
 		return stripeColour;
 	}
 
-
 	/**
 	 * Set the color for a kind.
-	 * @param kind - the kind
+	 *
+	 * @param kind  - the kind
 	 * @param color - the Color
 	 */
 	public void setColorFor(IMarkupKind kind, Color color) {
 		colourMemory.put("not unique:" + kind.getName(), color); //Note: String not displayed externally //$NON-NLS-1$
 	}
 
-
 	/**
 	 * Get the next assignable colour and assign it to the String argument.
+	 *
 	 * @param p - the kind
 	 * @return new Color
 	 */
 	protected Color getNextColourFor(String p) {
 		if (!availableColours.containsKey(p)) {
 			RGB[] rgb = PaletteManager.getCurrentPalette().getPalette().getRGBValues();
-			List colourList = new ArrayList(Arrays.asList(rgb));
+			List<RGB> colourList = Arrays.asList(rgb);
 			availableColours.put(p, colourList);
 		}
 
-		List colours = (List) availableColours.get(p);
-		RGB v;
+		List<RGB> colours = availableColours.get(p);
+		RGB rgb;
 		if (!colours.isEmpty()) {
-			v = (RGB) colours.get(0);
+			rgb = colours.get(0);
 			colours.remove(0);
-		} else {
-			v = PaletteManager.getCurrentPalette().getPalette().getRandomRGBValue();
 		}
+		else
+			rgb = PaletteManager.getCurrentPalette().getPalette().getRandomRGBValue();
 
-		Object obj = allocatedColours.get(v);
-		Color c;
-		if ((obj!=null) && (obj instanceof Color)) {
-			c = (Color)obj;
-		} else {
-			c = new Color(Display.getDefault(),v);
-			allocatedColours.put(v,c);
+		Color color = allocatedColours.get(rgb);
+		if (color == null) {
+			color = new Color(Display.getDefault(), rgb);
+			allocatedColours.put(rgb, color);
 		}
-		return c;
+		return color;
 	}
-
 
 	/**
 	 * Empty the data structures that contain the stripe and kind information
 	 */
 	public void resetMarkupsAndKinds() {
-		markups = new Hashtable();
-		markupKinds = new TreeSet();
+		markups = new Hashtable<>();
+    // FIXME: IMarkupKind is not Comparable, only SimpleMarkupKind is
+		markupKinds = new TreeSet<>();
 	}
-
 
 	/**
 	 * Reset the color memory
 	 */
 	public void resetColours() {
-		availableColours = new HashMap();
-		colourMemory = new HashMap();
+		availableColours = new HashMap<>();
+		colourMemory = new HashMap<>();
 	}
 
 	/**
 	 * Reset the color memory
 	 */
 	private void disposeColors() {
-    for (Object o : allocatedColours.keySet()) {
-      Color c = (Color) allocatedColours.get(o);
-      c.dispose();
-    }
-		allocatedColours = new HashMap();
+		for (RGB rgb : allocatedColours.keySet()) {
+			Color color = allocatedColours.get(rgb);
+			color.dispose();
+		}
+		allocatedColours = new HashMap<>();
 	}
-
 
 	/**
 	 * Process a mouse click on a stripe.  This implementation does nothing and returns
 	 * true to allow the visualiser to perform the default operations.
+	 *
 	 * @see org.eclipse.contribution.visualiser.interfaces.IMarkupProvider#processMouseclick(IMember, Stripe, int)
 	 */
 	public boolean processMouseclick(IMember member, Stripe stripe, int buttonClicked) {
 		return true;
 	}
 
-
-
 	/**
 	 * Activate the provider
 	 */
-	public void activate() {
-	}
-
+	public void activate() { }
 
 	/**
 	 * Deactivate the provider

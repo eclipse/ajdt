@@ -63,10 +63,10 @@ public class AJDTContentProvider extends JDTContentProvider {
 	}
 
 	/**
-	 * Get all the members to display.
-	 *
-	 * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers()
-	 */
+   * Get all the members to display.
+   *
+   * @see org.eclipse.contribution.visualiser.interfaces.IContentProvider#getAllMembers()
+   */
 	public List<IMember> getAllMembers() {
 		synchronized (this) {
             if (currentMembers == null) {
